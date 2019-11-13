@@ -6,11 +6,13 @@ import matplotlib.pyplot as plt
 import os
 import ..rawfiles
 
+__all__ = ['taxiarray', 'triparray', 'Dataset']
 
 class taxiarray(np.ndarray):
     '''pratical data container based on structured array of numoy.
     traditionally, data type is '['id', 'x','y','time','passenger']'.
     please check datatype.'''
+
     def iterate_with(self, type='id'):
         '''other iteration method for ussefulness.
         iterative taxi array given.'''
@@ -39,15 +41,60 @@ class taxiarray(np.ndarray):
     def split(self, arg):
         pass
 
+class triparray(taxiarray):
+    """this array is specific data types for taxi data.
+    a component of triparray is consist of two taxiarray components.
+    so we call one of them to origin and the other as destination.
+    to manage that property, we provide trajectory and,
+    length or some other method for trip."""
 
+    def __init__(self,  arg, dataset = None):
+        super(triparray, self).__init__()
+        self.arg = arg
+        if dataset is not None:
+            self.dataset = dataset
+
+    def origins():
+        doc = "origin is start point of trip. this property gives origin points as taxiarray form."
+        def fget(self): # IDEA: return origin points of this instance as taxi array
+            return taxidata(_origins)
+        return locals()
+    origins = property(**origins())
+
+    def destination():
+        doc = "destination is end point of trip. this this property gives origin points as taxiarray form."
+        def fget(self):
+            return self._destination
+        def fset(self, value):
+            self._destination = value
+        def fdel(self):
+            del self._destination
+        return locals()
+    destination = property(**destination())
+
+
+    def trajectory(self, index):
+        '''it will give i-th trip's trajectory from original dataset. return is taxiarray.'''
+        pass
+
+    def plot(self, arg):
+        raise NotImplementedError
+
+    def range(self, arg):
+        pass
 
 class Dataset:
     '''this class will take FileManager and read from file make many objects of processing data.
     so that you can get taxi object or network object easily with this class. '''
-    def __init__(self, files):
-        self.filesystem = files
+    def __init__(self, file = None):
+        if files is not None:
+            self.open(file)
         self._scope = None
-        pass
+
+
+    def open(self, file):
+        '''open hdf5 file to load data.'''
+        self.filesystem = h5py.File(file, 'r+')
 
     def set_scope(self, **scope):
         '''if you want specific data, you can customizing scope of data.
