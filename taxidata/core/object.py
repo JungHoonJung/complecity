@@ -4,7 +4,7 @@ import networkx as nx
 import datetime as dt
 import matplotlib.pyplot as plt
 import os
-import ..rawfiles
+from ..rawfiles import rawfiles
 
 __all__ = ['taxiarray', 'triparray', 'Dataset']
 
@@ -112,7 +112,7 @@ class Dataset:
         pass
 
     def range(self, **range):
-        '''equivalent to taxiarray.range()''''
+        '''equivalent to taxiarray.range()'''
         pass
 
     def snapshot(self, time, target = 'point'):
