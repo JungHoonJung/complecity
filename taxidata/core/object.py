@@ -237,7 +237,8 @@ class DataProcessor:
         remains = self.hdf.require_group('remains')
         for i, typename in enumerate(self.RAW.dtype.names):
             if typename == 'id' or typename =='time':continue
-            if taxidata.get(typename, False):
+            if not taxidata.get(typename, False):
+                self.logger.debug("'{}' Dataset created.".format(typename))
                 ta = taxidata.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
                 #ta.attrs['Nonesign'] = -1
                 #errors.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
