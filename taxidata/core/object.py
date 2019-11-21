@@ -250,31 +250,48 @@ class DataProcessor:
         id_count = 0
         #err_c = 0
         rem_c = 0
-
+        self.logger.info('Collecting id.')
+        ids = self.RAW.col_unique(0)
+        ids.sort()
+        self.logger.debug('Constructing id_list.')
         id_list = dict()
+        for taxiid in ids:
+            id_list[taxiid] = id_count
+            id_count +=1
+
+        self.logger.info('Saving id_list')
+        self.hdf['id_list'].resize((len(id_list),))
+        for id in id_list:
+            self.hdf['id_list'][id_list[id]] = id
+
+        self.logger.debug('\tTime table resize')
+        self.hdf['TimeTable'].resize((8640,len(id_list)))
+
         date = self._date*86400 + 54000
         totalfile = len(self.RAW)
         self.logger.debug('total file : {}'.format(totalfile))
         for npy in self.RAW.to_npy():
             self.logger.debug('\tFile {}({}/{}) '.format(files+1,files+1, totalfile))
-            ids = np.unique(npy['id'])
-            for taxiid in ids:
-                if not taxiid in id_list:
-                    id_list[taxiid] = id_count
-                    id_count +=1
+
             self.logger.debug('\tCurrent total taxi number : {}'.format(len(id_list)))
-            self.logger.debug('\tTime table resize')
-            self.hdf['TimeTable'].resize((8640,len(id_list)))
+
+            self.logger.debug('\tSorting npy')
+            np.sort(npy, order=['time','id'])
+
             self.logger.debug('\tTime converting')
             times = (time_converter(npy['time']) - (self._date*86400+54000))/10
+
             self.logger.debug('\tMasking start')
             mask = np.logical_and(times>=0, times<8640)
+
             self.logger.debug('\tid converting')
             ids = [id_list[i] for i in npy['id'][mask]]
             datalen = len(ids)
+
             self.logger.debug('\tTime table update')
             for i, j in enumerate(zip(times[mask], ids)):
                 self.hdf['TimeTable'][j] = lines+i
+
             self.logger.debug('\tData collecting')
             for types in npy.dtype.names:
                 if types == 'id' or types =='time':continue
@@ -288,9 +305,7 @@ class DataProcessor:
             rem_c+= len(npy)-datalen
             self.logger.debug('\ttotal files length : {}, data : {}. remains : {}'.format(len(npy), datalen, len(npy)-datalen))
 
-        self.hdf['id_list'].resize((len(id_list),))
-        for id in id_list:
-            self.hdf['id_list'][id_list[id]] = id
+
 
         self.hdf.attrs['TotalNumber'] = len(id_list)
         self.logger.debug('Finished!')

@@ -74,8 +74,14 @@ class rawfiles:
         else:
             return np.loadtxt(self.path[index], dtype = self.dtype)
 
+    def col_unique(self, index):
+        res = {}
+        dtype = self.dtype[index]
+        for file in self.path:
+            for item in np.loadtxt(file, dtype = dtype, delimiter=',', uescols=(index,)):
+                res[item] = 0
 
-
+        return list(res.keys())
 
     def __iter__(self):
         self._index = 0
