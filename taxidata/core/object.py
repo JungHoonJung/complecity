@@ -181,7 +181,7 @@ class DataProcessor:
         self.hdf = h5py.File(file)
 
     def set_RAW_path(self, path):
-        if rawfiles(path).checkfiles():
+        if rawfiles(path).file_check():
             self.RAW = rawfiles(path)
         else:
             raise FileNotFoundError("RAW file doesn't exist")
