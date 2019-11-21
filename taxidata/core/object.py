@@ -268,8 +268,8 @@ class DataProcessor:
         date = self._date*86400 + 54000
         totalfile = len(self.RAW)
         self.logger.debug('total file : {}'.format(totalfile))
-        #full = np.empty([4e8],dtype = self.RAW.dtype)
-        #check = 0
+        full = np.empty([4e8],dtype = self.RAW.dtype)
+        check = 0
 
         for npy in self.RAW.to_npy():
             self.logger.debug('File \t{} ({}/{}) '.format(files+1,files+1, totalfile))
@@ -278,32 +278,37 @@ class DataProcessor:
 
             self.logger.debug('\tSorting npy')
             np.sort(npy, order=['time','id'])
+            full[check:check+npy.shape[0]] = npy
+            check += npy.shape[0]
+        self.logger.debug('total : {}'.format(check))
+        full = full[:check]
 
-            self.logger.debug('\tTime converting')
-            times = ((time_converter(npy['time']) - (self._date*86400+54000))/10).astype(np.int32)
+        self.logger.debug('Time converting')
+        times = ((time_converter(full['time']) - (self._date*86400+54000))/10).astype(np.int32)
 
-            self.logger.debug('\tMasking start')
-            mask = np.logical_and(times>=0, times<8640)
+        self.logger.debug('Masking start')
+        mask = np.logical_and(times>=0, times<8640)
 
-            self.logger.debug('\tid converting')
-            ids = [id_list[i] for i in npy['id'][mask]]
-            datalen = len(ids)
+        self.logger.debug('id converting')
+        ids = [id_list[i] for i in full['id'][mask]]
+        datalen = len(ids)
 
-            self.logger.debug('\tTime table update')
-            timetable[times[mask], ids] = lines+i
+        self.logger.debug('Time table update')
+        timetable[times[mask], ids] = lines+i
 
-            self.logger.debug('\tData collecting')
-            for types in npy.dtype.names:
-                if types == 'id' or types =='time':continue
-                self.logger.debug('\t\t{}'.format(types))
-                taxidata[types].resize((datalen+lines,))
-                taxidata[types][lines:] = npy[types][mask]
-                remains[types].resize((rem_c+len(npy)-datalen,))
-                remains[types][rem_c:] = npy[types][np.logical_not(mask)]
-            files+=1
-            lines+=datalen
-            rem_c+= len(npy)-datalen
-            self.logger.debug('\ttotal files length : {}, data : {}. remains : {}'.format(len(npy), datalen, len(npy)-datalen))
+        self.logger.debug('Data collecting')
+        for types in npy.dtype.names:
+            if types == 'id' or types =='time':continue
+            self.logger.debug('\t\t{}'.format(types))
+            taxidata[types].resize((datalen,))
+            taxidata[types][lines:] = full[types][mask]
+            remains[types].resize((rem_c+full.shape[0]-datalen,))
+            remains[types][rem_c:] = full[types][np.logical_not(mask)]
+
+        #files+=1
+        #lines+=datalen
+        #rem_c+= len(npy)-datalen
+        self.logger.debug('total files length : {}, data : {}. remains : {}'.format(len(npy), datalen, len(npy)-datalen))
 
         self.logger.info('Saving time table.')
         self.hdf['TimeTable'] = timetable
