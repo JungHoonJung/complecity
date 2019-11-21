@@ -146,7 +146,7 @@ class DataProcessor:
         self.logger = logging.getLogger('DataProcessor')
         self.logger.setLevel(log_level)
         self.logger.addHandler(logging.FileHandler('processing.log'))
-        DataProcessor.counts += 1
+        #DataProcessor.counts += 1
 
 
     def date():
@@ -233,16 +233,9 @@ class DataProcessor:
             self.logger.info('Collecting id.')
             ids = self.RAW.col_unique(0)
             ids.sort()
-            self.logger.debug('Constructing id_list.')
-            id_list = dict()
-            for taxiid in ids:
-                id_list[taxiid] = id_count
-                id_count +=1
-
             self.logger.info('Saving id_list')
             self.hdf['id_list'].resize((len(id_list),))
-            for id in id_list:
-                self.hdf['id_list'][id_list[id]] = id
+            self.hdf['id_list'][:] = ids
 
             self.logger.debug('Time table resize')
             self.hdf['TimeTable'].resize((8640,len(id_list)))
@@ -259,6 +252,11 @@ class DataProcessor:
                 #errors.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
                 re = remains.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
                 #ta.attrs['Nonesign'] = -1
+
+        ids = self.hdf['id_list'][:]
+        id_list = dict()
+        for i,j in enumerate(ids):
+            id_list[j] = i
 
         files = 0
         lines = 0
