@@ -136,7 +136,7 @@ class DataProcessor:
     '''controll whole type of files, keep file IO to save or read new things.'''
     counts = 0
 
-    def __init__(self, log_level = logging.INFO):
+    def __init__(self, log_level = logging.DEBUG):
         '''if you set date FileManager class will check date of data default is None'''
         self.hdf = None
         self._npy = None
