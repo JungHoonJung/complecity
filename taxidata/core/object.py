@@ -167,13 +167,13 @@ class DataProcessor:
     def load(self, hdf = None, npy = None, RAW = None, shp = None):
         if hdf is not None:
             self.hdf = h5py.File(hdf, 'r+')
-            self.logger.info("'{}' file loaded by hdf5 handler")
+            self.logger.info("'{}' file loaded by hdf5 handler".format(hdf))
         if npy is not None:
             self.set_npy(npy)
-            self.logger.info("'{}' file loaded by numpy handler")
+            self.logger.info("'{}' file loaded by numpy handler".format(npy))
         if RAW is not None:
             self.set_RAW_path(RAW)
-            self.logger.info("'{}' folder loaded by RAW handler")
+            self.logger.info("'{}' folder loaded by RAW handler".format(RAW))
         if shp is not None:
             pass
 
@@ -261,17 +261,23 @@ class DataProcessor:
                 if not taxiid in id_list:
                     id_list[taxiid] = id_count
                     id_count +=1
-            self.logger.debug('\tcurrent total taxi number : {}'.format(len(id_list)))
-            self.hdf['id_list'].resize((len(id_list),))
+            self.logger.debug('\tCurrent total taxi number : {}'.format(len(id_list)))
+            self.logger.debug('\tTime table resize')
             self.hdf['TimeTable'].resize((8640,len(id_list)))
-
+            self.logger.debug('\tTime converting')
             times = (time_converter(npy['time']) - (self._date*86400+54000))/10
+            self.logger.debug('\tMasking start')
             mask = np.logical_and(times>=0, times<8640)
+            self.logger.debug('\tid converting')
             ids = [id_list[i] for i in npy['id'][mask]]
             datalen = len(ids)
+            self.logger.debug('\tTime table update')
             for i, j in enumerate(zip(times[mask], ids)):
                 self.hdf['TimeTable'][j] = lines+i
+            self.logger.debug('\tData collecting')
             for types in npy.dtype.names:
+                if types == 'id' or types =='time':continue
+                self.logger.debug('\t\t{}'.format(types))
                 taxidata[types].resize((datalen+lines,))
                 taxidata[types][lines:] = npy[types][mask]
                 remains[types].resize((rem_c+len(npy)-datalen,))
@@ -281,6 +287,7 @@ class DataProcessor:
             rem_c+= len(npy)-datalen
             self.logger.debug('\ttotal files length : {}, data : {}. remains : {}'.format(len(npy), datalen, len(npy)-datalen))
 
+        self.hdf['id_list'].resize((len(id_list),))
         for id in id_list:
             self.hdf['id_list'][id_list[id]] = id
 
