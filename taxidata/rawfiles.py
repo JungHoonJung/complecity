@@ -24,8 +24,8 @@ class rawfiles:
             h += 1
         if (h == 24): break
     #raw='/'
-    dtype = {'names':('id','lat','lon','z','time','ang','vel','valid','psg'),
-            'formats' :('u4','u4','u4','i4','S14','i4','i4','?','?')            }
+    dtype = np.dtype({'names':('id','lat','lon','z','time','ang','vel','valid','psg'),
+            'formats' :('u4','u4','u4','i4','S14','i4','i4','?','?') })
 
     def __init__(self, folder_path, dtype = None ,opt = 'r'):
         if type(folder_path)==str:
