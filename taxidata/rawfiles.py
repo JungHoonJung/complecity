@@ -78,7 +78,7 @@ class rawfiles:
         res = {}
         dtype = self.dtype[index]
         for file in self.path:
-            for item in np.loadtxt(file, dtype = dtype, delimiter=',', uescols=(index,)):
+            for item in np.loadtxt(file, dtype = dtype, delimiter=',', usecols=(index,)):
                 res[item] = 0
 
         return list(res.keys())
