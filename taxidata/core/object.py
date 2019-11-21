@@ -269,8 +269,8 @@ class DataProcessor:
             mask = np.logical_and(times>=0, times<8640)
             ids = [id_list[i] for i in npy['id'][mask]]
             datalen = len(ids)
-
-            self.hdf['TimeTable'][times[mask], ids] = np.arange(lines, lines+datalen)
+            for i, j in enumerate(zip(times[mask], ids)):
+                self.hdf['TimeTable'][j] = lines+i
             for types in npy.dtype.names:
                 taxidata[types].resize((datalen+lines,))
                 taxidata[types][lines:] = npy[types][mask]
@@ -348,7 +348,9 @@ if __name__ == '__main__':
     logging.warning('hi')
     a = logging.getLogger('test')
     a = logging.getLogger().getChild('test')
-    np.arange(100,200).reshape(10,10)[[1,2,3],np.array([2,3,4])]
+    np.arange(100,200).reshape(10,10)[[3,2,1],np.array([2,3,4])]
+    a = h5py.File('test.hdf5')
+    a['test'][[3,2,1],[2,3,1]]
     a.setLevel(logging.INFO)
     a.info('ho')
     logging.info('test')
