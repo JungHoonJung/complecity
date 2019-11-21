@@ -262,8 +262,8 @@ class DataProcessor:
                     id_list[taxiid] = id_count
                     id_count +=1
             self.logger.debug('\tcurrent total taxi number : {}'.format(len(id_list)))
-            self.hdf['id_list'].resize(len(id_list),)
-            self.hdf['TimeTable'].resize(8640,len(id_list))
+            self.hdf['id_list'].resize((len(id_list),))
+            self.hdf['TimeTable'].resize((8640,len(id_list)))
 
             times = (time_converter(npy['time']) - (self._date*86400+54000))/10
             mask = np.logical_and(times>=0, times<8640)
@@ -272,9 +272,9 @@ class DataProcessor:
 
             self.hdf['TimeTable'][times[mask], ids] = np.arange(lines, lines+datalen)
             for types in npy.dtype.names:
-                taxidata[types].resize(datalen+lines)
+                taxidata[types].resize((datalen+lines,))
                 taxidata[types][lines:] = npy[types][mask]
-                remains[types].resize(rem_c+len(npy)-datalen)
+                remains[types].resize((rem_c+len(npy)-datalen,))
                 taxidata[types][rem_c:] = npy[types][np.logical_not(mask)]
             files+=1
             lines+=datalen
