@@ -255,7 +255,7 @@ class DataProcessor:
         totalfile = len(self.RAW)
         self.logger.debug('total file : {}'.format(totalfile))
         for npy in self.RAW.to_npy():
-            self.logger.debug('\tFile {}(/{}) '.format(files+1, totalfile))
+            self.logger.debug('\tFile {}({}/{}) '.format(files+1,files+1, totalfile))
             ids = np.unique(npy['id'])
             for taxiid in ids:
                 if not taxiid in id_list:
@@ -332,7 +332,7 @@ class HDFManager:
 
 @np.vectorize
 def time_converter(strtime):
-    return dt.datetime.strptime(strtime, '%Y%m%d%H%M%S').timestamp()
+    return dt.datetime.strptime(strtime.decode(), '%Y%m%d%H%M%S').timestamp()
 
 
 if __name__ == '__main__':
