@@ -263,13 +263,13 @@ class DataProcessor:
         id_count = 0
         #err_c = 0
         rem_c = 0
-
+        timetable = -np.ones([8640,len(id_list)], dtype = np.int32)
 
         date = self._date*86400 + 54000
         totalfile = len(self.RAW)
         self.logger.debug('total file : {}'.format(totalfile))
         for npy in self.RAW.to_npy():
-            self.logger.debug('\tFile {}({}/{}) '.format(files+1,files+1, totalfile))
+            self.logger.debug('File \t{} ({}/{}) '.format(files+1,files+1, totalfile))
 
             self.logger.debug('\tCurrent total taxi number : {}'.format(len(id_list)))
 
@@ -287,7 +287,7 @@ class DataProcessor:
             datalen = len(ids)
 
             self.logger.debug('\tTime table update')
-            self.hdf['TimeTable'][times[mask], ids] = lines+i
+            timetable[times[mask], ids] = lines+i
 
             self.logger.debug('\tData collecting')
             for types in npy.dtype.names:
@@ -302,10 +302,10 @@ class DataProcessor:
             rem_c+= len(npy)-datalen
             self.logger.debug('\ttotal files length : {}, data : {}. remains : {}'.format(len(npy), datalen, len(npy)-datalen))
 
-
-
+        self.logger.info('Saving time table.')
+        self.hdf['TimeTable'] = timetable
         self.hdf.attrs['TotalNumber'] = len(id_list)
-        self.logger.debug('Finished!')
+        self.logger.info('Finished!')
         self.hdf.flush()
 
 
@@ -370,7 +370,9 @@ if __name__ == '__main__':
     a = logging.getLogger().getChild('test')
     np.arange(100,200).reshape(10,10)[[3,2,1],np.array([2,3,4])]
     a = h5py.File('test.hdf5')
-    a['test'][[3,2,1],[2,3,1]]
+    a['test'].resize((8640,200))
+    a['test'][[1,2,3,4,5,6,7,8]]
+    a['test'][1]
     a.setLevel(logging.INFO)
     a.info('ho')
     logging.info('test')
