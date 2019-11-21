@@ -277,7 +277,7 @@ class DataProcessor:
             np.sort(npy, order=['time','id'])
 
             self.logger.debug('\tTime converting')
-            times = (time_converter(npy['time']) - (self._date*86400+54000))/10
+            times = ((time_converter(npy['time']) - (self._date*86400+54000))/10).astype(np.int32)
 
             self.logger.debug('\tMasking start')
             mask = np.logical_and(times>=0, times<8640)
