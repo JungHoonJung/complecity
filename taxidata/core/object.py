@@ -220,7 +220,7 @@ class DataProcessor:
             raise ValueError("No RAW files.")
         if self.hdf is None:
             self.set_hdf(path)
-        if self._date = None:
+        if self._date == None:
             self.logger.error('Attempt to make hdf before setting date.')
             raise ValueError("'date' is None.")
 
