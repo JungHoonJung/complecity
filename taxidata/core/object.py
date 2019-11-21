@@ -268,7 +268,7 @@ class DataProcessor:
         date = self._date*86400 + 54000
         totalfile = len(self.RAW)
         self.logger.debug('total file : {}'.format(totalfile))
-        full = np.empty([4e8],dtype = self.RAW.dtype)
+        full = np.empty([int(4e8)],dtype = self.RAW.dtype)
         check = 0
 
         for npy in self.RAW.to_npy():
