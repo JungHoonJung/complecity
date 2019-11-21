@@ -1,4 +1,5 @@
 import numpy as np
+import os
 
 class rawfiles:
     '''Cause number of taxi data file is ~600, it is almost linux file open limit.
@@ -22,13 +23,13 @@ class rawfiles:
             m=0
             h += 1
         if (h == 24): break
-    raw='/'
+    #raw='/'
     dtype = {'names':('id','lat','lon','z','time','ang','vel','valid','psg'),
             'formats' :('u4','u4','u4','i4','S14','i4','i4','?','?')            }
 
     def __init__(self, folder_path, dtype = None ,opt = 'r'):
         if type(folder_path)==str:
-            self.path = [folder_path+taxifiles.raw+t for t in self.time]
+            self.path = [os.path.join(folder_path,t) for t in self.time]
         if type(folder_path)==list:
             self.path = folder_path
 
