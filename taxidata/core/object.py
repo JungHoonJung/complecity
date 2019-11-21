@@ -230,10 +230,11 @@ class DataProcessor:
             self.hdf.create_dataset('id_list',(1,), maxshape=(None,), dtype = np.int32)
             self.hdf.create_dataset('TimeTable',(8640,1000), maxshape=(8640,None), dtype = np.int32)
             self.logger.info('hdf handler start to initializing')
+            self.hdf.attrs['Date'] = self._date
 
-        taxidata = self.hdf.require_group('Taxidata')
+        taxidata = self.hdf.require_group('taxidata')
         #errors = self.hdf.require_group('Errors')
-        remains = self.hdf.require_group('Remains')
+        remains = self.hdf.require_group('remains')
         for i, typename in enumerate(self.RAW.dtype.names):
             if typename == 'id' or typename =='time':continue
             if taxidata.get(typename, False):
@@ -283,6 +284,7 @@ class DataProcessor:
         for id in id_list:
             self.hdf['id_list'][id_list[id]] = id
 
+        self.hdf.attrs['TotalNumber'] = len(id_list)
         self.logger.debug('Finished!')
         self.hdf.flush()
 
