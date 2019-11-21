@@ -1,4 +1,4 @@
-from .core.objects import DataProcessor
+from .core.object import DataProcessor
 
 def RAW_to_hdf(hdf_filename, RAW_path):
     processor = DataProcessor()
