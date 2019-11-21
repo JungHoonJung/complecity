@@ -296,7 +296,7 @@ class DataProcessor:
                 taxidata[types].resize((datalen+lines,))
                 taxidata[types][lines:] = npy[types][mask]
                 remains[types].resize((rem_c+len(npy)-datalen,))
-                taxidata[types][rem_c:] = npy[types][np.logical_not(mask)]
+                remains[types][rem_c:] = npy[types][np.logical_not(mask)]
             files+=1
             lines+=datalen
             rem_c+= len(npy)-datalen
