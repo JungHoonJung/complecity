@@ -5,8 +5,13 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import os
 from ..rawfiles import rawfiles
+import logging
 
-__all__ = ['taxiarray', 'triparray', 'Dataset']
+
+__all__ = ['taxiarray', 'triparray', 'Dataset'] ## triparray == od_data(id, origin, destination) .npy => .hdf5
+
+logging.basicConfig(format='%(asctime)s %(name)-10s : [%(levelname)-8s] %(message)s')
+
 
 class taxiarray(np.ndarray):
     '''pratical data container based on structured array of numoy.
@@ -86,9 +91,10 @@ class triparray(taxiarray):
 class Dataset:
     '''this class will take FileManager and read from file make many objects of processing data.
     so that you can get taxi object or network object easily with this class. '''
-    def __init__(self, file = None):
-        if files is not None:
-            self.open(file)
+    def __init__(self, file):
+        self.file = FileManager()
+        self.file.load_h5py(file)
+        self.date = self.file.date
         self._scope = None
 
 
@@ -126,32 +132,71 @@ class Dataset:
 
 
 
-class FileManager:
+class DataProcessor:
     '''controll whole type of files, keep file IO to save or read new things.'''
-    def __init__(self, date = None):
+    counts = 0
+
+    def __init__(self, log_level = logging.INFO):
         '''if you set date FileManager class will check date of data default is None'''
-        self.date = date
         self.hdf = None
-        self.npy = None
+        self._npy = None
+        self.npydtype = None
         self.RAW = None
         self.shp = None
+        self._date = None
+        self.logger = logging.getLogger('DataProcessor{}'.format(DataProcessor.counts))
+        self.logger.setLevel(log_level)
+        self.logger.addHandler(logging.FileHandler('processing.log'))
+        DataProcessor.counts += 1
 
-    def create_h5py(self, file):
-        self.hdf = h5py.File(file, 'w')
 
-    def load_h5py(self, file):
-        self.hdf = h5py.File(file, 'r+')
+    def date():
+        doc = "The date is usual information of whole data, we will seperate timestamp with date part and 'hms' part."
+        def fget(self):
+            if self._date is None:
+                if self.hdf.attrs.get('Date', False):
+                    self._date = self.hdf.attrs['Date']
+            return dt.datetime.fromtimestamp(self._date*86400+54000).date()
+        return locals()
+    date = property(**date())
+
+    def set_date(self, year, month, day):
+        date = dt.datetime(year, month, day)
+        self._date = int(date.timestamp()-54000)/86400
+
+    def load(self, hdf = None, npy = None, RAW = None, shp = None):
+        if hdf is not None:
+            self.hdf = h5py.File(hdf, 'r+')
+            self.logger.info("'{}' file loaded by hdf5 handler")
+        if npy is not None:
+            self.set_npy(npy)
+            self.logger.info("'{}' file loaded by numpy handler")
+        if RAW is not None:
+            self.set_RAW_path(RAW)
+            self.logger.info("'{}' folder loaded by RAW handler")
+        if shp is not None:
+            pass
+
+    def set_hdf(self, file):
+        self.hdf = h5py.File(file)
 
     def set_RAW_path(self, path):
         if rawfiles(path).checkfiles():
             self.RAW = rawfiles(path)
         else:
-            raise FileExistsError("RAW file doesn't exist")
+            raise FileNotFoundError("RAW file doesn't exist")
 
-    def set_npy(self, file):
+    def set_npy(self, file, dtype = None):
         '''In previous work, we provide data with numpy binary file(.npy),
         So, this class will take that data to make new format to analyze.'''
-        pass
+        if os.path.isfile(file):
+            self.npy = file
+            if dtype is None:
+                self.npydtype = np.load(file).dtype
+            else:
+                self.npydtype  = dtype
+        else:
+            np.load(file)
 
     def set_shp(self, file):
         '''to make new network, there needs some GIS data for node and link,
@@ -161,8 +206,162 @@ class FileManager:
         into arbitrary network which is useful to analyze through SM.'''
         pass
 
+    def npytohdf(self, path = None):
+        if self.npy is None:
+            raise ValueError("No .npy file")
+        if self.hdf is None:
+            self.set_hdf(path)
+
+
+
+    def RAWtohdf(self, path = None):
+        if self.RAW is None:
+            self.logger.error('Attempt to make hdf before setting RAW file.')
+            raise ValueError("No RAW files.")
+        if self.hdf is None:
+            self.set_hdf(path)
+        if self._date = None:
+            self.logger.error('Attempt to make hdf before setting date.')
+            raise ValueError("'date' is None.")
+
+        self.logger.info('Starting process converting RAW to hdf5.')
+
+        if not self.hdf.get('id_list',False):
+            self.hdf.create_dataset('id_list',(1,), maxshape=(None,), dtype = np.int32)
+            self.hdf.create_dataset('TimeTable',(8640,1000), maxshape=(8640,None), dtype = np.int32)
+            self.logger.info('hdf handler start to initializing')
+
+        taxidata = self.hdf.require_group('Taxidata')
+        #errors = self.hdf.require_group('Errors')
+        remains = self.hdf.require_group('Remains')
+        for i, typename in enumerate(self.RAW.dtype.names):
+            if typename == 'id' or typename =='time':continue
+            if taxidata.get(typename, False):
+                ta = taxidata.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
+                #ta.attrs['Nonesign'] = -1
+                #errors.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
+                re = remains.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
+                #ta.attrs['Nonesign'] = -1
+
+        files = 0
+        lines = 0
+        id_count = 0
+        #err_c = 0
+        rem_c = 0
+
+        id_list = dict()
+        date = self._date*86400 + 54000
+        totalfile = len(self.RAW)
+        self.logger.debug('total file : {}'.format(totalfile))
+        for npy in self.RAW.to_npy():
+            self.logger.debug('\tFile {}(/{}) '.format(files+1, totalfile))
+            ids = np.unique(npy['id'])
+            for taxiid in ids:
+                if not taxiid in id_list:
+                    id_list[taxiid] = id_count
+                    id_count +=1
+            self.logger.debug('\tcurrent total taxi number : {}'.format(len(id_list)))
+            self.hdf['id_list'].resize(len(id_list),)
+            self.hdf['TimeTable'].resize(8640,len(id_list))
+
+            times = (time_converter(npy['time']) - (self._date*86400+54000))/10
+            mask = np.logical_and(times>=0, times<8640)
+            ids = [id_list[i] for i in npy['id'][mask]]
+            datalen = len(ids)
+
+            self.hdf['TimeTable'][times[mask], ids] = np.arange(lines, lines+datalen)
+            for types in npy.dtype.names:
+                taxidata[types].resize(datalen+lines)
+                taxidata[types][lines:] = npy[types][mask]
+                remains[types].resize(rem_c+len(npy)-datalen)
+                taxidata[types][rem_c:] = npy[types][np.logical_not(mask)]
+            files+=1
+            lines+=datalen
+            rem_c+= len(npy)-datalen
+            self.logger.debug('\ttotal files length : {}, data : {}. remains : {}'.format(len(npy), datalen, len(npy)-datalen))
+
+        for id in id_list:
+            self.hdf['id_list'][id_list[id]] = id
+
+        self.logger.debug('Finished!')
+        self.hdf.flush()
+
+
+
+
     def extract(self, arg):
         pass
 
     def read(self, arg):
         pass
+
+class HDFManager:
+    """HDFManager for certain data structure."""
+
+    def __init__(self, file):
+        self.file = h5py.File(file, 'r+')
+        self._initialized = True if self.file.attrs.get(date,False) else False
+        self.taxidata = self.file.require_group('Taxidata')
+        self.errors = self.file.require_group('Errors')
+        self.remains = self.file.require_group('Remains')
+        #self.shp = self.file.require_group('shp')
+        #self.trip = self.file.require_group('trip')
+
+    def __getitem__(self, arg):
+        if arg =='errors':
+            pass
+        if arg == 'remains':
+            pass
+
+        pass
+
+    def field(self, arg):
+        return self.file['taxidata'][arg]
+
+    def a_get(self, arg):
+        return self.file.attrs[arg]
+
+    def a_set(self, name, val):
+        self.file.attrs[name] = val
+
+
+
+
+
+@np.vectorize
+def time_converter(strtime):
+    return dt.datetime.strptime(strtime, '%Y%m%d%H%M%S').timestamp()
+
+
+if __name__ == '__main__':
+    b = dt.datetime(1900,1,1)
+    a = dt.datetime.strptime('121212',"%H%M%S")
+    t = np.array(['20190515234512'],dtype='S14')
+    test = h5py.File('test.hdf5')
+    test.create_dataset('test', (8640,20000), maxshape = (8640,None))
+    test['test'].resize([8640,10000])
+    test['test'][0,:] = np.arange(10000)
+    test['test'][0,3000:]
+    logging.error('test')
+    logging.warning('hi')
+    a = logging.getLogger('test')
+    a = logging.getLogger().getChild('test')
+    np.arange(100,200).reshape(10,10)[[1,2,3],np.array([2,3,4])]
+    a.setLevel(logging.INFO)
+    a.info('ho')
+    logging.info('test')
+    rlog = logging.getLogger()
+    a = np.zeros([1],dtype =[('id','i4'), ('x','u4')])
+    a.dtype
+    for i in a.dtype.fields:
+        print(a.dtype.fields[i])
+    dt.timedelta(123).total_seconds()
+    dt.datetime.strptime('121212',"%H%M%S")
+    t[0][-6:]
+    dt.datetime(2015,5,8).timestamp()/86400
+    # IDEA: timestamp of date of module 'datetime' is consist of (integer of day) * 86400(seconds/oneday) + 54000(IDK what it is)
+    dt.datetime.fromtimestamp(16560*86400+54000)
+    86400*0.625
+    54000/3600
+    1<<31
+    17751966

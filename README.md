@@ -3,6 +3,7 @@ taxi network analysis with Python Numpy.
 
 ## taxidata module will be attached with several session
 > 1. taxi data I/O
+>  - HDF5 description attached.
 > 2. shp(GIS) data I/O and constructing network
 > 3. taxi data and GIS data mapper
 > 4. Analyzer

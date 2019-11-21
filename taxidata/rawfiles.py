@@ -1,3 +1,5 @@
+import numpy as np
+
 class rawfiles:
     '''Cause number of taxi data file is ~600, it is almost linux file open limit.
        So, there needs more efficient controller for I/O file handler.
@@ -21,8 +23,10 @@ class rawfiles:
             h += 1
         if (h == 24): break
     raw='/'
+    dtype = {'names':('id','lat','lon','z','time','ang','vel','valid','psg'),
+            'formats' :('u4','u4','u4','i4','S14','i4','i4','?','?')            }
 
-    def __init__(self, folder_path, opt = 'r'):
+    def __init__(self, folder_path, dtype = None ,opt = 'r'):
         if type(folder_path)==str:
             self.path = [folder_path+taxifiles.raw+t for t in self.time]
         if type(folder_path)==list:
@@ -34,6 +38,10 @@ class rawfiles:
         self._index = 0
         self.file = None
         self.valid = False
+        if dtype is None:
+            self.dtype = rawfiles.dtype
+        else:
+            self.dtype = dtype
 
     def __repr__(self):
         return "<I/O files handler from : %s, to : %s>\n"%(self.path[0],self.path[-1])
@@ -55,6 +63,17 @@ class rawfiles:
             valid = valid and v
         self.valid = valid
         return valid
+
+    def to_npy(self, index = None):
+        if self.dtype is None:
+            raise TypeError
+        if index == None:
+            for file in self.path:
+                yield np.loadtxt(file, dtype = self.dtype, delimiter=',')
+        else:
+            return np.loadtxt(self.path[index], dtype = self.dtype)
+
+
 
 
     def __iter__(self):
