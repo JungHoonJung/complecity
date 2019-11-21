@@ -134,7 +134,6 @@ class Dataset:
 
 class DataProcessor:
     '''controll whole type of files, keep file IO to save or read new things.'''
-    counts = 0
 
     def __init__(self, log_level = logging.DEBUG):
         '''if you set date FileManager class will check date of data default is None'''
@@ -144,7 +143,7 @@ class DataProcessor:
         self.RAW = None
         self.shp = None
         self._date = None
-        self.logger = logging.getLogger('DataProcessor{}'.format(DataProcessor.counts))
+        self.logger = logging.getLogger('DataProcessor')
         self.logger.setLevel(log_level)
         self.logger.addHandler(logging.FileHandler('processing.log'))
         DataProcessor.counts += 1
@@ -231,6 +230,22 @@ class DataProcessor:
             self.hdf.create_dataset('TimeTable',(8640,1000), maxshape=(8640,None), dtype = np.int32)
             self.logger.info('hdf handler start to initializing')
             self.hdf.attrs['Date'] = self._date
+            self.logger.info('Collecting id.')
+            ids = self.RAW.col_unique(0)
+            ids.sort()
+            self.logger.debug('Constructing id_list.')
+            id_list = dict()
+            for taxiid in ids:
+                id_list[taxiid] = id_count
+                id_count +=1
+
+            self.logger.info('Saving id_list')
+            self.hdf['id_list'].resize((len(id_list),))
+            for id in id_list:
+                self.hdf['id_list'][id_list[id]] = id
+
+            self.logger.debug('Time table resize')
+            self.hdf['TimeTable'].resize((8640,len(id_list)))
 
         taxidata = self.hdf.require_group('taxidata')
         #errors = self.hdf.require_group('Errors')
@@ -250,22 +265,7 @@ class DataProcessor:
         id_count = 0
         #err_c = 0
         rem_c = 0
-        self.logger.info('Collecting id.')
-        ids = self.RAW.col_unique(0)
-        ids.sort()
-        self.logger.debug('Constructing id_list.')
-        id_list = dict()
-        for taxiid in ids:
-            id_list[taxiid] = id_count
-            id_count +=1
 
-        self.logger.info('Saving id_list')
-        self.hdf['id_list'].resize((len(id_list),))
-        for id in id_list:
-            self.hdf['id_list'][id_list[id]] = id
-
-        self.logger.debug('\tTime table resize')
-        self.hdf['TimeTable'].resize((8640,len(id_list)))
 
         date = self._date*86400 + 54000
         totalfile = len(self.RAW)
@@ -289,8 +289,7 @@ class DataProcessor:
             datalen = len(ids)
 
             self.logger.debug('\tTime table update')
-            for i, j in enumerate(zip(times[mask], ids)):
-                self.hdf['TimeTable'][j] = lines+i
+            self.hdf['TimeTable'][times[mask], ids] = lines+i
 
             self.logger.debug('\tData collecting')
             for types in npy.dtype.names:
