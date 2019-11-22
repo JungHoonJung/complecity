@@ -218,7 +218,7 @@ class DataProcessor:
             self.logger.error('Attempt to make hdf before setting RAW file.')
             raise ValueError("No RAW files.")
         if self.hdf is None:
-            self.set_hdf(path)
+            self.set_hdf(path) # self.hdf = h5py.File(file)
         if self._date == None:
             self.logger.error('Attempt to make hdf before setting date.')
             raise ValueError("'date' is None.")
@@ -280,6 +280,7 @@ class DataProcessor:
             np.sort(npy, order=['time','id'])
             full[check:check+npy.shape[0]] = npy
             check += npy.shape[0]
+            files +=1
         self.logger.debug('total : {}'.format(check))
         full = full[:check]
 
