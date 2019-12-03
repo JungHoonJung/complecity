@@ -193,7 +193,7 @@ class DataProcessor:
             if dtype is None:
                 self.npydtype = np.load(file).dtype
             else:
-                self.npydtype  = dtype
+                self.npydtype = dtype
         else:
             np.load(file)
 
