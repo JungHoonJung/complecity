@@ -20,6 +20,19 @@ import matplotlib.pyplot as plt
 
 # generate Street network
 def genStreetNet(Edgelist):
+    """Short summary.
+
+    Parameters
+    ----------
+    Edgelist : type
+        Description of parameter `Edgelist`.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -45,6 +58,28 @@ def Max_velocity(velocity0,velocity1):
 
 # get relative velocity
 def relativeVelocity(Period,velocity0,velocity1):
+    """Short summary.
+
+    Parameters
+    ----------
+    Period : type
+        Description of parameter `Period`.
+    velocity0 : type
+        Description of parameter `velocity0`.
+    velocity1 : type
+        Description of parameter `velocity1`.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+
+    dkdfef
+
+    .. note::
+        test note
+    """
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
 # generate network given weight by relative speed
