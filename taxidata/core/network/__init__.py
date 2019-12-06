@@ -89,7 +89,23 @@ def genStreetNet(Edgelist):
 
 # generate Street network
 def genStreetNet(Edgelist):
+<<<<<<< HEAD
 >>>>>>> graph module
+=======
+    """Short summary.
+
+    Parameters
+    ----------
+    Edgelist : type
+        Description of parameter `Edgelist`.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
+>>>>>>> docstring test
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -151,6 +167,7 @@ def Max_velocity(velocity0,velocity1):
 # get relative velocity
 def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
+<<<<<<< HEAD
     """Short summary.
     Divide road's each period speed by Fastest speed, get relative velocity each road
 
@@ -169,6 +186,30 @@ def relativeVelocity(Period,velocity0,velocity1):
     """
 =======
 >>>>>>> graph module
+=======
+    """Short summary.
+
+    Parameters
+    ----------
+    Period : type
+        Description of parameter `Period`.
+    velocity0 : type
+        Description of parameter `velocity0`.
+    velocity1 : type
+        Description of parameter `velocity1`.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+
+    dkdfef
+
+    .. note::
+        test note
+    """
+>>>>>>> docstring test
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
 # generate network given weight by relative speed
