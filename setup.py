@@ -11,6 +11,6 @@ setup(name='taxidata',
 		include_package_data=True,
 		#package_data={'taxidata':['taxidata/lib/TL_SCCO_SIG_W.gml']},
 		python_requires = '>=3',
-		setup_requires=['numpy', 'networkx', 'h5py', 'matplotlib']
+		install_requires=['numpy', 'networkx', 'h5py', 'matplotlib']
 
 	 )
