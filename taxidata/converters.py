@@ -28,6 +28,5 @@ def npy_to_hdf(hdf_filename, npy):
 
     ..note::
         This is also making note
-
     """
     pass
