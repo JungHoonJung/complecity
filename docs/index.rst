@@ -10,6 +10,10 @@ Welcome to complecity's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   complecity
+
+
+
 
 
 Indices and tables
