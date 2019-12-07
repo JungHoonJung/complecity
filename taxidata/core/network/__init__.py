@@ -5,6 +5,7 @@ import re
 import matplotlib.pyplot as plt
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 # edgelist data convert to npy
 def convert2npy_edgelist(path,filename):
     """Short summary.
@@ -93,19 +94,64 @@ def genStreetNet(Edgelist):
 >>>>>>> graph module
 =======
     """Short summary.
+=======
+# edgelist data convert to npy
+def convert2npy_edgelist(path,filename):
+    """
+    Chengdu road linklist's raw data is csv format. This function convert to npy format.
 
     Parameters
     ----------
-    Edgelist : type
-        Description of parameter `Edgelist`.
+    path : string ex) '/home/dataset/'
+        path of raw csv data
+
+    filename : string ex) 'ChengduLink'
+        new name of new file
+
 
     Returns
     -------
-    type
-        Description of returned object.
+    type filename.npy
+        np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
 
     """
+    data = np.genfromtxt(path, delimiter=',',skip_header=1,dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+    np.save(filename,data)
+
+# speed data convert to npy
+def convert2npy_linkspeed(Path):
+    """
+    Chengdu road speed data's raw data is csv format. This function convert to npy format.
+>>>>>>> Adding 'raw csv data' conver to npy format.
+
+    Parameters
+    ----------
+    Path : string ex) '/home/dataset'
+        path of raw csv data
+
+    Returns
+    -------
+    type speed[monthDay]_[1or0].npy
+        np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+
+    """
+<<<<<<< HEAD
 >>>>>>> docstring test
+=======
+    path_dr = Path
+    file_list = os.listdir(path_dr)
+    file_list.sort()
+    file_list = file_list[5:len((file_list))]
+    for i in range(len(file_list)):
+        path=file_list[i]
+        data = np.genfromtxt(os.path.join(Path,path),delimiter=',',skip_header=1, dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+        filename=int(re.findall('\d+',path)[0])
+        fileType=int(re.findall('\d+',path)[1])
+        np.save('speed[{}]_[{}].npy'.format(filename,fileType),data)
+
+# generate Street network
+def genStreetNet(Edgelist):
+>>>>>>> Adding 'raw csv data' conver to npy format.
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -168,6 +214,7 @@ def Max_velocity(velocity0,velocity1):
 def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     """Short summary.
     Divide road's each period speed by Fastest speed, get relative velocity each road
 
@@ -210,6 +257,8 @@ def relativeVelocity(Period,velocity0,velocity1):
         test note
     """
 >>>>>>> docstring test
+=======
+>>>>>>> Adding 'raw csv data' conver to npy format.
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
 # generate network given weight by relative speed
@@ -240,10 +289,14 @@ def weaklycc(network):
 
 # measuring GCC, SCC, CPoint, and generating graph
 <<<<<<< HEAD
+<<<<<<< HEAD
 def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 def criticalGraph(Period,edgelist,speedlist0,speedlist1):
 >>>>>>> graph module
+=======
+def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
+>>>>>>> Adding 'raw csv data' conver to npy format.
     # relative velocity
     rv = relativeVelocity(Period,speedlist0,speedlist1)
     # get GCC, SCC each q
@@ -266,8 +319,12 @@ def criticalGraph(Period,edgelist,speedlist0,speedlist1):
     curves=[curve1,curve2]
     ax1.legend(curves,[curve.get_label()for curve in curves],fontsize='x-large')
 <<<<<<< HEAD
+<<<<<<< HEAD
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
 =======
     plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
 >>>>>>> graph module
+=======
+    plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
+>>>>>>> Adding 'raw csv data' conver to npy format.
     plt.close()
