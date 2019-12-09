@@ -95,6 +95,7 @@ def genStreetNet(Edgelist):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -106,6 +107,8 @@ def genStreetNet(Edgelist):
 >>>>>>> graph module
 =======
 >>>>>>> since_problem2
+=======
+>>>>>>> add network docstring
 >>>>>>> since_problem
 <<<<<<< HEAD
 =======
@@ -367,7 +370,12 @@ def genStreetNet(Edgelist):
 =======
 >>>>>>> docstring test
 >>>>>>> last..
+<<<<<<< HEAD
 >>>>>>> last..
+=======
+=======
+>>>>>>> add network docstring
+>>>>>>> add network docstring
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -432,6 +440,7 @@ def network_pos(Edgelist):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since_problem4
 =======
@@ -465,9 +474,13 @@ def network_pos(Edgelist):
 >>>>>>> since_problem
 =======
 >>>>>>> last..
+=======
+>>>>>>> add network docstring
 >>>>>>> since_problem
 =======
 >>>>>>> last..
+=======
+>>>>>>> add network docstring
     # assign pos for nodes
     return {i:[Edgelist[Edgelist['Node_Start']==i]['Longitude_Start'][0],Edgelist[Edgelist['Node_Start']==i]['Latitude_Start'][0]]for i in range(len(np.unique(Edgelist['Node_Start'])))}
 
@@ -521,6 +534,7 @@ def Max_velocity(velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since_problem4
 =======
@@ -553,12 +567,19 @@ def Max_velocity(velocity0,velocity1):
 =======
 >>>>>>> graph module
 =======
+>>>>>>> add network docstring
+=======
 >>>>>>> graph module
 >>>>>>> since_problem
 >>>>>>> since_problem
 =======
 >>>>>>> last..
+<<<<<<< HEAD
 >>>>>>> last..
+=======
+=======
+>>>>>>> add network docstring
+>>>>>>> add network docstring
     max_velo = np.zeros(len(np.unique(velocity0['Link'])))
     for i in range(len(max_velo)):
         max_velo[i] = max([max(velocity0[velocity0['Link'] == i+1]['Speed']),max(velocity1[velocity1['Link'] == i+1]['Speed'])])
@@ -569,6 +590,9 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> add network docstring
 =======
 =======
 >>>>>>> since_problem3
@@ -606,6 +630,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 >>>>>>> last..
 =======
+<<<<<<< HEAD
 >>>>>>> to rebase
 =======
 >>>>>>> to rebase
@@ -621,6 +646,9 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 >>>>>>> since_problem3
 >>>>>>> since_problem3
+=======
+>>>>>>> add network docstring
+>>>>>>> add network docstring
     """Short summary.
     Divide road's each period speed by Fastest speed, get relative velocity each road
 
@@ -686,6 +714,7 @@ def relativeVelocity(Period,velocity0,velocity1):
     .. note::
         test note
     """
+<<<<<<< HEAD
 >>>>>>> docstring test
 <<<<<<< HEAD
 =======
@@ -708,6 +737,9 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> rebase2
 =======
 >>>>>>> since_problem2
+=======
+<<<<<<< HEAD
+>>>>>>> add network docstring
     """Short summary.
 
     Parameters
@@ -781,7 +813,12 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> since_problem3
 =======
 >>>>>>> last..
+<<<<<<< HEAD
 >>>>>>> last..
+=======
+=======
+>>>>>>> add network docstring
+>>>>>>> add network docstring
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
 # generate network given weight by relative speed
