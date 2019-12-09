@@ -97,7 +97,7 @@ def genStreetNet(Edgelist):
 =======
 # edgelist data convert to npy
 def convert2npy_edgelist(path,filename):
-    """
+    """Short summary.
     Chengdu road linklist's raw data is csv format. This function convert to npy format.
 
     Parameters
@@ -112,7 +112,8 @@ def convert2npy_edgelist(path,filename):
     Returns
     -------
     type filename.npy
-        np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+        np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),
+            ('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
 
     """
     data = np.genfromtxt(path, delimiter=',',skip_header=1,dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
@@ -120,7 +121,7 @@ def convert2npy_edgelist(path,filename):
 
 # speed data convert to npy
 def convert2npy_linkspeed(Path):
-    """
+    """Short summary.
     Chengdu road speed data's raw data is csv format. This function convert to npy format.
 >>>>>>> Adding 'raw csv data' conver to npy format.
 
@@ -151,7 +152,24 @@ def convert2npy_linkspeed(Path):
 
 # generate Street network
 def genStreetNet(Edgelist):
+<<<<<<< HEAD
 >>>>>>> Adding 'raw csv data' conver to npy format.
+=======
+    """Short summary.
+    Geneate road network with 'No' direct.
+    Parameters
+    ----------
+    Edgelist : np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),
+        ('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+
+
+    Returns
+    -------
+    type Graph()
+
+
+    """
+>>>>>>> add network docstring
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -166,6 +184,9 @@ def genStreetNet(Edgelist):
 # generate newowrk nodes' position
 def network_pos(Edgelist):
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> add network docstring
     """Short summary.
     Generate network node position.
     ex) pos=network_pos(Edgelist)
@@ -182,14 +203,20 @@ def network_pos(Edgelist):
 
 
     """
+<<<<<<< HEAD
 =======
 >>>>>>> graph module
+=======
+>>>>>>> add network docstring
     # assign pos for nodes
     return {i:[Edgelist[Edgelist['Node_Start']==i]['Longitude_Start'][0],Edgelist[Edgelist['Node_Start']==i]['Latitude_Start'][0]]for i in range(len(np.unique(Edgelist['Node_Start'])))}
 
 # get max velocity each street link
 def Max_velocity(velocity0,velocity1):
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> add network docstring
     """Short summary.
     Find each link's fatest speed in whole day.
     The reason why it takes two speed array is Chengdu's speed data splice day in two Period. 03:00~13:00, 13:00~23:00
@@ -203,8 +230,11 @@ def Max_velocity(velocity0,velocity1):
     type np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
 
     """
+<<<<<<< HEAD
 =======
 >>>>>>> graph module
+=======
+>>>>>>> add network docstring
     max_velo = np.zeros(len(np.unique(velocity0['Link'])))
     for i in range(len(max_velo)):
         max_velo[i] = max([max(velocity0[velocity0['Link'] == i+1]['Speed']),max(velocity1[velocity1['Link'] == i+1]['Speed'])])
@@ -215,6 +245,9 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> add network docstring
     """Short summary.
     Divide road's each period speed by Fastest speed, get relative velocity each road
 
@@ -231,6 +264,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 
 
     """
+<<<<<<< HEAD
 =======
 >>>>>>> graph module
 =======
@@ -259,6 +293,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> docstring test
 =======
 >>>>>>> Adding 'raw csv data' conver to npy format.
+=======
+>>>>>>> add network docstring
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
 # generate network given weight by relative speed
