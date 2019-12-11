@@ -31,6 +31,27 @@ class tdarray:
         self.error =0
 
     def construct(self, force_delete = False , line=None):
+        """Test docstring.
+
+        Parameters
+        ----------
+        force_delete : ``integer``
+            Description of parameter `force_delete`.
+        line : type
+            Description of parameter `line`.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+
+        # NOTE: this is making note
+
+        .. note::
+            this is also making note
+
+        """
         if tdarray.data and not force_delete:
             raise ValueError("Data is already occupied. please do method 'delete()'.")
         elif force_delete:

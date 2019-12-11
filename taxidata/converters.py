@@ -9,4 +9,24 @@ def RAW_to_hdf(hdf_filename, RAW_path, date):
 
 
 def npy_to_hdf(hdf_filename, npy):
+    """Test.
+
+    Parameters
+    ----------
+    hdf_filename : ``string``
+        Description of parameter `hdf_filename`.
+    npy : type
+        Description of parameter `npy`.
+
+    Returns
+    -------
+    type
+        Description of returned object.
+
+
+    # NOTE: this is making note
+
+    ..note::
+        This is also making note
+    """
     pass
