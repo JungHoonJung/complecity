@@ -10,7 +10,9 @@ Welcome to complecity's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   complecity
+   SphinxTutorial/main.rst
+   reference/main.rst
+
 
 
 

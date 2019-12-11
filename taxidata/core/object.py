@@ -30,11 +30,15 @@ class taxiarray(np.ndarray):
     def range(self, **range):
         '''indexing with field and its range.
         for example,
-        taxiarray.range(
-            x = (xstart, xend),
-            y = (ystart, yend),
-            time = (tstart, tend)
-        )
+        
+        .. code-block::
+            taxiarray.range(
+                x = (xstart, xend),
+                y = (ystart, yend),
+                time = (tstart, tend)
+            )
+
+
         will return index array.
         if there is no name in dtype field, it raise nameerror.
         '''

@@ -17,5 +17,5 @@ python:
     - method: setuptools
       path: .
 
-      
+
 #- requirements: requirements.txt

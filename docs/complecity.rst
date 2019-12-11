@@ -4,4 +4,4 @@ Completely
 
 .. toctree::
 
-  taxidata
+  reference/taxidata
