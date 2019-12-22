@@ -379,8 +379,11 @@ def criticalGraph(Period,edgelist,speedlist0,speedlist1):
 >>>>>>> graph module
 =======
 def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
+<<<<<<< HEAD
 >>>>>>> Adding 'raw csv data' conver to npy format.
 =======
+=======
+>>>>>>> add docstring
     """Short summary.
     calculate critical q point when second giant connected component was max.
     Parameters
@@ -399,6 +402,9 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
     type
         fgure.png
     """
+<<<<<<< HEAD
+>>>>>>> add docstring
+=======
 >>>>>>> add docstring
     # relative velocity
     rv = relativeVelocity(Period,speedlist0,speedlist1)
