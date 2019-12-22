@@ -5,6 +5,7 @@ import re
 import matplotlib.pyplot as plt
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -18,6 +19,8 @@ import matplotlib.pyplot as plt
 >>>>>>> since 11
 =======
 >>>>>>> last..
+=======
+>>>>>>> add docstring
 import math
 
 <<<<<<< HEAD
@@ -825,6 +828,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -836,6 +840,8 @@ def genStreetNet_speed(Edgelist,reVelo):
 =======
 >>>>>>> add docstring
 >>>>>>> since 11
+=======
+>>>>>>> add docstring
     """Short summary.
     Generate road network assigned relative velocity as weight on each link
 
@@ -852,6 +858,7 @@ def genStreetNet_speed(Edgelist,reVelo):
 
     """
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since_problem
 =======
 >>>>>>> add docstring
@@ -870,6 +877,8 @@ def genStreetNet_speed(Edgelist,reVelo):
 >>>>>>> since 11
 =======
 >>>>>>> last..
+=======
+>>>>>>> add docstring
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -882,12 +891,15 @@ def genStreetNet_speed(Edgelist,reVelo):
     return G
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> since 11
+=======
+>>>>>>> add docstring
 
 # remove link under parameter q
 def remove_qRoad(q,Edgelist,reVelo):
@@ -908,6 +920,7 @@ def remove_qRoad(q,Edgelist,reVelo):
     type Graph()
 
     """
+<<<<<<< HEAD
 =======
 # remove link under parameter q
 def remove_qRoad(q,Edgelist,reVelo):
@@ -944,6 +957,8 @@ def remove_qRoad(q,Edgelist,reVelo):
 >>>>>>> since problem6
 =======
 >>>>>>> last..
+=======
+>>>>>>> add docstring
     orign_net = genStreetNet_speed(Edgelist,reVelo)
     return_net = genStreetNet_speed(Edgelist,reVelo)
     Edge = np.array(orign_net.edges)
@@ -954,6 +969,7 @@ def remove_qRoad(q,Edgelist,reVelo):
 
 # get weakly connected components
 def weaklycc(network):
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> since problem6
@@ -969,6 +985,8 @@ def weaklycc(network):
 >>>>>>> since 11
 =======
 >>>>>>> last..
+=======
+>>>>>>> add docstring
     """Short summary.
     Generate weakly connected cluster distribution
 
@@ -981,6 +999,7 @@ def weaklycc(network):
     type list
 
     """
+<<<<<<< HEAD
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
@@ -1073,6 +1092,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> since 11
 =======
 >>>>>>> last..
+=======
+>>>>>>> add docstring
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
@@ -1144,10 +1165,13 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> Adding 'raw csv data' conver to npy format.
 =======
 >>>>>>> add docstring
 =======
+=======
+>>>>>>> add docstring
     """Short summary.
     calculate critical q point when second giant connected component was max.
     Parameters
@@ -1166,6 +1190,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
     type
         fgure.png
     """
+<<<<<<< HEAD
 >>>>>>> add docstring
 >>>>>>> since 11
 <<<<<<< HEAD
@@ -1174,7 +1199,12 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 >>>>>>> graph module
 >>>>>>> last..
+<<<<<<< HEAD
 >>>>>>> last..
+=======
+=======
+>>>>>>> add docstring
+>>>>>>> add docstring
     # relative velocity
     rv = relativeVelocity(Period,speedlist0,speedlist1)
     # get GCC, SCC each q
@@ -1320,6 +1350,7 @@ def logBinning(dist,base):
         hist[i]/=(base**(i+1)-base**i)
     return x_hist,hist
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since_problem
 =======
 <<<<<<< HEAD
@@ -1379,3 +1410,5 @@ def logBinning(dist,base):
 >>>>>>> since 11
 =======
 >>>>>>> last..
+=======
+>>>>>>> add docstring
