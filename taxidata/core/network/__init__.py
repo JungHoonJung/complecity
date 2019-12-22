@@ -3,6 +3,7 @@ import networkx as nx
 import os
 import re
 import matplotlib.pyplot as plt
+import math
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -299,6 +300,21 @@ def relativeVelocity(Period,velocity0,velocity1):
 
 # generate network given weight by relative speed
 def genStreetNet_speed(Edgelist,reVelo):
+    """Short summary.
+    Generate road network assigned relative velocity as weight on each link
+
+    Parameters
+    ----------
+    Edgelist : np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),
+        ('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+
+    reVelo : type np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+
+    Returns
+    -------
+    type Graph()
+
+    """
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -309,8 +325,26 @@ def genStreetNet_speed(Edgelist,reVelo):
     for i in range(len(Edgelist)):
         G.add_edge(Edgelist['Node_Start'][i],Edgelist['Node_End'][i],label=Edgelist['Link'][i],weight=reVelo[i])
     return G
+
 # remove link under parameter q
 def remove_qRoad(q,Edgelist,reVelo):
+    """Short summary.
+    Generate road network that cutted links(roads) which weight(relative velocity) smaller than q
+
+    Parameters
+    ----------
+    q : float
+
+    Edgelist : np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),
+        ('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+
+    reVelo : type np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+
+    Returns
+    -------
+    type Graph()
+
+    """
     orign_net = genStreetNet_speed(Edgelist,reVelo)
     return_net = genStreetNet_speed(Edgelist,reVelo)
     Edge = np.array(orign_net.edges)
@@ -321,18 +355,51 @@ def remove_qRoad(q,Edgelist,reVelo):
 
 # get weakly connected components
 def weaklycc(network):
+    """Short summary.
+    Generate weakly connected cluster distribution
+
+    Parameters
+    ----------
+    network : Graph()
+
+    Returns
+    -------
+    type list
+
+    """
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
 <<<<<<< HEAD
 <<<<<<< HEAD
 def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
+<<<<<<< HEAD
 =======
 def criticalGraph(Period,edgelist,speedlist0,speedlist1):
 >>>>>>> graph module
 =======
 def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> Adding 'raw csv data' conver to npy format.
+=======
+    """Short summary.
+    calculate critical q point when second giant connected component was max.
+    Parameters
+    ----------
+    day : string
+        ex) '10' input data's day
+    Period : string
+        ex) '08:00-08:02' time period
+    edgelist : np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),
+        ('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+    speedlist0 : np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+    speedlist1 : np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+
+    Returns
+    -------
+    type
+        fgure.png
+    """
+>>>>>>> add docstring
     # relative velocity
     rv = relativeVelocity(Period,speedlist0,speedlist1)
     # get GCC, SCC each q
@@ -364,3 +431,35 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
 >>>>>>> Adding 'raw csv data' conver to npy format.
     plt.close()
+
+# log binning
+def logBinning(dist,base):
+    """Short summary.
+    Generate logbinning histogram array tuple.
+
+    Parameters
+    ----------
+    dist : list
+        ex) clsuter size distribution
+    base : int
+        ex) log_{base}
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
+    # histogram
+    maximum=int(math.log(dist[0],base))+1
+    hist=np.zeros(maximum)
+    # add cluster size each range
+    for x in dist:
+        hist[int(math.log(x,base))]+=1
+    # generate x axis
+    x_hist=np.zeros(maximum)
+    for i in range(maximum):
+        x_hist[i]=(base**(i+1)+base**(i))*0.5
+    # divide by range
+    for i in range(maximum):
+        hist[i]/=(base**(i+1)-base**i)
+    return x_hist,hist
