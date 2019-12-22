@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -19,6 +20,8 @@ import matplotlib.pyplot as plt
 >>>>>>> since 11
 =======
 >>>>>>> last..
+=======
+>>>>>>> add docstring
 =======
 >>>>>>> add docstring
 import math
@@ -829,6 +832,7 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -840,6 +844,8 @@ def genStreetNet_speed(Edgelist,reVelo):
 =======
 >>>>>>> add docstring
 >>>>>>> since 11
+=======
+>>>>>>> add docstring
 =======
 >>>>>>> add docstring
     """Short summary.
@@ -859,6 +865,7 @@ def genStreetNet_speed(Edgelist,reVelo):
     """
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since_problem
 =======
 >>>>>>> add docstring
@@ -877,6 +884,8 @@ def genStreetNet_speed(Edgelist,reVelo):
 >>>>>>> since 11
 =======
 >>>>>>> last..
+=======
+>>>>>>> add docstring
 =======
 >>>>>>> add docstring
     # node label & number
@@ -892,12 +901,15 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> since 11
+=======
+>>>>>>> add docstring
 =======
 >>>>>>> add docstring
 
@@ -920,6 +932,7 @@ def remove_qRoad(q,Edgelist,reVelo):
     type Graph()
 
     """
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 # remove link under parameter q
@@ -959,6 +972,8 @@ def remove_qRoad(q,Edgelist,reVelo):
 >>>>>>> last..
 =======
 >>>>>>> add docstring
+=======
+>>>>>>> add docstring
     orign_net = genStreetNet_speed(Edgelist,reVelo)
     return_net = genStreetNet_speed(Edgelist,reVelo)
     Edge = np.array(orign_net.edges)
@@ -969,6 +984,7 @@ def remove_qRoad(q,Edgelist,reVelo):
 
 # get weakly connected components
 def weaklycc(network):
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -987,6 +1003,8 @@ def weaklycc(network):
 >>>>>>> last..
 =======
 >>>>>>> add docstring
+=======
+>>>>>>> add docstring
     """Short summary.
     Generate weakly connected cluster distribution
 
@@ -999,6 +1017,7 @@ def weaklycc(network):
     type list
 
     """
+<<<<<<< HEAD
 <<<<<<< HEAD
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
@@ -1094,6 +1113,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> last..
 =======
 >>>>>>> add docstring
+=======
+>>>>>>> add docstring
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
@@ -1166,10 +1187,13 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> Adding 'raw csv data' conver to npy format.
 =======
 >>>>>>> add docstring
 =======
+=======
+>>>>>>> add docstring
 =======
 >>>>>>> add docstring
     """Short summary.
@@ -1191,6 +1215,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
         fgure.png
     """
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 >>>>>>> since 11
 <<<<<<< HEAD
@@ -1201,6 +1226,10 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> last..
 <<<<<<< HEAD
 >>>>>>> last..
+=======
+=======
+>>>>>>> add docstring
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> add docstring
@@ -1351,6 +1380,7 @@ def logBinning(dist,base):
     return x_hist,hist
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since_problem
 =======
 <<<<<<< HEAD
@@ -1410,5 +1440,7 @@ def logBinning(dist,base):
 >>>>>>> since 11
 =======
 >>>>>>> last..
+=======
+>>>>>>> add docstring
 =======
 >>>>>>> add docstring
