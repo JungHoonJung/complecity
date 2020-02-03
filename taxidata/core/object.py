@@ -160,7 +160,7 @@ class DataProcessor:
     date = property(**date())
 
     def set_date(self, year, month, day):
-        date = dt.datetime(year, month, day)
+        date = dt.datetime(int(year), int(month), int(day))
         self._date = int(date.timestamp()-54000)/86400
 
     def load(self, hdf = None, npy = None, RAW = None, shp = None):
