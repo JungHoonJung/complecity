@@ -176,8 +176,7 @@ class DataProcessor:
         if shp is not None:
             pass
 
-    def set_hdf(self, file):
-        self.hdf = h5py.File(file)
+
 
     def set_RAW_path(self, path):
         if rawfiles(path).file_check():
@@ -218,7 +217,7 @@ class DataProcessor:
             self.logger.error('Attempt to make hdf before setting RAW file.')
             raise ValueError("No RAW files.")
         if self.hdf is None:
-            self.set_hdf(path) # self.hdf = h5py.File(file)
+            self.hdf = h5py.File(path, 'w') # self.hdf = h5py.File(file)
             self.hdf.attrs['Date'] = self._date
         if self._date == None:
             self.logger.error('Attempt to make hdf before setting date.')
