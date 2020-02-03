@@ -22,5 +22,4 @@ For the first time, we will learn about how to make sphinx documentation and its
 
   basics
   Directive
-  nbsphinx/main
-  markdown/main
+  other
