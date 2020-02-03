@@ -234,11 +234,11 @@ class DataProcessor:
             ids = self.RAW.col_unique(0)
             ids.sort()
             self.logger.info('Saving id_list')
-            self.hdf['id_list'].resize((len(id_list),))
+            self.hdf['id_list'].resize((len(ids),))
             self.hdf['id_list'][:] = ids
 
             self.logger.debug('Time table resize')
-            self.hdf['TimeTable'].resize((8640,len(id_list)))
+            self.hdf['TimeTable'].resize((8640,len(ids)))
 
         taxidata = self.hdf.require_group('taxidata')
         #errors = self.hdf.require_group('Errors')
