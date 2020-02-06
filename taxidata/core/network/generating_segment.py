@@ -1,12 +1,11 @@
 import numpy as np
 import matplotlib.pylab as plt
 import math
-
-# data
-Seoul = np.load('./SeoulConvertEdgelist.npy')
-# Seoul['EDGE'] = np.arange(len(Seoul)) # edge 라벨 재설정(방향이 다른 경우 같으 라벨링이 되어있어서)
+import time
+import networkx as nx
+Seoul = np.load('./data_roadAndTaxi/SeoulConvertEdgelist.npy')
+Seoul['EDGE'] = np.arange(len(Seoul)) # edge 라벨 재설정(방향이 다른 경우 같으 라벨링이 되어있어서)
 node_Seoul = np.unique(Seoul['START_NODE']) # node 집합
-
 
 def next_node(input):
     index_find = [k for k, x in enumerate(input[0]) if x == "+"][-1]
@@ -17,10 +16,10 @@ def next_node(input):
     b=[]
     for n in range(len(next_edge)):
         turning_angle=0
-        # measuring turning angle
+        # turning angle measure
         if input[0].count('+') >= 2:
             cal_turningAg = input[0].split('+')[1:]
-            if len(cal_turningAg)>=2:
+            if len(cal_turningAg)>1:
                 X_1, Y_1 = Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-2]))][0][0],Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-2]))][0][1]
                 X_2, Y_2 = Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-1]))][0][0], Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-1]))][0][1]
                 X_3, Y_3 = Seoul[np.where(Seoul['START_NODE']==next_edge['END_NODE'][n])][0][0], Seoul[np.where(Seoul['START_NODE']==next_edge['END_NODE'][n])][0][1]
@@ -33,32 +32,43 @@ def node_cycle(input):
     for i in range(len(input)):
         output = output + next_node(input[i])
     return output
-
-# k
-k = 800
+"""
+main function
+"""
+k = 800 # k=500m
+start = time.time()
 segment = []
-
-for SN in node_Seoul: # input Seoul node
+# for SN in node_Seoul[1000:1003]:
+SN = node_Seoul[1002]
 #[+node+node+..., total_length, turning_angle]
-    input=[["+" + str(SN), 0, 0]]
-    count=0
-    while count < 100 :
-        input = node_cycle(input)
-        pop_parameter=0
-        # pop segment and add to segment list
-        for i in range(len(input)):
-            i-=pop_parameter
-            # if path's length exceed k
-            if input[i][-2]>k:
-                segment.append(input[i])
-                input.pop(i)
-                pop_parameter+=1
-            # if turning angle exceed 2pi
-            elif abs(input[i][-1])>2*np.pi:
-                segment.append(input[i])
-                input.pop(i)
-                pop_parameter+=1
-
-        # if count%10==0:print(count)
-        count += 1
-        if len(input) == 0: break
+input=[["+" + str(SN), 0, 0]]
+count=0
+while count < 100 :
+    input = node_cycle(input)
+    pop_parameter=0
+    for i in range(len(input)):
+        i-=pop_parameter
+        check_turnBack = input[i][0].split('+')
+        # if path's length exceed k
+        if input[i][-2]>k:
+            segment.append(input[i])
+            input.pop(i)
+            pop_parameter+=1
+        # if turning angle exceed 2pi
+        elif check_turnBack[-1]==check_turnBack[-3] or abs(input[i][-1])>2*np.pi:
+            segment.append(input[i])
+            input.pop(i)
+            pop_parameter+=1
+    if count%10==0:print(count)
+    count += 1
+    if len(input) == 0: break
+# string -> npy
+# segment_int = []
+for i in range(len(segment)):
+    path_str = segment[i][0].split('+')[1:]
+    path = []
+    for j in range(len(path_str)):
+        path.append(int(path_str[j]))
+    segment[i] = path
+#     segment_int.append(path)
+# print("time :", time.time() - start)
