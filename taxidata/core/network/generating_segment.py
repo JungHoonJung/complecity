@@ -14,6 +14,7 @@ import math
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> edit)
 =======
@@ -21,6 +22,10 @@ import math
 =======
 >>>>>>> since problem7
 =======
+=======
+=======
+>>>>>>> edit)
+>>>>>>> edit)
 =======
 >>>>>>> segment generator
 =======
@@ -53,6 +58,7 @@ Seoul['EDGE'] = np.arange(len(Seoul)) # edge 라벨 재설정(방향이 다른 �
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since problem8
 =======
@@ -61,6 +67,8 @@ Seoul['EDGE'] = np.arange(len(Seoul)) # edge 라벨 재설정(방향이 다른 �
 >>>>>>> since problem8
 =======
 >>>>>>> last..
+=======
+>>>>>>> edit)
 =======
 >>>>>>> edit)
 node_Seoul = np.unique(Seoul['START_NODE']) # node 집합
@@ -201,7 +209,14 @@ node_Seoul = np.unique(Seoul['START_NODE']) # node 집합
 =======
 
 >>>>>>> segment generator
+<<<<<<< HEAD
 >>>>>>> segment generator
+=======
+=======
+node_Seoul = np.unique(Seoul['START_NODE']) # node 집합
+
+>>>>>>> edit)
+>>>>>>> edit)
 def next_node(input):
     index_find = [k for k, x in enumerate(input[0]) if x == "+"][-1]
     next_edge = Seoul[np.where(Seoul['START_NODE']==int(input[0][(index_find+1):]))]
@@ -224,6 +239,7 @@ def next_node(input):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since problem8
 =======
@@ -296,6 +312,8 @@ def next_node(input):
 >>>>>>> edit)
 =======
 >>>>>>> segment generator
+=======
+>>>>>>> edit)
         # turning angle measure
         if input[0].count('+') >= 2:
             cal_turningAg = input[0].split('+')[1:]
@@ -378,9 +396,12 @@ def next_node(input):
 =======
 =======
         # measuring turning angle
+=======
+        # turning angle measure
+>>>>>>> edit)
         if input[0].count('+') >= 2:
             cal_turningAg = input[0].split('+')[1:]
-            if len(cal_turningAg)>=2:
+            if len(cal_turningAg)>1:
                 X_1, Y_1 = Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-2]))][0][0],Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-2]))][0][1]
                 X_2, Y_2 = Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-1]))][0][0], Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-1]))][0][1]
                 X_3, Y_3 = Seoul[np.where(Seoul['START_NODE']==next_edge['END_NODE'][n])][0][0], Seoul[np.where(Seoul['START_NODE']==next_edge['END_NODE'][n])][0][1]
@@ -408,6 +429,7 @@ def node_cycle(input):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since problem7
 =======
@@ -420,6 +442,8 @@ def node_cycle(input):
 >>>>>>> last..
 =======
 >>>>>>> segment generator
+=======
+>>>>>>> edit)
 """
 main
 """
@@ -626,10 +650,18 @@ SN = node_Seoul[1002]
 
 # k
 k = 800
+=======
+"""
+main function
+"""
+k = 800 # k=500m
+start = time.time()
+>>>>>>> edit)
 segment = []
-
-for SN in node_Seoul: # input Seoul node
+# for SN in node_Seoul[1000:1003]:
+SN = node_Seoul[1002]
 #[+node+node+..., total_length, turning_angle]
+<<<<<<< HEAD
 >>>>>>> segment generator
     input=[["+" + str(SN), 0, 0]]
     count=0
@@ -941,6 +973,8 @@ for i in range(len(segment)):
 >>>>>>> segment generator
 >>>>>>> segment generator
 =======
+=======
+>>>>>>> edit)
 input=[["+" + str(SN), 0, 0]]
 count=0
 while count < 100 :
@@ -972,8 +1006,11 @@ for i in range(len(segment)):
     segment[i] = path
 #     segment_int.append(path)
 # print("time :", time.time() - start)
+<<<<<<< HEAD
 >>>>>>> edit)
 =======
 >>>>>>> edit turning angle calculator
 =======
 >>>>>>> segment generator
+=======
+>>>>>>> edit)
