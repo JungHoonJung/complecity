@@ -1,4 +1,7 @@
 from .core.object import DataProcessor
+from .rawfiles import rawfiles
+import pyproj
+import numpy as np
 
 def RAW_to_hdf(hdf_filename, RAW_path, date):
     processor = DataProcessor()
@@ -30,3 +33,15 @@ def npy_to_hdf(hdf_filename, npy):
         This is also making note
     """
     pass
+
+def UTM(dataX,dataY):
+    """
+    convert to UTM coord from WGS84 coord
+
+    input longitude, latitude WGS84 coordinate
+    return longitude, latitude UTM coordinate
+    """
+    KoreaZone = 52
+    p = pyproj.Proj(proj = 'utm', zone = '52N', ellps='WGS84')
+    dataX, dataY = p(dataX, dataY,dtype=np.float32)
+    return dataX,dataY  # XCoord, YCoord

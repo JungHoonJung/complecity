@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import os
 from ..rawfiles import rawfiles
 import logging
-
+from .lib.plot import plotseoul
 
 __all__ = ['taxiarray', 'triparray', 'Dataset'] ## triparray == od_data(id, origin, destination) .npy => .hdf5
 
@@ -18,9 +18,31 @@ class taxiarray(np.ndarray):
     traditionally, data type is '['id', 'x','y','time','passenger']'.
     please check datatype.'''
 
+
+    @property
+    def pos(self):
+        return
+    @pos.getter
+    def pos(self):
+        return self[self._posx],self[self._posy]
+    @pos.setter
+    def pos(self, value):
+        self._posx = value[0]
+        self._posy = value[1]
+
+    @property
+    def taxi_id(self):
+        return self._taxi_id
+    @taxi_id.setter
+    def taxi_id(self, index_array):
+        self._taxi_id = index_array
+    @taxi_id.getter
+    def taxi_id(self):
+        return self._taxi_id
+
     def iterate_with(self, type='id'):
-        '''other iteration method for ussefulness.
-        iterative taxi array given.'''
+        '''other iteration method for usefulness.
+        iterator of given taxi array.'''
         pass
 
     def plot(self, id='all', time ='all'):
@@ -30,7 +52,7 @@ class taxiarray(np.ndarray):
     def range(self, **range):
         '''indexing with field and its range.
         for example,
-        
+
         .. code-block::
             taxiarray.range(
                 x = (xstart, xend),
@@ -96,15 +118,131 @@ class Dataset:
     '''this class will take FileManager and read from file make many objects of processing data.
     so that you can get taxi object or network object easily with this class. '''
     def __init__(self, file):
-        self.file = FileManager()
-        self.file.load_h5py(file)
-        self.date = self.file.date
-        self._scope = None
+        self.file = file
+        with h5py.File(file, 'r') as f:
+            self.date = dt.datetime.fromtimestamp(f.attrs['date']*86400+54000).date()
+
+    def id_list():
+        doc = "The id_list of saved taxis."
+        def fget(self):
+            if self._id_list is None:
+                self._id_list = self.file['id_list'][:]
+            return self._id_list
+        return locals()
+    id_list = property(**id_list())
+
+    def fields():
+        doc = "The id_list of saved taxis."
+        def fget(self):
+            return [field for field in self.file['taxidata']]
+        return locals()
+    fields = property(**fields())
 
 
-    def open(self, file):
-        '''open hdf5 file to load data.'''
-        self.filesystem = h5py.File(file, 'r+')
+    def get_array(target = None, start_time = None, end_time = None, **kwarg):
+        '''return array from file.
+        start_time and end_time specify the output data size.
+        if integer is given, regard as hours
+        or time instance of datetime module.
+
+        if None, whole data will be returned.
+
+        kwargs
+        ---------
+        num : integer
+            total taxi number fixed as given integer.
+            same option of Dataset.set_taxis(num, random)
+        random : bool (optional)
+            same option of Dataset.set_taxis(num, random)
+            default is `True`.
+        time : tuple
+            set start_time and end_time
+
+        dtype : np.dtype with field name
+            set return dtypes.
+            if None, return whole field and saved dtypes.
+        fields : list
+            set return fields.
+            if None, return whole field
+        position : str
+            specify position default is latitude and longitude
+        '''
+        set_taxis = False
+        fields = self.fields
+        dtypes =
+        for key in kwarg:
+            if key == 'num':
+                if kwarg.get('random',False):
+                    self.set_taxis(kwarg['num'],kwarg['random'])
+                else:
+                    self.set_taxis(kwarg['num'])
+                set_taxis = True
+            if key == 'time':
+                start_time = kwarg[key][0]
+                end_time = kwarg[key][1]
+            if key == 'fields':
+                fields = kwarg['fields']
+            if key == 'dtypes':
+                dtypes = kwarg[key]
+
+
+        if kwarg.get('num',False):
+            if kwarg.get('random',False):
+                self.set_taxis(kwarg['num'],kwarg['random'])
+            else:
+                self.set_taxis(kwarg['num'])
+        if self.targets is None:
+            raise TypeError("No taxi specified.")
+
+        if kwarg.get('fields',False):
+
+        else:
+            fields = self.fields
+
+        if target is not None:
+            self.set_taxi_id(target)
+
+        if isinstance(start_time,dt.datetime.datetime):
+            if self.date == start_time.date:
+                start_time = start_time.time()
+        if isinstance(start_time,dt.datetime.time):
+            start = start_time.hour*360+start_time.minute*6+start_time.second//10
+        elif isinstance(start_time, int):
+            start = start_time*360
+
+        if isinstance(end_time,dt.datetime.datetime):
+            if self.date == end_time.date:
+                end_time = end_time.time()
+        if isinstance(end_time,dt.datetime.time):
+            end = end_time.hour*360+end_time.minute*6+end_time.second//10
+        elif isinstance(end_time, int):
+            end = end_time*360
+
+        time = slice(start, end)
+
+        timetable = self.file['TimeTable'][:]
+        ids = {ii:i for i, ii in enumerate(self.id_list)}
+        target = [ids[taxiid] for taxiid in self.targets]
+        target.sort()
+        indices = []
+        #reading data indices from timetable
+        for i in target:
+            indices.append(timetable[i][time])
+        array = np.array()
+
+
+
+    def set_taxis(self, num, random = True):
+        '''setting number of taxis to extract.
+        if random is False, the order is same as id_list.'''
+        if random:
+            self.targets = np.random.choice(self.id_list, num, replace = False)
+        else:
+            self.targets = self.id_list[:num]
+
+    def set_taxi_id(self, ids):
+        '''ids = list of id. setting target with given id'''
+        self.targets = ids
 
     def set_scope(self, **scope):
         '''if you want specific data, you can customizing scope of data.
@@ -114,21 +252,6 @@ class Dataset:
         if self._scope is None:
             print(None)
             return
-        pass
-
-    def show_scope(self):
-        '''if you set scope before, then this method will make geometric scope,
-        and time.'''
-        pass
-
-    def range(self, **range):
-        '''equivalent to taxiarray.range()'''
-        pass
-
-    def snapshot(self, time, target = 'point'):
-        '''this method will make snapshot of data.
-        you can set target of snapshot as network, point, etc.
-        default is point.'''
         pass
 
     def __getitems__(self,  key):
@@ -329,37 +452,6 @@ class DataProcessor:
 
     def read(self, arg):
         pass
-
-class HDFManager:
-    """HDFManager for certain data structure."""
-
-    def __init__(self, file):
-        self.file = h5py.File(file, 'r+')
-        self._initialized = True if self.file.attrs.get(date,False) else False
-        self.taxidata = self.file.require_group('Taxidata')
-        self.errors = self.file.require_group('Errors')
-        self.remains = self.file.require_group('Remains')
-        #self.shp = self.file.require_group('shp')
-        #self.trip = self.file.require_group('trip')
-
-    def __getitem__(self, arg):
-        if arg =='errors':
-            pass
-        if arg == 'remains':
-            pass
-
-        pass
-
-    def field(self, arg):
-        return self.file['taxidata'][arg]
-
-    def a_get(self, arg):
-        return self.file.attrs[arg]
-
-    def a_set(self, name, val):
-        self.file.attrs[name] = val
-
-
 
 
 
