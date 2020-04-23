@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import os
 from ..rawfiles import rawfiles
 import logging
-from .lib.plot import plotseoul
+from .lib.plot import plot_seoul
 
 __all__ = ['taxiarray', 'triparray', 'Dataset'] ## triparray == od_data(id, origin, destination) .npy => .hdf5
 
@@ -38,7 +38,7 @@ class taxiarray(np.ndarray):
         self._taxi_id = index_array
     @taxi_id.getter
     def taxi_id(self):
-        return self._taxi_id
+        return [id for id,_ in self._taxi_id]
 
     def iterate_with(self, type='id'):
         '''other iteration method for usefulness.
@@ -117,16 +117,29 @@ class triparray(taxiarray):
 class Dataset:
     '''this class will take FileManager and read from file make many objects of processing data.
     so that you can get taxi object or network object easily with this class. '''
+
+    dtype_presets = {'lat':'f8','lon':'f8','time':'i8','id':'i4', 'x':'i4','y':'i4','psg':'?','ang':'i4','valid':'?','vel':'i4','z':'i4'}
+
     def __init__(self, file):
         self.file = file
-        with h5py.File(file, 'r') as f:
-            self.date = dt.datetime.fromtimestamp(f.attrs['date']*86400+54000).date()
+        self.targets = None
+        self._id_list = None
+        with h5py.File(self.file, 'r') as f:
+            self.date = dt.datetime.fromtimestamp(f.attrs['Date']*86400+54000)
+
+    def open(self):
+        self.h5py = h5py.File(self.file,'r')
+
+    def close(self):
+        self.h5py.close()
+        del self.h5py
 
     def id_list():
         doc = "The id_list of saved taxis."
         def fget(self):
             if self._id_list is None:
-                self._id_list = self.file['id_list'][:]
+                with h5py.File(self.file, 'r') as f:
+                    self._id_list = f['id_list'][:]
             return self._id_list
         return locals()
     id_list = property(**id_list())
@@ -134,16 +147,17 @@ class Dataset:
     def fields():
         doc = "The id_list of saved taxis."
         def fget(self):
-            return [field for field in self.file['taxidata']]
+            with h5py.File(self.file, 'r') as f:
+                return [field for field in f['taxidata']]
         return locals()
     fields = property(**fields())
 
 
-    def get_array(target = None, start_time = None, end_time = None, **kwarg):
+    def get_array(self, target = None, start_time = None, end_time = None, **kwarg):
         '''return array from file.
         start_time and end_time specify the output data size.
-        if integer is given, regard as hours
-        or time instance of datetime module.
+        if integer is given, each argument will be regarded as hours
+        or time must be instance of datetime module.
 
         if None, whole data will be returned.
 
@@ -158,18 +172,29 @@ class Dataset:
         time : tuple
             set start_time and end_time
 
-        dtype : np.dtype with field name
+        date : bool
+            if True, timestamp of date will be added.
+
+        dtype : list of (field_name, dtype)
             set return dtypes.
             if None, return whole field and saved dtypes.
         fields : list
             set return fields.
             if None, return whole field
-        position : str
-            specify position default is latitude and longitude
+        position : tuple of str (field_name_of_x, field_name_of_y)
+            specify position default is ('lon','lat')
         '''
         set_taxis = False
-        fields = self.fields
-        dtypes =
+        fields = None
+        dtypes = None
+        fd_ol = False
+        start = None
+        end = None
+        position = ('lon','lat')
+
+        if target is not None:
+            self.set_taxi_id(target)
+
         for key in kwarg:
             if key == 'num':
                 if kwarg.get('random',False):
@@ -182,54 +207,120 @@ class Dataset:
                 end_time = kwarg[key][1]
             if key == 'fields':
                 fields = kwarg['fields']
+                dtypes = [(key, self.dtype_presets[key]) for key in fields]
+                if fd_ol:
+                    raise KeyError("fields and dtypes cannot be mentioned together.")
+                fd_ol = True
             if key == 'dtypes':
                 dtypes = kwarg[key]
+                fields = []
+                for dtype in dtypes:
+                    fields.append(dtype[0])
+                if fd_ol:
+                    raise KeyError("fields and dtypes cannot be mentioned together.")
+                fd_ol = True
+            if key == 'position':
+                position = kwarg['position']
 
-
-        if kwarg.get('num',False):
-            if kwarg.get('random',False):
-                self.set_taxis(kwarg['num'],kwarg['random'])
-            else:
-                self.set_taxis(kwarg['num'])
-        if self.targets is None:
-            raise TypeError("No taxi specified.")
-
-        if kwarg.get('fields',False):
+        if fields is None:
+            fields = self.fields
+            fields.insert(0,'time')
+            fields.insert(0,'id')
+            dtypes = [(key,self.dtype_presets[key]) for key in fields]
 
         else:
-            fields = self.fields
+            if not 'time' in fields:
+                dtypes.insert(0,('time',self.dtype_presets['time']))
 
-        if target is not None:
-            self.set_taxi_id(target)
+            if not 'id' in fields:
+                dtypes.insert(0,('id',self.dtype_presets['id']))
 
-        if isinstance(start_time,dt.datetime.datetime):
+
+        if self.targets is None:
+            self.targets = self.id_list
+
+
+
+        if isinstance(start_time,dt.datetime):
             if self.date == start_time.date:
                 start_time = start_time.time()
-        if isinstance(start_time,dt.datetime.time):
+        if isinstance(start_time,dt.time):
             start = start_time.hour*360+start_time.minute*6+start_time.second//10
         elif isinstance(start_time, int):
             start = start_time*360
 
-        if isinstance(end_time,dt.datetime.datetime):
+        if isinstance(end_time,dt.datetime):
             if self.date == end_time.date:
                 end_time = end_time.time()
-        if isinstance(end_time,dt.datetime.time):
+        if isinstance(end_time,dt.time):
             end = end_time.hour*360+end_time.minute*6+end_time.second//10
         elif isinstance(end_time, int):
             end = end_time*360
 
-        time = slice(start, end)
 
-        timetable = self.file['TimeTable'][:]
+        time = slice(start, end)
+        with h5py.File(self.file, 'r') as f:
+            timetable = f['TimeTable'][:].T
         ids = {ii:i for i, ii in enumerate(self.id_list)}
         target = [ids[taxiid] for taxiid in self.targets]
         target.sort()
         indices = []
+        nums = []
+        times = []
+
+        date = self.date.timestamp()
         #reading data indices from timetable
         for i in target:
-            indices.append(timetable[i][time])
-        array = np.array()
+            mask = timetable[i][time]
+            taxi = mask[mask != -1]
 
+            if taxi.shape[0] == 0:
+                continue
+
+            tlist = np.arange(8640)[time][mask != -1]*10
+            if kwarg.get('date',False):
+                tlist+= date*86400+54000
+            times.append(tlist)
+            indices.append(taxi)
+            nums.append(taxi.shape[0])
+
+        #print(dtypes) ## check
+
+        array = np.zeros(sum(nums),dtype = dtypes)
+        cumnum = np.array(nums).cumsum()
+        order = np.empty([cumnum[-1],2],dtype = np.int32)
+        order[:,1] = np.arange(cumnum[-1])
+        number = 0
+        for index in indices:
+            order[:,0][number:number + len(index)] = index
+            number += len(index)
+
+        #order = np.sort(order, 0)
+
+        ch_len = 0
+
+        with h5py.File(self.file, 'r') as f:
+            for field, _ in dtypes:
+                if field == 'id' or field == 'time':continue
+                array[field] = f['taxidata'][field][:][order.T[0]]
+
+            for start_index, dlen, taxi_id, tlist, index in zip(cumnum, nums, self.targets, times, indices):
+                tarr = array[start_index-dlen: start_index]
+                ch_len+=dlen
+                tarr['id'] = taxi_id
+                tarr['time'] = tlist
+
+        assert ch_len == cumnum[-1]
+
+        res = array.view(taxiarray)
+        if 'lat' in fields:
+            res['lat']/=1e7
+        if 'lon' in fields:
+            res['lon']/=1e7
+        res.pos = ('lat','lon')
+        res.taxi_id = [(id, index) for id, index in zip(self.targets, cumnum)]
+        self.targets = None
+        return res
 
 
     def set_taxis(self, num, random = True):
