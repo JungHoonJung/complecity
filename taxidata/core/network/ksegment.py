@@ -102,6 +102,79 @@ class segment:
         pass
 
 
+class Roadnetwork(nx.MultiDiGraph):
+    def __init__(self):
+        self.__super__(self)
+
+    def pos():
+        doc = '''return position dictionay'''
+        def fget(self):
+            return self.nodes(data = 'pos')
+        return locals()
+    pos = property(**pos())
+
+
+    def subgraph_of_node(self, node, depth_limit = 2):
+        """return subgraph of given node with bfs manner
+
+        Parameters
+        ----------
+        node : type
+            Description of parameter `node`.
+        depth_limit : type
+            Description of parameter `depth_limit`.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
+
+        nodes = {node : 0}
+        for edge in nx.bfs_edges(self, node, depth_limit= depth_limit):
+            nodes[edge[1]] = 0
+
+        nodes = list(nodes.keys())
+        if depth_limit == 0:
+            nodes = [node]
+        return self.subgraph(nodes)
+
+    def nn_nodes(G, node, depth_limit = 2):
+        '''return nodes from given node with bfs manner'''
+        nodes = {node : 0}
+        for edge in nx.bfs_edges(G, node, depth_limit= depth_limit):
+            nodes[edge[1]] = 0
+
+        nodes = list(nodes.keys())
+        if depth_limit == 0:
+            nodes = [node]
+        return nodes
+
+
+
+    def edge_plot(G):
+        '''plot edges in given graph'''
+        for i in G.edges(data = 'geometry'):
+            plt.plot(*i[2].xy)
+
+    def edgelist_plot(G, edgelist):
+        '''plot edges in given edgelist '''
+        for edge in edgelist:
+            plt.plot(*G.edges[edge]['geometry'].xy)
+
+    def subgraph_plot(G, node, depth_limit = 2):
+        '''making subgraph and plot'''
+        sub = subgraph_of_node(G,node, depth_limit)
+        node_pos = pos(sub)[node]
+
+        edge_plot(sub)
+        plt.scatter(*node_pos, s= 100)
+
+
+
+
+
 def k_segments(G, node, k= 100):
     '''k_segments with only breadth-first searching'''
     segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
