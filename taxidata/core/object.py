@@ -21,10 +21,18 @@ class taxiarray(np.ndarray):
 
     @property
     def pos(self):
+        """Short summary.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
         return
     @pos.getter
     def pos(self):
-        return self[self._posx],self[self._posy]
+        return np.array(self[self._posx],self[self._posy])
     @pos.setter
     def pos(self, value):
         self._posx = value[0]
@@ -32,6 +40,14 @@ class taxiarray(np.ndarray):
 
     @property
     def taxi_id(self):
+        """Short summary.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
         return self._taxi_id
     @taxi_id.setter
     def taxi_id(self, index_array):
@@ -42,8 +58,12 @@ class taxiarray(np.ndarray):
 
     def iterate_with(self, type='id'):
         '''other iteration method for usefulness.
-        iterator of given taxi array.'''
-        pass
+        iterator of given taxi array.
+        *only id for now*'''
+        i = 0
+        for taxi_id, index in self._taxi_id:
+            yield taxi_id, self[i:index]
+            i = index
 
     def plot(self, id='all', time ='all'):
         '''plot this data on seoul map.'''
@@ -66,11 +86,40 @@ class taxiarray(np.ndarray):
         '''
         pass
 
-    def mapping(self, mapper):
+    def distance(self, point):
+        '''return distance between taxi data's position and given point.'''
         pass
 
-    def split(self, arg):
+
+    def get_trajectories(self):
+        '''return trajectory list by taxi_id'''
+        t = []
+        for taxi_id, array in self.iterate_with('id'):
+            taxi = array.view(trajectory)
+            taxi.taxi_id = taxi_id
+            t.append(taxi)
+        return t
+
+class trajectory(taxiarray):
+    '''a set of continuous point of single taxi. time gap may be 10 seconds.
+    interaction with segment, other trajectories. map matching.
+    '''
+    def taxi_id():
+        doc = "The taxi_id property."
+        def fget(self):
+            return self._taxi_id
+        def fset(self, value):
+            self._taxi_id = value
+        def fdel(self):
+            del self._taxi_id
+        return locals()
+    taxi_id = property(**taxi_id())
+
+    def distance_of_curve(self, i, segment):
+
         pass
+
+
 
 class triparray(taxiarray):
     """this array is specific data types for taxi data.
@@ -105,7 +154,7 @@ class triparray(taxiarray):
 
 
     def trajectory(self, index):
-        '''it will give i-th trip's trajectory from original dataset. return is taxiarray.'''
+        '''it will give i-th trip's trajectory from original dataset. return is trajectory.'''
         pass
 
     def plot(self, arg):
