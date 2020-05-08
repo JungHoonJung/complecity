@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -56,7 +57,19 @@ import matplotlib.pyplot as plt
 >>>>>>> since_problem2
 =======
 >>>>>>> since problem6
+=======
+>>>>>>> since 11
 >>>>>>> since problem6
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> add docstring
+=======
+>>>>>>> add docstring
+>>>>>>> since 11
 import math
 
 <<<<<<< HEAD
@@ -1455,6 +1468,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> rebase
 >>>>>>> since_problem
 >>>>>>> since_problem3
+<<<<<<< HEAD
 =======
 >>>>>>> last..
 <<<<<<< HEAD
@@ -1480,6 +1494,24 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 >>>>>>> rebase2
 >>>>>>> rebase2
+=======
+    return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
+
+# generate network given weight by relative speed
+def genStreetNet_speed(Edgelist,reVelo):
+<<<<<<< HEAD
+>>>>>>> since problem6
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> add docstring
+=======
+>>>>>>> add docstring
+>>>>>>> since 11
+>>>>>>> since 11
     """Short summary.
 
     Parameters
@@ -1502,6 +1534,7 @@ def relativeVelocity(Period,velocity0,velocity1):
     .. note::
         test note
     """
+<<<<<<< HEAD
 >>>>>>> docstring test
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1686,10 +1719,25 @@ def genStreetNet_speed(Edgelist,reVelo):
 >>>>>>> since_problem
 =======
 >>>>>>> since problem6
+=======
+<<<<<<< HEAD
+>>>>>>> since 11
 >>>>>>> since_problem
 =======
 >>>>>>> add docstring
 >>>>>>> since problem6
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> graph module
+=======
+>>>>>>> graph module
+=======
+>>>>>>> add docstring
+=======
+>>>>>>> add docstring
+>>>>>>> since 11
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -1711,12 +1759,16 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> since 11
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> since 11
+<<<<<<< HEAD
 =======
 >>>>>>> add docstring
 =======
@@ -1767,6 +1819,8 @@ def remove_qRoad(q,Edgelist,reVelo):
 >>>>>>> last..
 =======
 >>>>>>> rebase
+=======
+>>>>>>> since 11
 
 # remove link under parameter q
 def remove_qRoad(q,Edgelist,reVelo):
@@ -2107,6 +2161,11 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 
 # remove link under parameter q
 def remove_qRoad(q,Edgelist,reVelo):
+=======
+
+# remove link under parameter q
+def remove_qRoad(q,Edgelist,reVelo):
+>>>>>>> add docstring
     """Short summary.
     Generate road network that cutted links(roads) which weight(relative velocity) smaller than q
 
@@ -2124,6 +2183,9 @@ def remove_qRoad(q,Edgelist,reVelo):
     type Graph()
 
     """
+<<<<<<< HEAD
+>>>>>>> add docstring
+=======
 >>>>>>> add docstring
 >>>>>>> since problem6
     orign_net = genStreetNet_speed(Edgelist,reVelo)
@@ -2136,7 +2198,18 @@ def remove_qRoad(q,Edgelist,reVelo):
 
 # get weakly connected components
 def weaklycc(network):
+<<<<<<< HEAD
 >>>>>>> since problem6
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> add docstring
+=======
+>>>>>>> add docstring
+>>>>>>> since 11
     """Short summary.
     Generate weakly connected cluster distribution
 
@@ -2149,7 +2222,11 @@ def weaklycc(network):
     type list
 
     """
+<<<<<<< HEAD
 >>>>>>> since problem6
+=======
+<<<<<<< HEAD
+>>>>>>> since 11
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
@@ -2269,6 +2346,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 >>>>>>> since 11
 <<<<<<< HEAD
@@ -2293,6 +2371,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> graph module
 =======
 >>>>>>> since_problem4
+=======
+>>>>>>> since 11
 >>>>>>> since_problem
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -2334,11 +2414,20 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 >>>>>>> since problem6
 >>>>>>> since problem6
+=======
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> graph module
+=======
+>>>>>>> add docstring
+>>>>>>> since 11
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
 def criticalGraph(Period,edgelist,speedlist0,speedlist1):
 >>>>>>> graph module
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 <<<<<<< HEAD
@@ -2356,8 +2445,44 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 >>>>>>> add docstring
 >>>>>>> since problem6
+<<<<<<< HEAD
 >>>>>>> since problem6
+<<<<<<< HEAD
 >>>>>>> since problem6
+=======
+=======
+=======
+=======
+>>>>>>> graph module
+=======
+def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
+<<<<<<< HEAD
+>>>>>>> Adding 'raw csv data' conver to npy format.
+=======
+>>>>>>> add docstring
+=======
+    """Short summary.
+    calculate critical q point when second giant connected component was max.
+    Parameters
+    ----------
+    day : string
+        ex) '10' input data's day
+    Period : string
+        ex) '08:00-08:02' time period
+    edgelist : np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),
+        ('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+    speedlist0 : np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+    speedlist1 : np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+
+    Returns
+    -------
+    type
+        fgure.png
+    """
+>>>>>>> add docstring
+>>>>>>> since 11
+>>>>>>> since 11
+>>>>>>> since 11
     # relative velocity
     rv = relativeVelocity(Period,speedlist0,speedlist1)
     # get GCC, SCC each q
@@ -2679,6 +2804,7 @@ def logBinning(dist,base):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 <<<<<<< HEAD
 >>>>>>> since problem6
@@ -2700,9 +2826,56 @@ def logBinning(dist,base):
 >>>>>>> since_problem3
 =======
 >>>>>>> since_problem4
+=======
+>>>>>>> since 11
 >>>>>>> since_problem
+=======
+<<<<<<< HEAD
+=======
+    plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
+>>>>>>> since 11
     plt.close()
 >>>>>>> graph module
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since_problem3
 >>>>>>> since problem6
+=======
+>>>>>>> graph module
+=======
+
+# log binning
+def logBinning(dist,base):
+    """Short summary.
+    Generate logbinning histogram array tuple.
+
+    Parameters
+    ----------
+    dist : list
+        ex) clsuter size distribution
+    base : int
+        ex) log_{base}
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
+    # histogram
+    maximum=int(math.log(dist[0],base))+1
+    hist=np.zeros(maximum)
+    # add cluster size each range
+    for x in dist:
+        hist[int(math.log(x,base))]+=1
+    # generate x axis
+    x_hist=np.zeros(maximum)
+    for i in range(maximum):
+        x_hist[i]=(base**(i+1)+base**(i))*0.5
+    # divide by range
+    for i in range(maximum):
+        hist[i]/=(base**(i+1)-base**i)
+    return x_hist,hist
+>>>>>>> add docstring
+=======
+>>>>>>> add docstring
+>>>>>>> since 11
