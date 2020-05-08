@@ -14,6 +14,7 @@ import networkx as nx
 >>>>>>> since10
 import numpy as np
 from ..object import taxiarray, trajectory, Dataset
+<<<<<<< HEAD
 =======
 fdfdfsdsdf
 >>>>>>> test
@@ -38,3 +39,6 @@ fdfdfsdsdf
 import numpy as np
 from ..object import taxiarray, trajectory, Dataset
 >>>>>>> last..
+=======
+>>>>>>> test_ys_since conflict problem
+>>>>>>> test_ys_since conflict problem
