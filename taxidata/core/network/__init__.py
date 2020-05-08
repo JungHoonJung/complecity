@@ -76,6 +76,7 @@ def genStreetNet(Edgelist):
     """
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -84,6 +85,8 @@ def genStreetNet(Edgelist):
 =======
 >>>>>>> graph module
 >>>>>>> since_problem
+=======
+>>>>>>> rebase2
 
 <<<<<<< HEAD
 >>>>>>> rebase
@@ -192,6 +195,7 @@ def convert2npy_edgelist(path,filename):
 # generate Street network
 def genStreetNet(Edgelist):
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> Adding 'raw csv data' conver to npy format.
 =======
     """Short summary.
@@ -219,7 +223,10 @@ def genStreetNet(Edgelist):
 >>>>>>> since_problem2
 =======
 >>>>>>> last..
+=======
+>>>>>>> rebase2
 >>>>>>> graph module
+<<<<<<< HEAD
     """Short summary.
 
     Parameters
@@ -484,6 +491,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since_problem4
 =======
@@ -531,6 +539,10 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 =======
 >>>>>>> to rebase
+=======
+=======
+>>>>>>> rebase2
+>>>>>>> rebase2
     """Short summary.
 
     Parameters
