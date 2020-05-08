@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -53,6 +54,9 @@ import matplotlib.pyplot as plt
 >>>>>>> since_problem
 =======
 >>>>>>> since_problem2
+=======
+>>>>>>> since problem6
+>>>>>>> since problem6
 import math
 
 <<<<<<< HEAD
@@ -1559,6 +1563,7 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -1596,6 +1601,9 @@ def genStreetNet_speed(Edgelist,reVelo):
 >>>>>>> since_problem
 =======
 >>>>>>> since_problem2
+=======
+>>>>>>> since problem6
+>>>>>>> since problem6
     """Short summary.
     Generate road network assigned relative velocity as weight on each link
 
@@ -1620,6 +1628,7 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since_problem
 =======
 >>>>>>> add docstring
@@ -1675,7 +1684,12 @@ def genStreetNet_speed(Edgelist,reVelo):
 >>>>>>> to rebase
 =======
 >>>>>>> since_problem
+=======
+>>>>>>> since problem6
 >>>>>>> since_problem
+=======
+>>>>>>> add docstring
+>>>>>>> since problem6
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -2087,6 +2101,55 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> since_problem2
 >>>>>>> since_problem
 >>>>>>> since_problem
+<<<<<<< HEAD
+=======
+=======
+
+# remove link under parameter q
+def remove_qRoad(q,Edgelist,reVelo):
+    """Short summary.
+    Generate road network that cutted links(roads) which weight(relative velocity) smaller than q
+
+    Parameters
+    ----------
+    q : float
+
+    Edgelist : np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),
+        ('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+
+    reVelo : type np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+
+    Returns
+    -------
+    type Graph()
+
+    """
+>>>>>>> add docstring
+>>>>>>> since problem6
+    orign_net = genStreetNet_speed(Edgelist,reVelo)
+    return_net = genStreetNet_speed(Edgelist,reVelo)
+    Edge = np.array(orign_net.edges)
+    for i in range(len(Edge)):
+        if list(orign_net.edges.data('weight'))[i][2] < q:
+            return_net.remove_edge(*Edge[i])
+    return return_net
+
+# get weakly connected components
+def weaklycc(network):
+>>>>>>> since problem6
+    """Short summary.
+    Generate weakly connected cluster distribution
+
+    Parameters
+    ----------
+    network : Graph()
+
+    Returns
+    -------
+    type list
+
+    """
+>>>>>>> since problem6
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
@@ -2231,6 +2294,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 >>>>>>> since_problem4
 >>>>>>> since_problem
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> graph module
@@ -2267,14 +2331,17 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> last..
 =======
 =======
+=======
+>>>>>>> since problem6
+>>>>>>> since problem6
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
-<<<<<<< HEAD
 def criticalGraph(Period,edgelist,speedlist0,speedlist1):
 >>>>>>> graph module
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
 def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> Adding 'raw csv data' conver to npy format.
 >>>>>>> since_problem3
@@ -2283,7 +2350,14 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 =======
 >>>>>>> since_problem4
+<<<<<<< HEAD
 >>>>>>> since_problem4
+=======
+=======
+>>>>>>> add docstring
+>>>>>>> since problem6
+>>>>>>> since problem6
+>>>>>>> since problem6
     # relative velocity
     rv = relativeVelocity(Period,speedlist0,speedlist1)
     # get GCC, SCC each q
@@ -2629,4 +2703,6 @@ def logBinning(dist,base):
 >>>>>>> since_problem
     plt.close()
 >>>>>>> graph module
+<<<<<<< HEAD
 >>>>>>> since_problem3
+>>>>>>> since problem6
