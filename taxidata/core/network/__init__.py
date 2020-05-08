@@ -4,6 +4,7 @@ import os
 import re
 import matplotlib.pyplot as plt
 <<<<<<< HEAD
+<<<<<<< HEAD
 import math
 
 <<<<<<< HEAD
@@ -77,7 +78,12 @@ def genStreetNet(Edgelist):
     """
 =======
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+=======
+>>>>>>> graph module
+>>>>>>> since_problem
 
 >>>>>>> rebase
 # edgelist, speed data convert to npy
@@ -96,6 +102,7 @@ def genStreetNet(Edgelist):
 
 # generate Street network
 def genStreetNet(Edgelist):
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -182,6 +189,8 @@ def genStreetNet(Edgelist):
 >>>>>>> graph module
 >>>>>>> rebase
 =======
+=======
+>>>>>>> since_problem
 >>>>>>> graph module
 =======
     """Short summary.
@@ -198,7 +207,12 @@ def genStreetNet(Edgelist):
 
     """
 >>>>>>> docstring test
+<<<<<<< HEAD
 >>>>>>> rebase2
+=======
+=======
+>>>>>>> graph module
+>>>>>>> since_problem
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -215,10 +229,13 @@ def network_pos(Edgelist):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> add network docstring
 =======
 >>>>>>> rebase
+=======
+>>>>>>> since_problem
     """Short summary.
     Generate network node position.
     ex) pos=network_pos(Edgelist)
@@ -244,7 +261,12 @@ def network_pos(Edgelist):
 =======
 =======
 >>>>>>> graph module
+<<<<<<< HEAD
 >>>>>>> rebase
+=======
+=======
+>>>>>>> graph module
+>>>>>>> since_problem
     # assign pos for nodes
     return {i:[Edgelist[Edgelist['Node_Start']==i]['Longitude_Start'][0],Edgelist[Edgelist['Node_Start']==i]['Latitude_Start'][0]]for i in range(len(np.unique(Edgelist['Node_Start'])))}
 
@@ -253,10 +275,13 @@ def Max_velocity(velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> add network docstring
 =======
 >>>>>>> rebase
+=======
+>>>>>>> since_problem
     """Short summary.
     Find each link's fatest speed in whole day.
     The reason why it takes two speed array is Chengdu's speed data splice day in two Period. 03:00~13:00, 13:00~23:00
@@ -279,7 +304,12 @@ def Max_velocity(velocity0,velocity1):
 =======
 =======
 >>>>>>> graph module
+<<<<<<< HEAD
 >>>>>>> rebase
+=======
+=======
+>>>>>>> graph module
+>>>>>>> since_problem
     max_velo = np.zeros(len(np.unique(velocity0['Link'])))
     for i in range(len(max_velo)):
         max_velo[i] = max([max(velocity0[velocity0['Link'] == i+1]['Speed']),max(velocity1[velocity1['Link'] == i+1]['Speed'])])
@@ -293,12 +323,15 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> add network docstring
 =======
 >>>>>>> rebase
 =======
 >>>>>>> rebase2
+=======
+>>>>>>> since_problem
     """Short summary.
     Divide road's each period speed by Fastest speed, get relative velocity each road
 
@@ -377,11 +410,17 @@ def relativeVelocity(Period,velocity0,velocity1):
         test note
     """
 >>>>>>> docstring test
+<<<<<<< HEAD
 >>>>>>> rebase2
+=======
+=======
+>>>>>>> graph module
+>>>>>>> since_problem
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
 # generate network given weight by relative speed
 def genStreetNet_speed(Edgelist,reVelo):
+<<<<<<< HEAD
 <<<<<<< HEAD
     """Short summary.
     Generate road network assigned relative velocity as weight on each link
@@ -400,6 +439,8 @@ def genStreetNet_speed(Edgelist,reVelo):
     """
 =======
 >>>>>>> graph module
+=======
+>>>>>>> graph module
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -410,6 +451,7 @@ def genStreetNet_speed(Edgelist,reVelo):
     for i in range(len(Edgelist)):
         G.add_edge(Edgelist['Node_Start'][i],Edgelist['Node_End'][i],label=Edgelist['Link'][i],weight=reVelo[i])
     return G
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 # remove link under parameter q
@@ -435,6 +477,10 @@ def remove_qRoad(q,Edgelist,reVelo):
 # remove link under parameter q
 def remove_qRoad(q,Edgelist,reVelo):
 >>>>>>> graph module
+=======
+# remove link under parameter q
+def remove_qRoad(q,Edgelist,reVelo):
+>>>>>>> graph module
     orign_net = genStreetNet_speed(Edgelist,reVelo)
     return_net = genStreetNet_speed(Edgelist,reVelo)
     Edge = np.array(orign_net.edges)
@@ -445,6 +491,7 @@ def remove_qRoad(q,Edgelist,reVelo):
 
 # get weakly connected components
 def weaklycc(network):
+<<<<<<< HEAD
 <<<<<<< HEAD
     """Short summary.
     Generate weakly connected cluster distribution
@@ -500,10 +547,15 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> add docstring
 =======
 =======
+=======
+>>>>>>> graph module
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
 def criticalGraph(Period,edgelist,speedlist0,speedlist1):
+<<<<<<< HEAD
+>>>>>>> graph module
+=======
 >>>>>>> graph module
 >>>>>>> rebase
     # relative velocity
@@ -530,6 +582,7 @@ def criticalGraph(Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
 =======
     plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
@@ -537,6 +590,8 @@ def criticalGraph(Period,edgelist,speedlist0,speedlist1):
 =======
 =======
 >>>>>>> rebase
+=======
+>>>>>>> since_problem
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
 >>>>>>> Adding 'raw csv data' conver to npy format.
     plt.close()
@@ -572,6 +627,10 @@ def logBinning(dist,base):
     for i in range(maximum):
         hist[i]/=(base**(i+1)-base**i)
     return x_hist,hist
+=======
+    plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
+    plt.close()
+>>>>>>> graph module
 =======
     plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
     plt.close()
