@@ -6,18 +6,26 @@ import math
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> edit)
 =======
 >>>>>>> edit)
 =======
 >>>>>>> since problem7
+=======
+=======
+>>>>>>> edit)
+>>>>>>> since problem8
 import time
 import networkx as nx
 Seoul = np.load('./data_roadAndTaxi/SeoulConvertEdgelist.npy')
 Seoul['EDGE'] = np.arange(len(Seoul)) # edge 라벨 재설정(방향이 다른 경우 같으 라벨링이 되어있어서)
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> since problem8
 node_Seoul = np.unique(Seoul['START_NODE']) # node 집합
 """
 define function
@@ -44,6 +52,7 @@ node_Seoul = np.unique(Seoul['START_NODE']) # node 집합
 >>>>>>> since problem7
 >>>>>>> segment generator
 
+<<<<<<< HEAD
 # data
 Seoul = np.load('./SeoulConvertEdgelist.npy')
 # Seoul['EDGE'] = np.arange(len(Seoul)) # edge 라벨 재설정(방향이 다른 경우 같으 라벨링이 되어있어서)
@@ -73,6 +82,10 @@ def turning_angle(v1,v2):
     if angle_vectorProduct == 0: angle = angle_innerProduct
     else: angle = angle_vectorProduct/abs(angle_vectorProduct)*angle_innerProduct
     return angle
+=======
+=======
+node_Seoul = np.unique(Seoul['START_NODE']) # node 집합
+>>>>>>> since problem8
 
 >>>>>>> edit)
 def next_node(input):
@@ -89,6 +102,7 @@ def next_node(input):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         # turning angle measure
         if input[0].count('+') >= 2:
             cal_turningAg = input[0].split('+')[1:]
@@ -125,6 +139,8 @@ def next_node(input):
 =======
 =======
 >>>>>>> since problem7
+=======
+>>>>>>> since problem8
         # turning angle measure
 >>>>>>> edit)
         if input[0].count('+') >= 2:
@@ -146,9 +162,12 @@ def next_node(input):
 =======
 =======
         # measuring turning angle
+=======
+        # turning angle measure
+>>>>>>> edit)
         if input[0].count('+') >= 2:
             cal_turningAg = input[0].split('+')[1:]
-            if len(cal_turningAg)>=2:
+            if len(cal_turningAg)>1:
                 X_1, Y_1 = Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-2]))][0][0],Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-2]))][0][1]
                 X_2, Y_2 = Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-1]))][0][0], Seoul[np.where(Seoul['START_NODE']==int(cal_turningAg[-1]))][0][1]
                 X_3, Y_3 = Seoul[np.where(Seoul['START_NODE']==next_edge['END_NODE'][n])][0][0], Seoul[np.where(Seoul['START_NODE']==next_edge['END_NODE'][n])][0][1]
@@ -168,8 +187,11 @@ def node_cycle(input):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since problem7
+=======
+>>>>>>> since problem8
 """
 main
 """
@@ -183,6 +205,7 @@ for SN in node_Seoul[1000:1001]:
 
 # k
 k = 800
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 """
@@ -233,10 +256,20 @@ for SN in node_Seoul[1000:1001]:
     #[+node+node+..., total_length, turning_angle]
 >>>>>>> edit turning angle calculator
 =======
+=======
+=======
+"""
+main function
+"""
+k = 800 # k=500m
+start = time.time()
+>>>>>>> edit)
+>>>>>>> since problem8
 segment = []
-
-for SN in node_Seoul: # input Seoul node
+# for SN in node_Seoul[1000:1003]:
+SN = node_Seoul[1002]
 #[+node+node+..., total_length, turning_angle]
+<<<<<<< HEAD
 >>>>>>> segment generator
 >>>>>>> since problem7
     input=[["+" + str(SN), 0, 0]]
@@ -374,4 +407,40 @@ for i in range(len(segment)):
 >>>>>>> edit turning angle calculator
 =======
 >>>>>>> segment generator
+<<<<<<< HEAD
 >>>>>>> since problem7
+=======
+=======
+input=[["+" + str(SN), 0, 0]]
+count=0
+while count < 100 :
+    input = node_cycle(input)
+    pop_parameter=0
+    for i in range(len(input)):
+        i-=pop_parameter
+        check_turnBack = input[i][0].split('+')
+        # if path's length exceed k
+        if input[i][-2]>k:
+            segment.append(input[i])
+            input.pop(i)
+            pop_parameter+=1
+        # if turning angle exceed 2pi
+        elif check_turnBack[-1]==check_turnBack[-3] or abs(input[i][-1])>2*np.pi:
+            segment.append(input[i])
+            input.pop(i)
+            pop_parameter+=1
+    if count%10==0:print(count)
+    count += 1
+    if len(input) == 0: break
+# string -> npy
+# segment_int = []
+for i in range(len(segment)):
+    path_str = segment[i][0].split('+')[1:]
+    path = []
+    for j in range(len(path_str)):
+        path.append(int(path_str[j]))
+    segment[i] = path
+#     segment_int.append(path)
+# print("time :", time.time() - start)
+>>>>>>> edit)
+>>>>>>> since problem8
