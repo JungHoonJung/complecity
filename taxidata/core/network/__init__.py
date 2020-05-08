@@ -3,6 +3,7 @@ import networkx as nx
 import os
 import re
 import matplotlib.pyplot as plt
+>>>>>>> since problem6
 import math
 
 <<<<<<< HEAD
@@ -715,6 +716,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 
 # generate network given weight by relative speed
 def genStreetNet_speed(Edgelist,reVelo):
+>>>>>>> since problem6
     """Short summary.
     Generate road network assigned relative velocity as weight on each link
 
@@ -730,9 +732,10 @@ def genStreetNet_speed(Edgelist,reVelo):
     type Graph()
 
     """
-=======
->>>>>>> graph module
 >>>>>>> since_problem
+=======
+>>>>>>> add docstring
+>>>>>>> since problem6
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -768,6 +771,29 @@ def remove_qRoad(q,Edgelist,reVelo):
 def remove_qRoad(q,Edgelist,reVelo):
 >>>>>>> graph module
 >>>>>>> since_problem
+=======
+
+# remove link under parameter q
+def remove_qRoad(q,Edgelist,reVelo):
+    """Short summary.
+    Generate road network that cutted links(roads) which weight(relative velocity) smaller than q
+
+    Parameters
+    ----------
+    q : float
+
+    Edgelist : np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),
+        ('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+
+    reVelo : type np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+
+    Returns
+    -------
+    type Graph()
+
+    """
+>>>>>>> add docstring
+>>>>>>> since problem6
     orign_net = genStreetNet_speed(Edgelist,reVelo)
     return_net = genStreetNet_speed(Edgelist,reVelo)
     Edge = np.array(orign_net.edges)
@@ -778,6 +804,7 @@ def remove_qRoad(q,Edgelist,reVelo):
 
 # get weakly connected components
 def weaklycc(network):
+>>>>>>> since problem6
     """Short summary.
     Generate weakly connected cluster distribution
 
@@ -865,12 +892,13 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 >>>>>>> since_problem4
 >>>>>>> since_problem
+>>>>>>> since problem6
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
-<<<<<<< HEAD
 def criticalGraph(Period,edgelist,speedlist0,speedlist1):
 >>>>>>> graph module
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -919,6 +947,11 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> since_problem3
 =======
 >>>>>>> since_problem4
+=======
+=======
+>>>>>>> add docstring
+>>>>>>> since problem6
+>>>>>>> since problem6
     # relative velocity
     rv = relativeVelocity(Period,speedlist0,speedlist1)
     # get GCC, SCC each q
@@ -1063,4 +1096,6 @@ def logBinning(dist,base):
 >>>>>>> since_problem
     plt.close()
 >>>>>>> graph module
+<<<<<<< HEAD
 >>>>>>> since_problem3
+>>>>>>> since problem6
