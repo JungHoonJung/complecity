@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -30,6 +31,10 @@ import matplotlib.pyplot as plt
 >>>>>>> rebase
 =======
 >>>>>>> since_problem
+=======
+=======
+>>>>>>> add docstring
+>>>>>>> since problem6
 import math
 
 <<<<<<< HEAD
@@ -1146,6 +1151,7 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -1165,6 +1171,10 @@ def genStreetNet_speed(Edgelist,reVelo):
 >>>>>>> rebase
 =======
 >>>>>>> since_problem
+=======
+=======
+>>>>>>> add docstring
+>>>>>>> since problem6
     """Short summary.
     Generate road network assigned relative velocity as weight on each link
 
@@ -1184,6 +1194,7 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since_problem
 =======
 >>>>>>> add docstring
@@ -1192,11 +1203,14 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
+>>>>>>> since problem6
+=======
 >>>>>>> graph module
 =======
 >>>>>>> graph module
 =======
 >>>>>>> add docstring
+<<<<<<< HEAD
 =======
 >>>>>>> add docstring
 >>>>>>> since 11
@@ -1215,6 +1229,8 @@ def genStreetNet_speed(Edgelist,reVelo):
 =======
 >>>>>>> graph module
 >>>>>>> since_problem
+=======
+>>>>>>> since problem6
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -1231,6 +1247,7 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1243,6 +1260,8 @@ def genStreetNet_speed(Edgelist,reVelo):
 >>>>>>> add docstring
 =======
 >>>>>>> since_problem
+=======
+>>>>>>> since problem6
 
 # remove link under parameter q
 def remove_qRoad(q,Edgelist,reVelo):
@@ -1317,9 +1336,34 @@ def remove_qRoad(q,Edgelist,reVelo):
 def remove_qRoad(q,Edgelist,reVelo):
 >>>>>>> graph module
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> rebase
 =======
 >>>>>>> since_problem
+=======
+=======
+
+# remove link under parameter q
+def remove_qRoad(q,Edgelist,reVelo):
+    """Short summary.
+    Generate road network that cutted links(roads) which weight(relative velocity) smaller than q
+
+    Parameters
+    ----------
+    q : float
+
+    Edgelist : np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),
+        ('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+
+    reVelo : type np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+
+    Returns
+    -------
+    type Graph()
+
+    """
+>>>>>>> add docstring
+>>>>>>> since problem6
     orign_net = genStreetNet_speed(Edgelist,reVelo)
     return_net = genStreetNet_speed(Edgelist,reVelo)
     Edge = np.array(orign_net.edges)
@@ -1336,6 +1380,7 @@ def weaklycc(network):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -1357,6 +1402,10 @@ def weaklycc(network):
 >>>>>>> rebase
 =======
 >>>>>>> since_problem
+=======
+=======
+>>>>>>> add docstring
+>>>>>>> since problem6
     """Short summary.
     Generate weakly connected cluster distribution
 
@@ -1419,6 +1468,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
@@ -1454,7 +1504,11 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> last..
 =======
 >>>>>>> rebase
+=======
+>>>>>>> since problem6
 >>>>>>> since_problem
+>>>>>>> since problem6
+=======
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -1613,8 +1667,16 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 =======
 >>>>>>> Adding 'raw csv data' conver to npy format.
+<<<<<<< HEAD
 >>>>>>> since_problem3
+<<<<<<< HEAD
 >>>>>>> since_problem3
+=======
+=======
+=======
+>>>>>>> add docstring
+>>>>>>> since problem6
+>>>>>>> since problem6
     # relative velocity
     rv = relativeVelocity(Period,speedlist0,speedlist1)
     # get GCC, SCC each q
@@ -1848,5 +1910,43 @@ def logBinning(dist,base):
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
 >>>>>>> Adding 'raw csv data' conver to npy format.
     plt.close()
+<<<<<<< HEAD
 >>>>>>> graph module
+<<<<<<< HEAD
 >>>>>>> since_problem
+=======
+=======
+
+# log binning
+def logBinning(dist,base):
+    """Short summary.
+    Generate logbinning histogram array tuple.
+
+    Parameters
+    ----------
+    dist : list
+        ex) clsuter size distribution
+    base : int
+        ex) log_{base}
+    Returns
+    -------
+    type
+        Description of returned object.
+
+    """
+    # histogram
+    maximum=int(math.log(dist[0],base))+1
+    hist=np.zeros(maximum)
+    # add cluster size each range
+    for x in dist:
+        hist[int(math.log(x,base))]+=1
+    # generate x axis
+    x_hist=np.zeros(maximum)
+    for i in range(maximum):
+        x_hist[i]=(base**(i+1)+base**(i))*0.5
+    # divide by range
+    for i in range(maximum):
+        hist[i]/=(base**(i+1)-base**i)
+    return x_hist,hist
+>>>>>>> add docstring
+>>>>>>> since problem6
