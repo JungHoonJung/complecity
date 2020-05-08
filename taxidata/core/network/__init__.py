@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since problem6
 =======
 <<<<<<< HEAD
@@ -24,6 +25,8 @@ import matplotlib.pyplot as plt
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
+=======
+>>>>>>> rebase
 import math
 
 <<<<<<< HEAD
@@ -102,6 +105,7 @@ def genStreetNet(Edgelist):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -115,6 +119,8 @@ def genStreetNet(Edgelist):
 >>>>>>> since_problem2
 =======
 >>>>>>> add network docstring
+=======
+>>>>>>> rebase
 >>>>>>> since_problem
 <<<<<<< HEAD
 =======
@@ -230,6 +236,8 @@ def convert2npy_edgelist(path,filename):
 >>>>>>> to rebase
 =======
 =======
+>>>>>>> rebase
+=======
 
 # edgelist, speed data convert to npy
 # def conver2npy_edgelist(path,filename):
@@ -244,8 +252,14 @@ def convert2npy_edgelist(path,filename):
 #         data = np.genfromtxt(path_file,delimiter=',',skip_header=1, dtype=[('Period','U12'),('Link','int'),('Speed','float')])
 #         filename=int(re.findall('\d+',path_file)[0])
 #         np.save('{}.npy'.format(filename),data)
+<<<<<<< HEAD
 >>>>>>> last..
+<<<<<<< HEAD
 >>>>>>> last..
+=======
+=======
+>>>>>>> rebase
+>>>>>>> rebase
 
 # generate Street network
 def genStreetNet(Edgelist):
@@ -287,6 +301,7 @@ def genStreetNet(Edgelist):
 =======
 >>>>>>> since_problem2
 >>>>>>> graph module
+<<<<<<< HEAD
     """Short summary.
 
     Parameters
@@ -382,6 +397,8 @@ def genStreetNet(Edgelist):
 =======
 >>>>>>> add network docstring
 >>>>>>> add network docstring
+=======
+>>>>>>> rebase
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -395,6 +412,7 @@ def genStreetNet(Edgelist):
 
 # generate newowrk nodes' position
 def network_pos(Edgelist):
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -423,6 +441,8 @@ def network_pos(Edgelist):
 >>>>>>> since_problem
 =======
 >>>>>>> since_problem2
+=======
+>>>>>>> rebase
     """Short summary.
     Generate network node position.
     ex) pos=network_pos(Edgelist)
@@ -447,6 +467,7 @@ def network_pos(Edgelist):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since_problem4
 =======
@@ -482,11 +503,17 @@ def network_pos(Edgelist):
 >>>>>>> last..
 =======
 >>>>>>> add network docstring
+=======
+>>>>>>> rebase
 >>>>>>> since_problem
 =======
 >>>>>>> last..
 =======
 >>>>>>> add network docstring
+=======
+=======
+>>>>>>> graph module
+>>>>>>> rebase
     # assign pos for nodes
     return {i:[Edgelist[Edgelist['Node_Start']==i]['Longitude_Start'][0],Edgelist[Edgelist['Node_Start']==i]['Latitude_Start'][0]]for i in range(len(np.unique(Edgelist['Node_Start'])))}
 
@@ -500,6 +527,7 @@ def Max_velocity(velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> add network docstring
 =======
@@ -520,6 +548,8 @@ def Max_velocity(velocity0,velocity1):
 >>>>>>> since_problem
 =======
 >>>>>>> since_problem2
+=======
+>>>>>>> rebase
     """Short summary.
     Find each link's fatest speed in whole day.
     The reason why it takes two speed array is Chengdu's speed data splice day in two Period. 03:00~13:00, 13:00~23:00
@@ -541,6 +571,7 @@ def Max_velocity(velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since_problem4
 =======
@@ -571,6 +602,8 @@ def Max_velocity(velocity0,velocity1):
 =======
 >>>>>>> since_problem2
 =======
+>>>>>>> rebase
+=======
 >>>>>>> graph module
 =======
 >>>>>>> add network docstring
@@ -586,6 +619,10 @@ def Max_velocity(velocity0,velocity1):
 =======
 >>>>>>> add network docstring
 >>>>>>> add network docstring
+=======
+=======
+>>>>>>> graph module
+>>>>>>> rebase
     max_velo = np.zeros(len(np.unique(velocity0['Link'])))
     for i in range(len(max_velo)):
         max_velo[i] = max([max(velocity0[velocity0['Link'] == i+1]['Speed']),max(velocity1[velocity1['Link'] == i+1]['Speed'])])
@@ -597,9 +634,12 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> add network docstring
 =======
+=======
+>>>>>>> rebase
 =======
 >>>>>>> since_problem3
 <<<<<<< HEAD
@@ -655,6 +695,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 >>>>>>> add network docstring
 >>>>>>> add network docstring
+=======
+>>>>>>> rebase
     """Short summary.
     Divide road's each period speed by Fastest speed, get relative velocity each road
 
@@ -679,6 +721,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since_problem4
 =======
@@ -746,6 +789,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 <<<<<<< HEAD
 >>>>>>> add network docstring
+=======
+>>>>>>> rebase
     """Short summary.
 
     Parameters
@@ -825,10 +870,15 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 >>>>>>> add network docstring
 >>>>>>> add network docstring
+=======
+=======
+>>>>>>> graph module
+>>>>>>> rebase
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
 # generate network given weight by relative speed
 def genStreetNet_speed(Edgelist,reVelo):
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -848,6 +898,8 @@ def genStreetNet_speed(Edgelist,reVelo):
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
+=======
+>>>>>>> rebase
     """Short summary.
     Generate road network assigned relative velocity as weight on each link
 
@@ -866,6 +918,7 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> since_problem
 =======
 >>>>>>> add docstring
@@ -888,6 +941,10 @@ def genStreetNet_speed(Edgelist,reVelo):
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
+=======
+=======
+>>>>>>> graph module
+>>>>>>> rebase
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -902,6 +959,7 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -942,6 +1000,8 @@ def remove_qRoad(q,Edgelist,reVelo):
 =======
 =======
 >>>>>>> last..
+=======
+>>>>>>> rebase
 
 # remove link under parameter q
 def remove_qRoad(q,Edgelist,reVelo):
@@ -964,6 +1024,7 @@ def remove_qRoad(q,Edgelist,reVelo):
     """
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
@@ -974,6 +1035,12 @@ def remove_qRoad(q,Edgelist,reVelo):
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
+=======
+=======
+# remove link under parameter q
+def remove_qRoad(q,Edgelist,reVelo):
+>>>>>>> graph module
+>>>>>>> rebase
     orign_net = genStreetNet_speed(Edgelist,reVelo)
     return_net = genStreetNet_speed(Edgelist,reVelo)
     Edge = np.array(orign_net.edges)
@@ -984,6 +1051,7 @@ def remove_qRoad(q,Edgelist,reVelo):
 
 # get weakly connected components
 def weaklycc(network):
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1005,6 +1073,8 @@ def weaklycc(network):
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
+=======
+>>>>>>> rebase
     """Short summary.
     Generate weakly connected cluster distribution
 
@@ -1066,6 +1136,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
@@ -1099,6 +1170,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> since 11
 =======
 >>>>>>> last..
+=======
+>>>>>>> rebase
 >>>>>>> since_problem
 >>>>>>> since problem6
 =======
@@ -1115,10 +1188,14 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
+=======
+=======
+>>>>>>> rebase
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
 def criticalGraph(Period,edgelist,speedlist0,speedlist1):
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> graph module
 <<<<<<< HEAD
@@ -1233,7 +1310,13 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 =======
 >>>>>>> add docstring
+<<<<<<< HEAD
 >>>>>>> add docstring
+=======
+=======
+>>>>>>> graph module
+>>>>>>> rebase
+>>>>>>> rebase
     # relative velocity
     rv = relativeVelocity(Period,speedlist0,speedlist1)
     # get GCC, SCC each q
@@ -1267,6 +1350,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
 =======
     plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
@@ -1344,6 +1428,8 @@ def logBinning(dist,base):
 >>>>>>> since_problem4
 =======
 >>>>>>> last..
+=======
+>>>>>>> rebase
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
     plt.close()
 
@@ -1398,6 +1484,8 @@ def logBinning(dist,base):
 =======
 =======
 <<<<<<< HEAD
+=======
+>>>>>>> rebase
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
     plt.close()
 >>>>>>> last..
@@ -1434,6 +1522,7 @@ def logBinning(dist,base):
         hist[i]/=(base**(i+1)-base**i)
     return x_hist,hist
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
@@ -1444,3 +1533,9 @@ def logBinning(dist,base):
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
+=======
+=======
+    plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
+    plt.close()
+>>>>>>> graph module
+>>>>>>> rebase
