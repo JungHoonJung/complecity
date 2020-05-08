@@ -214,7 +214,6 @@ def convert2npy_edgelist(path,filename):
     Chengdu road linklist's raw data is csv format. This function convert to npy format.
 >>>>>>> to rebase
 
-<<<<<<< HEAD
 # generate Street network
 def genStreetNet(Edgelist):
 <<<<<<< HEAD
@@ -223,6 +222,10 @@ def genStreetNet(Edgelist):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> since_problem4
 =======
 <<<<<<< HEAD
 =======
@@ -282,6 +285,7 @@ def convert2npy_linkspeed(Path):
 >>>>>>> since_problem
 =======
 >>>>>>> rebase2
+<<<<<<< HEAD
     """Short summary.
 <<<<<<< HEAD
 >>>>>>> rebase2
@@ -311,6 +315,11 @@ def convert2npy_linkspeed(Path):
     Chengdu road speed data's raw data is csv format. This function convert to npy format.
 >>>>>>> Adding 'raw csv data' conver to npy format.
 >>>>>>> since_problem3
+=======
+=======
+>>>>>>> since_problem4
+    """Short summary.
+>>>>>>> since_problem4
 
     Parameters
     ----------
@@ -326,6 +335,7 @@ def convert2npy_linkspeed(Path):
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -453,6 +463,8 @@ def genStreetNet(Edgelist):
 >>>>>>> docstring test
 =======
 >>>>>>> graph module
+=======
+>>>>>>> since_problem4
 =======
 >>>>>>> since_problem3
 >>>>>>> docstring test
@@ -621,6 +633,7 @@ def Max_velocity(velocity0,velocity1):
 =======
 >>>>>>> graph module
 >>>>>>> since_problem
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 >>>>>>> last..
@@ -1091,6 +1104,8 @@ def Max_velocity(velocity0,velocity1):
 >>>>>>> since_problem
 =======
 >>>>>>> since_problem3
+=======
+>>>>>>> since_problem4
     max_velo = np.zeros(len(np.unique(velocity0['Link'])))
     for i in range(len(max_velo)):
         max_velo[i] = max([max(velocity0[velocity0['Link'] == i+1]['Speed']),max(velocity1[velocity1['Link'] == i+1]['Speed'])])
@@ -1114,6 +1129,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since_problem3
 =======
@@ -1135,6 +1151,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> to rebase
 =======
 >>>>>>> since_problem2
+=======
+>>>>>>> since_problem4
 =======
 >>>>>>> rebase
 =======
@@ -1234,6 +1252,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 >>>>>>> since_problem3
 >>>>>>> since_problem3
+=======
+>>>>>>> since_problem4
     """Short summary.
     Divide road's each period speed by Fastest speed, get relative velocity each road
 
@@ -1482,6 +1502,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> rebase2
 =======
 =======
@@ -1505,6 +1526,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 >>>>>>> last..
 =======
+=======
+>>>>>>> since_problem4
 >>>>>>> rebase
 >>>>>>> to rebase
 =======
@@ -1519,9 +1542,6 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> rebase
 >>>>>>> since_problem2
 >>>>>>> since_problem
-=======
-=======
->>>>>>> Adding 'raw csv data' conver to npy format.
 >>>>>>> since_problem3
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
@@ -2185,6 +2205,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 >>>>>>> since 11
 <<<<<<< HEAD
@@ -2207,6 +2228,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 =======
 >>>>>>> graph module
+=======
+>>>>>>> since_problem4
 >>>>>>> since_problem
 <<<<<<< HEAD
 =======
@@ -2250,11 +2273,17 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 def criticalGraph(Period,edgelist,speedlist0,speedlist1):
 >>>>>>> graph module
+<<<<<<< HEAD
 =======
 def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> Adding 'raw csv data' conver to npy format.
 >>>>>>> since_problem3
+<<<<<<< HEAD
 >>>>>>> since_problem3
+=======
+=======
+>>>>>>> since_problem4
+>>>>>>> since_problem4
     # relative velocity
     rv = relativeVelocity(Period,speedlist0,speedlist1)
     # get GCC, SCC each q
@@ -2276,6 +2305,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
     curve2 = ax2.errorbar(q,cc[1]/1902,marker='^',markersize=20,label='SCC',c='orange')
     curves=[curve1,curve2]
     ax1.legend(curves,[curve.get_label()for curve in curves],fontsize='x-large')
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -2359,6 +2389,8 @@ def logBinning(dist,base):
 >>>>>>> since_problem2
 =======
 >>>>>>> since_problem3
+=======
+>>>>>>> since_problem4
 =======
 =======
 <<<<<<< HEAD
@@ -2525,6 +2557,8 @@ def logBinning(dist,base):
 <<<<<<< HEAD
 >>>>>>> since_problem3
 >>>>>>> since_problem3
+=======
+>>>>>>> since_problem4
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
     plt.close()
 <<<<<<< HEAD
@@ -2570,6 +2604,7 @@ def logBinning(dist,base):
     return x_hist,hist
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 <<<<<<< HEAD
 >>>>>>> since problem6
@@ -2589,17 +2624,9 @@ def logBinning(dist,base):
 >>>>>>> since_problem
 =======
 >>>>>>> since_problem3
+=======
+>>>>>>> since_problem4
 >>>>>>> since_problem
-=======
-=======
-    plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
-    plt.close()
->>>>>>> graph module
-=======
-    plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
-=======
-    plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
->>>>>>> Adding 'raw csv data' conver to npy format.
     plt.close()
 >>>>>>> graph module
 >>>>>>> since_problem3
