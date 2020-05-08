@@ -124,18 +124,22 @@ def genStreetNet(Edgelist):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
 =======
 >>>>>>> to rebase
+=======
+>>>>>>> rebase2
 >>>>>>> since_problem
 =======
 =======
 =======
 >>>>>>> graph module
 =======
+<<<<<<< HEAD
 >>>>>>> since_problem2
 =======
 >>>>>>> add network docstring
@@ -144,6 +148,8 @@ def genStreetNet(Edgelist):
 >>>>>>> since_problem
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> rebase2
 >>>>>>> rebase2
 
 <<<<<<< HEAD
@@ -189,6 +195,17 @@ def genStreetNet(Edgelist):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> graph module
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+=======
+>>>>>>> rebase2
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> graph module
@@ -228,8 +245,13 @@ def convert2npy_linkspeed(Path):
 =======
 >>>>>>> last..
 =======
+<<<<<<< HEAD
 >>>>>>> last..
 >>>>>>> since_problem
+=======
+>>>>>>> rebase2
+    """Short summary.
+>>>>>>> rebase2
 
     Parameters
     ----------
@@ -1086,6 +1108,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> last..
 =======
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> to rebase
 >>>>>>> to rebase
@@ -1184,6 +1207,10 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> docstring test
 =======
 >>>>>>> last..
+=======
+=======
+>>>>>>> rebase2
+>>>>>>> rebase2
     """Short summary.
 
     Parameters
