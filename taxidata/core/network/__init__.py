@@ -106,6 +106,7 @@ def genStreetNet(Edgelist):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> graph module
 =======
     """Short summary.
@@ -191,8 +192,12 @@ def genStreetNet(Edgelist):
 =======
 =======
 >>>>>>> since_problem
+=======
+>>>>>>> since_problem2
 >>>>>>> graph module
 =======
+=======
+>>>>>>> docstring test
     """Short summary.
 
     Parameters
@@ -206,13 +211,19 @@ def genStreetNet(Edgelist):
         Description of returned object.
 
     """
+<<<<<<< HEAD
 >>>>>>> docstring test
 <<<<<<< HEAD
 >>>>>>> rebase2
 =======
 =======
 >>>>>>> graph module
+<<<<<<< HEAD
 >>>>>>> since_problem
+=======
+=======
+>>>>>>> docstring test
+>>>>>>> since_problem2
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -324,6 +335,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> add network docstring
 =======
@@ -332,6 +344,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> rebase2
 =======
 >>>>>>> since_problem
+=======
+>>>>>>> since_problem2
     """Short summary.
     Divide road's each period speed by Fastest speed, get relative velocity each road
 
@@ -353,6 +367,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 >>>>>>> graph module
 =======
+=======
+>>>>>>> docstring test
     """Short summary.
 
     Parameters
@@ -375,6 +391,7 @@ def relativeVelocity(Period,velocity0,velocity1):
     .. note::
         test note
     """
+<<<<<<< HEAD
 >>>>>>> docstring test
 =======
 >>>>>>> Adding 'raw csv data' conver to npy format.
@@ -383,6 +400,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 =======
 >>>>>>> graph module
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> rebase
 =======
@@ -416,6 +434,10 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 >>>>>>> graph module
 >>>>>>> since_problem
+=======
+=======
+>>>>>>> docstring test
+>>>>>>> since_problem2
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
 # generate network given weight by relative speed
