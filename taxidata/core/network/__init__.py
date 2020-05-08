@@ -6,6 +6,9 @@ import matplotlib.pyplot as plt
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> add docstring
 =======
 >>>>>>> add docstring
 import math
@@ -320,6 +323,9 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> add docstring
 =======
 >>>>>>> add docstring
     """Short summary.
@@ -338,10 +344,13 @@ def genStreetNet_speed(Edgelist,reVelo):
 
     """
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> graph module
 =======
 >>>>>>> graph module
+=======
+>>>>>>> add docstring
 =======
 >>>>>>> add docstring
     # node label & number
@@ -357,6 +366,7 @@ def genStreetNet_speed(Edgelist,reVelo):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 # remove link under parameter q
 def remove_qRoad(q,Edgelist,reVelo):
@@ -389,6 +399,11 @@ def remove_qRoad(q,Edgelist,reVelo):
 
 # remove link under parameter q
 def remove_qRoad(q,Edgelist,reVelo):
+=======
+
+# remove link under parameter q
+def remove_qRoad(q,Edgelist,reVelo):
+>>>>>>> add docstring
     """Short summary.
     Generate road network that cutted links(roads) which weight(relative velocity) smaller than q
 
@@ -406,6 +421,9 @@ def remove_qRoad(q,Edgelist,reVelo):
     type Graph()
 
     """
+<<<<<<< HEAD
+>>>>>>> add docstring
+=======
 >>>>>>> add docstring
     orign_net = genStreetNet_speed(Edgelist,reVelo)
     return_net = genStreetNet_speed(Edgelist,reVelo)
@@ -420,6 +438,9 @@ def weaklycc(network):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> add docstring
 =======
 >>>>>>> add docstring
     """Short summary.
@@ -434,6 +455,7 @@ def weaklycc(network):
     type list
 
     """
+<<<<<<< HEAD
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
@@ -460,6 +482,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 =======
 =======
 >>>>>>> graph module
+=======
+>>>>>>> add docstring
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
@@ -471,8 +495,29 @@ def criticalGraph(Period,edgelist,speedlist0,speedlist1):
 >>>>>>> graph module
 =======
 def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
+<<<<<<< HEAD
 >>>>>>> Adding 'raw csv data' conver to npy format.
 =======
+>>>>>>> add docstring
+=======
+    """Short summary.
+    calculate critical q point when second giant connected component was max.
+    Parameters
+    ----------
+    day : string
+        ex) '10' input data's day
+    Period : string
+        ex) '08:00-08:02' time period
+    edgelist : np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),
+        ('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+    speedlist0 : np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+    speedlist1 : np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+
+    Returns
+    -------
+    type
+        fgure.png
+    """
 >>>>>>> add docstring
     # relative velocity
     rv = relativeVelocity(Period,speedlist0,speedlist1)
@@ -532,6 +577,7 @@ def logBinning(dist,base):
     for i in range(maximum):
         hist[i]/=(base**(i+1)-base**i)
     return x_hist,hist
+<<<<<<< HEAD
 =======
     plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
     plt.close()
@@ -577,4 +623,6 @@ def logBinning(dist,base):
     for i in range(maximum):
         hist[i]/=(base**(i+1)-base**i)
     return x_hist,hist
+>>>>>>> add docstring
+=======
 >>>>>>> add docstring
