@@ -123,10 +123,13 @@ def genStreetNet(Edgelist):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
+=======
+>>>>>>> to rebase
 >>>>>>> since_problem
 =======
 =======
@@ -1074,12 +1077,18 @@ def relativeVelocity(Period,velocity0,velocity1):
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add network docstring
 =======
 >>>>>>> rebase
 =======
 <<<<<<< HEAD
 >>>>>>> last..
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> to rebase
+>>>>>>> to rebase
     """Short summary.
 
     Parameters
@@ -1103,6 +1112,7 @@ def relativeVelocity(Period,velocity0,velocity1):
         test note
     """
 >>>>>>> docstring test
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -1148,6 +1158,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> since_problem3
 >>>>>>> since_problem3
 =======
+=======
+>>>>>>> to rebase
 >>>>>>> rebase
 >>>>>>> since_problem
 >>>>>>> since_problem3
@@ -1219,6 +1231,9 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> since_problem4
 =======
 >>>>>>> last..
+=======
+>>>>>>> rebase
+>>>>>>> to rebase
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
 # generate network given weight by relative speed
@@ -1598,6 +1613,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
@@ -1641,6 +1657,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> to rebase
 =======
 >>>>>>> to rebase
+=======
+>>>>>>> to rebase
 >>>>>>> since_problem
 >>>>>>> since problem6
 =======
@@ -1673,6 +1691,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> since 11
 =======
 >>>>>>> last..
+=======
+>>>>>>> to rebase
 =======
 >>>>>>> to rebase
 =======
@@ -1878,6 +1898,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
 =======
     plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
@@ -1961,6 +1982,8 @@ def logBinning(dist,base):
 >>>>>>> since_problem3
 =======
 >>>>>>> last..
+=======
+>>>>>>> to rebase
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
     plt.close()
 
@@ -2018,6 +2041,8 @@ def logBinning(dist,base):
 <<<<<<< HEAD
 =======
 >>>>>>> rebase
+=======
+>>>>>>> to rebase
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
     plt.close()
 >>>>>>> last..
