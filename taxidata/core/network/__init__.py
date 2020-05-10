@@ -149,7 +149,6 @@ def Max_velocity(velocity0,velocity1):
 
 # get relative velocity
 def relativeVelocity(Period,velocity0,velocity1):
-<<<<<<< HEAD
     """Short summary.
     Divide road's each period speed by Fastest speed, get relative velocity each road
 
@@ -282,6 +281,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
     type
         fgure.png
     """
+<<<<<<< HEAD
 <<<<<<< HEAD
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
