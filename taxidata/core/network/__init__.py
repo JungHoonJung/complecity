@@ -75,6 +75,7 @@ def genStreetNet(Edgelist):
 
     """
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -87,6 +88,8 @@ def genStreetNet(Edgelist):
 <<<<<<< HEAD
 >>>>>>> rebase
 =======
+=======
+>>>>>>> to rebase
 
 <<<<<<< HEAD
 >>>>>>> last..
@@ -480,6 +483,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since_problem4
 =======
@@ -525,6 +529,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> rebase
 =======
 =======
+=======
+>>>>>>> to rebase
     """Short summary.
 
     Parameters
@@ -549,6 +555,7 @@ def relativeVelocity(Period,velocity0,velocity1):
     """
 >>>>>>> docstring test
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> rebase2
 =======
 =======
@@ -570,6 +577,9 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> since_problem4
 =======
 >>>>>>> last..
+=======
+>>>>>>> rebase
+>>>>>>> to rebase
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
 # generate network given weight by relative speed
@@ -682,6 +692,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
@@ -695,6 +706,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> add docstring
 =======
 >>>>>>> last..
+=======
+>>>>>>> to rebase
 =======
 >>>>>>> to rebase
 =======
@@ -770,6 +783,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
 =======
     plt.savefig('Chengdu_june1_{}_ciritcalpoint_{}.png'.format(Period,criticalPoint),transparent=True,dpi=300)
@@ -826,6 +840,8 @@ def logBinning(dist,base):
 =======
 =======
 >>>>>>> last..
+=======
+>>>>>>> to rebase
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
     plt.close()
 
