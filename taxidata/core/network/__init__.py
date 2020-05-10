@@ -436,6 +436,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> add network docstring
 =======
@@ -454,6 +455,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> since_problem4
 =======
 >>>>>>> last..
+=======
+>>>>>>> to rebase
     """Short summary.
     Divide road's each period speed by Fastest speed, get relative velocity each road
 
@@ -568,6 +571,21 @@ def relativeVelocity(Period,velocity0,velocity1):
 
 # generate network given weight by relative speed
 def genStreetNet_speed(Edgelist,reVelo):
+    """Short summary.
+    Generate road network assigned relative velocity as weight on each link
+
+    Parameters
+    ----------
+    Edgelist : np.array(dtype=[('Link', 'int'), ('Node_Start', 'int'), ('Longitude_Start', 'float'),
+        ('Latitude_Start', 'float'),('Node_End', 'int'), ('Longitude_End', 'float'),('Latitude_End', 'float'),('LENGTH', 'float')])
+
+    reVelo : type np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
+
+    Returns
+    -------
+    type Graph()
+
+    """
     # node label & number
     node_list = np.unique(Edgelist['Node_Start'])
     # network generating
@@ -659,6 +677,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
@@ -672,6 +691,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> add docstring
 =======
 >>>>>>> last..
+=======
+>>>>>>> to rebase
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
