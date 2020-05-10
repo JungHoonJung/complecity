@@ -72,6 +72,7 @@ def genStreetNet(Edgelist):
 
 
     """
+<<<<<<< HEAD
 
 # edgelist data convert to npy
 def convert2npy_edgelist(path,filename):
@@ -165,6 +166,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 
 
     """
+<<<<<<< HEAD
     """Short summary.
 
     Parameters
@@ -188,6 +190,7 @@ def relativeVelocity(Period,velocity0,velocity1):
         test note
     """
 >>>>>>> docstring test
+>>>>>>> rebase
     return np.array(velocity0[velocity0['Period']==Period]['Speed']/Max_velocity(velocity0,velocity1))
 
 # generate network given weight by relative speed
@@ -283,6 +286,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
     """
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
 
 # measuring GCC, SCC, CPoint, and generating graph
@@ -309,7 +313,6 @@ def criticalGraph(Period,edgelist,speedlist0,speedlist1):
     curve2 = ax2.errorbar(q,cc[1]/1902,marker='^',markersize=20,label='SCC',c='orange')
     curves=[curve1,curve2]
     ax1.legend(curves,[curve.get_label()for curve in curves],fontsize='x-large')
-<<<<<<< HEAD
     plt.savefig('Chengdu_june{}_{}_ciritcalpoint_{}.png'.format(day,Period,criticalPoint),transparent=True,dpi=300)
     plt.close()
 
