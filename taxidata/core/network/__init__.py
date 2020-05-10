@@ -882,6 +882,7 @@ def relativeVelocity(Period,velocity0,velocity1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> since_problem3
 =======
@@ -899,6 +900,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> to rebase
 =======
 >>>>>>> since_problem4
+=======
+>>>>>>> to rebase
 =======
 >>>>>>> rebase
 =======
@@ -972,6 +975,8 @@ def relativeVelocity(Period,velocity0,velocity1):
 >>>>>>> since_problem4
 =======
 >>>>>>> last..
+=======
+>>>>>>> to rebase
 =======
 >>>>>>> to rebase
     """Short summary.
@@ -1592,6 +1597,7 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> add docstring
 =======
 >>>>>>> add docstring
@@ -1633,6 +1639,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> last..
 =======
 >>>>>>> to rebase
+=======
+>>>>>>> to rebase
 >>>>>>> since_problem
 >>>>>>> since problem6
 =======
@@ -1665,6 +1673,8 @@ def criticalGraph(day,Period,edgelist,speedlist0,speedlist1):
 >>>>>>> since 11
 =======
 >>>>>>> last..
+=======
+>>>>>>> to rebase
 =======
 >>>>>>> to rebase
     return [len(c) for c in sorted(nx.weakly_connected_components(network), key=len, reverse=True)]
