@@ -88,6 +88,7 @@ def genStreetNet(Edgelist):
 >>>>>>> rebase
 =======
 
+<<<<<<< HEAD
 >>>>>>> last..
 # edgelist, speed data convert to npy
 # def conver2npy_edgelist(path,filename):
@@ -178,6 +179,12 @@ def convert2npy_linkspeed(Path):
         filename=int(re.findall('\d+',path)[0])
         fileType=int(re.findall('\d+',path)[1])
         np.save('speed[{}]_[{}].npy'.format(filename,fileType),data)
+=======
+# edgelist data convert to npy
+def convert2npy_edgelist(path,filename):
+    """
+    Chengdu road linklist's raw data is csv format. This function convert to npy format.
+>>>>>>> to rebase
 
 # generate Street network
 def genStreetNet(Edgelist):
@@ -214,13 +221,13 @@ def genStreetNet(Edgelist):
 
     Parameters
     ----------
-    Edgelist : type
-        Description of parameter `Edgelist`.
+    Path : string ex) '/home/dataset'
+        path of raw csv data
 
     Returns
     -------
-    type
-        Description of returned object.
+    type speed[monthDay]_[1or0].npy
+        np.array(dtype=[('Period','U12'),('Link','int'),('Speed','float')])
 
     """
 >>>>>>> docstring test
