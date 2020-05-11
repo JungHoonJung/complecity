@@ -24,7 +24,18 @@ class segment:
             self.total_angle  = np.array([0],dtype = np.float32)
 
     def expand(self, edge):
+        """Short summary.
         '''return copy of segment appending extra edge '''
+        Parameters
+        ----------
+        edge : type
+            (start_node, end_node, {'ID', 'length', 'geometry', 'angle'})
+
+        Returns
+        -------
+        type
+            Description of returned object.
+        """
         temp = segment()
         temp.start_node = self.start_node
         temp.past_node = edge[0]
@@ -43,7 +54,19 @@ class segment:
         return temp
 
     def check(self, k):
+        """Short summary.
         '''check condition of k segments'''
+        Parameters
+        ----------
+        k : int
+            limited path length
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
+
         return self.length> k or self.total_angle[-1]<-2*np.pi or self.total_angle[-1]>2*np.pi #(self.total_angle <-2*np.pi).any() or (self.total_angle > 2*np.pi).any()
 
     def overlap(self, edge):
@@ -91,7 +114,24 @@ class segment:
         return n
 
     def plot(self, pos, *arg,**kwarg):
+        """Short summary.
         '''plot segment in aspect of graph'''
+        Parameters
+        ----------
+        pos : type
+            Description of parameter `pos`.
+        *arg : type
+            Description of parameter `*arg`.
+        **kwarg : type
+            Description of parameter `**kwarg`.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
+
         temp = nx.path_graph(self.num+1,create_using=nx.DiGraph)
         position = {}
         for i,n in enumerate(self.nodes()):
@@ -119,18 +159,17 @@ class Roadnetwork(nx.MultiDiGraph):
 
         Parameters
         ----------
-        node : type
-            Description of parameter `node`.
-        depth_limit : type
-            Description of parameter `depth_limit`.
+        node : int
+            start path node which on the network
+        depth_limit : int
+            depth of path from start node
 
         Returns
         -------
         type
-            Description of returned object.
+            subgraph of path
 
         """
-
         nodes = {node : 0}
         for edge in nx.bfs_edges(self, node, depth_limit= depth_limit):
             nodes[edge[1]] = 0
@@ -141,7 +180,24 @@ class Roadnetwork(nx.MultiDiGraph):
         return self.subgraph(nodes)
 
     def nn_nodes(G, node, depth_limit = 2):
+        """Short summary.
         '''return nodes from given node with bfs manner'''
+        Parameters
+        ----------
+        G : Network(MultiDiGraph)
+
+        node : int
+            G's node
+        depth_limit : int
+            depth of path from start node
+
+        Returns
+        -------
+        type list
+            node list
+
+        """
+
         nodes = {node : 0}
         for edge in nx.bfs_edges(G, node, depth_limit= depth_limit):
             nodes[edge[1]] = 0
@@ -154,17 +210,56 @@ class Roadnetwork(nx.MultiDiGraph):
 
 
     def edge_plot(G):
+        """Short summary.
         '''plot edges in given graph'''
+        Parameters
+        ----------
+        G : Network
+
+        Returns
+        -------
+        plot edges in given graph
+        """
+
         for i in G.edges(data = 'geometry'):
             plt.plot(*i[2].xy)
 
     def edgelist_plot(G, edgelist):
+        """Short summary.
         '''plot edges in given edgelist '''
+        Parameters
+        ----------
+        G : Network
+
+        edgelist : geopandas
+
+        Returns
+        -------
+        type
+            plot edges
+
+        """
+
         for edge in edgelist:
             plt.plot(*G.edges[edge]['geometry'].xy)
 
     def subgraph_plot(G, node, depth_limit = 2):
+        """Short summary.
         '''making subgraph and plot'''
+        Parameters
+        ----------
+        G : Network
+
+        node : int
+            start node of path
+        depth_limit : int
+            depth of path from start node
+
+        Returns
+        -------
+        type
+            subgraph bfs_edges
+        """
         sub = subgraph_of_node(G,node, depth_limit)
         node_pos = pos(sub)[node]
 
@@ -176,7 +271,22 @@ class Roadnetwork(nx.MultiDiGraph):
 
 
 def k_segments(G, node, k= 100):
+    """Short summary.
     '''k_segments with only breadth-first searching'''
+    Parameters
+    ----------
+    G : Network
+
+    node : int
+        node which starts point of k_segment
+    k : int
+        segment's length
+
+    Returns
+    -------
+    type dictionay
+        k-segments
+    """
     segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     iter_num  = 0
@@ -202,7 +312,24 @@ def k_segments(G, node, k= 100):
     return k_segments
 
 def k_segments_strict_bfs(G, node, k= 100):
-    '''no overlapping node'''
+    """Short summary.
+    '''k_segment with no overlapping node'''
+    Parameters
+    ----------
+    G : Network
+        Description of parameter `G`.
+    node : int
+        node which starts point of k_segment
+    k : int
+        segment's length
+
+    Returns
+    -------
+    type dictionay
+        k-segments with no overlapping node
+
+    """
+
     segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     nodes = {node :True}
@@ -230,7 +357,24 @@ def k_segments_strict_bfs(G, node, k= 100):
     return k_segments
 
 def k_segments_strict_bfs_with_length(G, node, k= 100):
-    '''no overlapping node and search with length.'''
+    """Short summary.
+    '''k_segment with no overlapping node and search with length.'''
+    Parameters
+    ----------
+    G : Network
+
+    node : int
+        node which starts point of k_segment
+    k : int
+        segment's length
+
+    Returns
+    -------
+    type dictionay
+        k-segments with no overlapping node and search with length
+
+    """
+
     segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     nodes = {node :True}
@@ -260,7 +404,24 @@ def k_segments_strict_bfs_with_length(G, node, k= 100):
     return k_segments
 
 def k_segments_semi_strict_bfs(G, node, k= 100):
-    '''no overlap within single segment.'''
+    """Short summary.
+    '''k_segment with no overlap within single segment.'''
+    Parameters
+    ----------
+    G : Network
+
+    node : int
+        node which starts point of k_segment
+    k : int
+        segment's length
+
+    Returns
+    -------
+    type dictionay
+        k-segments with no overlapping node and search with length
+
+    """
+
     segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     nodes = {node :True}
