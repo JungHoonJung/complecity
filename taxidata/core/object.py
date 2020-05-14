@@ -8,53 +8,55 @@ from ..rawfiles import rawfiles
 import logging
 from .lib.plot import plot_seoul
 
-__all__ = ['taxiarray', 'triparray', 'Dataset'] ## triparray == od_data(id, origin, destination) .npy => .hdf5
+__all__ = ['taxiarray', 'triparray', 'Dataset','trajectory'] ## triparray == od_data(id, origin, destination) .npy => .hdf5
 
 logging.basicConfig(format='%(asctime)s %(name)-10s : [%(levelname)-8s] %(message)s')
 
 
 class taxiarray(np.ndarray):
+
     '''pratical data container based on structured array of numoy.
     traditionally, data type is '['id', 'x','y','time','passenger']'.
     please check datatype.'''
 
 
-    @property
-    def pos(self):
-        """Short summary.
+    def pos():
+        doc = """position of taxi.
 
         Returns
         -------
-        type
-            Description of returned object.
+        np.ndarray
+            in taxiarray, return np.array([x_array ,y_array])
 
         """
-        return
-    @pos.getter
-    def pos(self):
-        return np.array(self[self._posx],self[self._posy])
-    @pos.setter
-    def pos(self, value):
-        self._posx = value[0]
-        self._posy = value[1]
+        def fget(self):
+            return np.array([self[self._posx],self[self._posy]])
+        def fset(self, value):
+            self._posx = value[0]
+            self._posy = value[1]
+        def fdel(self):
+            return
+        return locals()
+    pos = property(**pos())
 
-    @property
-    def taxi_id(self):
-        """Short summary.
+    def taxi_id():
+        doc = """id of taxi.
 
-        Returns
-        -------
-        type
-            Description of returned object.
+                Returns
+                -------
+                np.index_array
+                    in taxiarray, return np.array([id_array])
 
-        """
-        return self._taxi_id
-    @taxi_id.setter
-    def taxi_id(self, index_array):
-        self._taxi_id = index_array
-    @taxi_id.getter
-    def taxi_id(self):
-        return [id for id,_ in self._taxi_id]
+                """
+        def fget(self):
+            return [id for id,_ in self._taxi_id]
+        def fset(self, index_array):
+            self._taxi_id = index_array
+        def fdel(self):
+            del self._taxi_id
+        return locals()
+    taxi_id = property(**taxi_id())
+
 
     def iterate_with(self, type='id'):
         '''other iteration method for usefulness.
@@ -66,6 +68,23 @@ class taxiarray(np.ndarray):
             i = index
 
     def plot(self, id='all', time ='all'):
+        """Short summary.
+
+        Parameters
+        ----------
+        id : list
+            id of taxi.
+        time : tuple
+            time set (start,end).
+
+        Returns
+        -------
+        plt.figure
+
+            plot taxi in time set
+
+
+        """
         '''plot this data on seoul map.'''
         pass
 
@@ -87,12 +106,31 @@ class taxiarray(np.ndarray):
         pass
 
     def distance(self, point):
-        '''return distance between taxi data's position and given point.'''
+        """return distance between taxi data's position and given point.
+        Parameters
+        ----------
+        point : array,tuple,list
+            the point where you want to know how far from each point from trajectories.
+
+        Returns
+        -------
+        list
+            list of distance from each point from trajectories.
+
+        """
+
         pass
 
 
     def get_trajectories(self):
-        '''return trajectory list by taxi_id'''
+        """return trajectories list by taxi_id.
+
+        Returns
+        -------
+        np.ndarray
+            in taxiarray, return np.array([trajectory_array])
+
+        """
         t = []
         for taxi_id, array in self.iterate_with('id'):
             taxi = array.view(trajectory)
@@ -105,7 +143,14 @@ class trajectory(taxiarray):
     interaction with segment, other trajectories. map matching.
     '''
     def taxi_id():
-        doc = "The taxi_id property."
+
+        doc ="""The taxi_id property.
+
+                Returns
+                -------
+                np.index_array
+                    in taxiarray, return np.array([id_array])
+                """
         def fget(self):
             return self._taxi_id
         def fset(self, value):
@@ -122,20 +167,48 @@ class trajectory(taxiarray):
 
 
 class triparray(taxiarray):
-    """this array is specific data types for taxi data.
-    a component of triparray is consist of two taxiarray components.
-    so we call one of them to origin and the other as destination.
-    to manage that property, we provide trajectory and,
-    length or some other method for trip."""
+    """
+
+        Parameters
+        ----------
+        arg : type
+            Description of parameter `arg`.
+        dataset : type
+            Description of parameter `dataset`.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        this array is specific data types for taxi data.
+        a component of triparray is consist of two taxiarray components.
+        so we call one of them to origin and the other as destination.
+        to manage that property, we provide trajectory and,
+        length or some other method for trip.
+
+        """
+
+    """"""
+
 
     def __init__(self,  arg, dataset = None):
+
         super(triparray, self).__init__()
         self.arg = arg
         if dataset is not None:
             self.dataset = dataset
 
     def origins():
-        doc = "origin is start point of trip. this property gives origin points as taxiarray form."
+        doc = """origin is start point of trip. this property gives origin points as taxiarray form.
+
+        Returns
+        -------
+        tdarray
+            origin points as taxiarray form
+
+        """
+
         def fget(self): # IDEA: return origin points of this instance as taxi array
             return taxidata(_origins)
         return locals()
@@ -177,6 +250,14 @@ class Dataset:
             self.date = dt.datetime.fromtimestamp(f.attrs['Date']*86400+54000)
 
     def open(self):
+        """open h5py file
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
         self.h5py = h5py.File(self.file,'r')
 
     def close(self):
@@ -184,7 +265,15 @@ class Dataset:
         del self.h5py
 
     def id_list():
-        doc = "The id_list of saved taxis."
+
+        doc ="""id list of saved taxi
+
+                Returns
+                -------
+                array
+                    array([id of taxies]).
+
+                """
         def fget(self):
             if self._id_list is None:
                 with h5py.File(self.file, 'r') as f:
@@ -194,7 +283,15 @@ class Dataset:
     id_list = property(**id_list())
 
     def fields():
-        doc = "The id_list of saved taxis."
+
+        doc ="""return fields of saved taxis array.
+
+                Returns
+                -------
+                list
+                    list[fields]
+
+                """
         def fget(self):
             with h5py.File(self.file, 'r') as f:
                 return [field for field in f['taxidata']]
@@ -381,10 +478,42 @@ class Dataset:
             self.targets = self.id_list[:num]
 
     def set_taxi_id(self, ids):
-        '''ids = list of id. setting target with given id'''
-        self.targets = ids
+        """setting target with given id.
 
+        Parameters
+        ----------
+        ids : list of integer
+            list of ids that you want to extract from hdf5
+
+
+
+        """
+        self.targets = ids
+    def get_target_id(self):
+        """ return current targetted ids
+
+        Returns
+        -------
+        list
+            [id of taxies]
+
+        """
+
+        return self.targets
     def set_scope(self, **scope):
+        """Short summary.
+
+        Parameters
+        ----------
+        **scope : type
+            Description of parameter `**scope`.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
         '''if you want specific data, you can customizing scope of data.
         after setting scope class will automatically limit the data within scope.
         for now, it only for geometric.
