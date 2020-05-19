@@ -179,13 +179,11 @@ class Roadnetwork(nx.MultiDiGraph):
             nodes = [node]
         return self.subgraph(nodes)
 
-    def nn_nodes(G, node, depth_limit = 2):
+    def nn_nodes(self, node, depth_limit = 2):
         """Short summary.
         '''return nodes from given node with bfs manner'''
         Parameters
         ----------
-        G : Network(MultiDiGraph)
-
         node : int
             G's node
         depth_limit : int
@@ -199,7 +197,7 @@ class Roadnetwork(nx.MultiDiGraph):
         """
 
         nodes = {node : 0}
-        for edge in nx.bfs_edges(G, node, depth_limit= depth_limit):
+        for edge in nx.bfs_edges(self, node, depth_limit= depth_limit):
             nodes[edge[1]] = 0
 
         nodes = list(nodes.keys())
@@ -209,28 +207,19 @@ class Roadnetwork(nx.MultiDiGraph):
 
 
 
-    def edge_plot(G):
+    def edge_plot(self):
         """Short summary.
         '''plot edges in given graph'''
-        Parameters
-        ----------
-        G : Network
-
-        Returns
-        -------
-        plot edges in given graph
         """
 
-        for i in G.edges(data = 'geometry'):
+        for i in self.edges(data = 'geometry'):
             plt.plot(*i[2].xy)
 
-    def edgelist_plot(G, edgelist):
+    def edgelist_plot(self, edgelist):
         """Short summary.
         '''plot edges in given edgelist '''
         Parameters
         ----------
-        G : Network
-
         edgelist : geopandas
 
         Returns
@@ -241,15 +230,13 @@ class Roadnetwork(nx.MultiDiGraph):
         """
 
         for edge in edgelist:
-            plt.plot(*G.edges[edge]['geometry'].xy)
+            plt.plot(*self.edges[edge]['geometry'].xy)
 
-    def subgraph_plot(G, node, depth_limit = 2):
+    def subgraph_plot(self, node, depth_limit = 2):
         """Short summary.
         '''making subgraph and plot'''
         Parameters
         ----------
-        G : Network
-
         node : int
             start node of path
         depth_limit : int
@@ -260,7 +247,7 @@ class Roadnetwork(nx.MultiDiGraph):
         type
             subgraph bfs_edges
         """
-        sub = subgraph_of_node(G,node, depth_limit)
+        sub = subgraph_of_node(self,node, depth_limit)
         node_pos = pos(sub)[node]
 
         edge_plot(sub)
