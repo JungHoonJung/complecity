@@ -7,9 +7,9 @@ def segment_length(G, segment):
 
     Parameters
     ----------
-    G : MultiDiGraph
+    G : MultiDiGraph(networkx)
 
-    segment : list
+    segment : list(edges)
         ex) [(1, 2, 0),(2, 6, 0), ...]
     Returns
     -------
@@ -26,11 +26,11 @@ def stitch_score(G, segment_start_edgelist, segment_next_edgelist):
 
     Parameters
     ----------
-    G : MultiDiGraph
+    G : MultiDiGraph(networkx)
 
-    segment_start_edgelist : list
+    segment_start_edgelist : list(edges)
         ex) [(1, 2, 0),(2, 6, 0), ...]
-    segment_next_edgelist : list
+    segment_next_edgelist : list(edges)
         ex) [(1, 2, 0),(2, 6, 0), ...]
 
     Returns
@@ -39,9 +39,9 @@ def stitch_score(G, segment_start_edgelist, segment_next_edgelist):
         stitch score
     """
 
-    if segment_next_edgelist[0] in segment_start_edgelist:
-        start_overlap = segment_start_edgelist.index(segment_next_edgelist[0])   ## segment_2와 겹치는 segment_1의 시작부분
-        end_overlap = segment_start_edgelist.index(segment_next_edgelist[-1])    ## segment_2와 겹치는 segment_1의 끝부분
+    if segment_next_edgelist[0] in segment_start_edgelist:                       ## check whether segment2's first node on segment1
+        start_overlap = segment_start_edgelist.index(segment_next_edgelist[0])   ## start point on segment_1 which overlap with segment2
+        end_overlap = segment_start_edgelist.index(segment_next_edgelist[-1])    ## end point on segment_1 which overlap with segment2
 
         ## overlap length of segment
         overlap_length = 0
