@@ -48,7 +48,7 @@ class segment:
         temp.path[:-1] = self.path
         temp.path[-1] = edge[1:3]
         temp.total_length = self.total_length + edge[-1]['length']
-        temp.length = self.length
+        temp.length = self.length.copy()
         temp.length.append(edge[-1]['length'])
         temp.angle =  edge[-1]['angle']
         temp.edgelist = {edge[:3]:True}
