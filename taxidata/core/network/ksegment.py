@@ -18,7 +18,8 @@ class segment:
             self.path = np.array(edge[1:3],dtype = [('node','i4'),('id','i4')])
             self.past_node = self.start_node
             self.last_node = edge[1]
-            self.length = edge[-1]['length']
+            self.total_length = edge[-1]['length']
+            self.length = [edge[-1]['length']]
             self.angle = edge[-1]['angle']
             self.edgelist = {edge[:3]:True}
             self.total_angle  = np.array([0],dtype = np.float32)
@@ -44,7 +45,9 @@ class segment:
         temp.path = np.empty([temp.num],dtype = [('node','i4'),('id','i4')])
         temp.path[:-1] = self.path
         temp.path[-1] = edge[1:3]
-        temp.length = self.length + edge[-1]['length']
+        temp.total_length = self.total_length + edge[-1]['length']
+        temp.length = self.length
+        temp.length.append(edge[-1]['length'])
         temp.angle =  edge[-1]['angle']
         temp.edgelist = {edge[:3]:True}
         for e in self.edgelist:
@@ -67,7 +70,7 @@ class segment:
 
         """
 
-        return self.length> k or self.total_angle[-1]<-2*np.pi or self.total_angle[-1]>2*np.pi #(self.total_angle <-2*np.pi).any() or (self.total_angle > 2*np.pi).any()
+        return self.total_length> k or self.total_angle[-1]<-2*np.pi or self.total_angle[-1]>2*np.pi #(self.total_angle <-2*np.pi).any() or (self.total_angle > 2*np.pi).any()
 
     def overlap(self, edge):
         '''check overlap with given edge'''
@@ -80,19 +83,19 @@ class segment:
 
     def __lt__(self, other):
         '''sorting'''
-        return self.length<other.length
+        return self.total_length<other.total_length
 
     def __gt__(self, other):
         '''sorting'''
-        return self.length>other.length
+        return self.total_length>other.total_length
 
     def __le__(self, other):
         '''sorting'''
-        return self.length<=other.length
+        return self.total_length<=other.total_length
 
     def __ge__(self, other):
         '''sorting'''
-        return self.length>=other.length
+        return self.total_length>=other.total_length
 
     def edges(self):
         '''return edgelist'''
