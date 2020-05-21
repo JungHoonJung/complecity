@@ -15,7 +15,9 @@ class segment:
             #initialize with given node as segment
             self.start_node = edge[0]
             self.num = 1
-            self.path = np.array(edge[1:3],dtype = [('node','i4'),('id','i4')])
+
+            self.path = np.empty([1],dtype = [('node','i4'),('id','i4')])
+            self.path[0] = tuple(edge[1:3])
             self.past_node = self.start_node
             self.last_node = edge[1]
             self.total_length = edge[-1]['length']
@@ -25,8 +27,8 @@ class segment:
             self.total_angle  = np.array([0],dtype = np.float32)
 
     def expand(self, edge):
-        """Short summary.
-        '''return copy of segment appending extra edge '''
+        """return copy of segment appending extra edge
+
         Parameters
         ----------
         edge : type
@@ -109,9 +111,6 @@ class segment:
     def nodes(self):
         '''return node list'''
         n = [self.start_node]
-        if self.num == 1:
-            n.append(self.path['node'])
-            return n
         for p in self.path:
             n.append(p['node'])
         return n
