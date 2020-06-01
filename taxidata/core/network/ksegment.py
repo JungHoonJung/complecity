@@ -15,7 +15,9 @@ class segment:
             #initialize with given node as segment
             self.start_node = edge[0]
             self.num = 1
-            self.path = np.array(edge[1:3],dtype = [('node','i4'),('id','i4')])
+            self.path = np.empty([2], ,dtype = [('node','i4'),('id','i4')])
+            self.path[0] = tuple((edge[0], 0))
+            self.path[1] = tuple(edge[1:3])
             self.past_node = self.start_node
             self.last_node = edge[1]
             self.length = edge[-1]['length']
@@ -41,7 +43,7 @@ class segment:
         temp.past_node = edge[0]
         temp.last_node = edge[1]
         temp.num = self.num+1
-        temp.path = np.empty([temp.num],dtype = [('node','i4'),('id','i4')])
+        temp.path = np.empty([temp.num+1],dtype = [('node','i4'),('id','i4')])
         temp.path[:-1] = self.path
         temp.path[-1] = edge[1:3]
         temp.length = self.length + edge[-1]['length']
@@ -98,7 +100,7 @@ class segment:
         '''return edgelist'''
         e = []
         temp = self.start_node
-        for p in self.path:
+        for p in self.path[1:]:
             e.append((temp,p['node'],p['id']))
             temp = p['node']
         return e
@@ -109,7 +111,7 @@ class segment:
         if self.num == 1:
             n.append(self.path['node'])
             return n
-        for p in self.path:
+        for p in self.path[1:]:
             n.append(p['node'])
         return n
 
@@ -138,8 +140,31 @@ class segment:
             position[i] = pos[n]
         nx.draw(temp, position, *arg, **kwarg)
 
-    def stitch_score(self, other):
-        pass
+    def stitch_score(self, Segment1, Segment2):
+        """Calculate stitch score with Segment1 and Segment2
+
+        Parameters
+        ----------
+        Segment1 : np.array
+
+        Segment2 : np.array
+
+        Returns
+        -------
+        stitch score : float
+        """
+        start_overlap = np.where(Segment1.path == Segment2.path[0])[0]
+        # seg2 start node doesn't match with seg1
+        if len(start_overlap) == 0: stitchScore = 1
+        # seg2 start node in seg1
+        else:
+            if (Segment1.path[start_overlap[0]:] == Segment2.path[:len(Segment1.path[start_overlap[0]:])]).all():
+                overlap_length = sum(Segment1.length[start_overlap[0]:])
+                total_length = Segment1.total_length + Segment2.total_length - overlap_length
+                stitchScore = 1 - overlap_length/total_length
+            else:stitchScore = 1
+        return stitchScore
+
 
 
 class Roadnetwork(nx.MultiDiGraph):
