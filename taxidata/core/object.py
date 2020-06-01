@@ -14,12 +14,11 @@ logging.basicConfig(format='%(asctime)s %(name)-10s : [%(levelname)-8s] %(messag
 
 
 class taxiarray(np.ndarray):
-
     '''pratical data container based on structured array of numoy.
     traditionally, data type is '['id', 'x','y','time','passenger']'.
     please check datatype.'''
 
-
+#thekr
     def pos():
         doc = """position of taxi.
 
