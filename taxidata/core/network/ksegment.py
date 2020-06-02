@@ -15,9 +15,9 @@ class segment:
             #initialize with given node as segment
             self.start_node = edge[0]
             self.num = 1
-
-            self.path = np.empty([1],dtype = [('node','i4'),('id','i4')])
-            self.path[0] = tuple(edge[1:3])
+            self.path = np.empty([2], ,dtype = [('node','i4'),('id','i4')])
+            self.path[0] = tuple((edge[0], 0))
+            self.path[1] = tuple(edge[1:3])
             self.past_node = self.start_node
             self.last_node = edge[1]
             self.total_length = edge[-1]['length']
@@ -44,7 +44,7 @@ class segment:
         temp.past_node = edge[0]
         temp.last_node = edge[1]
         temp.num = self.num+1
-        temp.path = np.empty([temp.num],dtype = [('node','i4'),('id','i4')])
+        temp.path = np.empty([temp.num+1],dtype = [('node','i4'),('id','i4')])
         temp.path[:-1] = self.path
         temp.path[-1] = edge[1:3]
         temp.total_length = self.total_length + edge[-1]['length']
@@ -103,17 +103,14 @@ class segment:
         '''return edgelist'''
         e = []
         temp = self.start_node
-        for p in self.path:
+        for p in self.path[1:]:
             e.append((temp,p['node'],p['id']))
             temp = p['node']
         return e
 
     def nodes(self):
         '''return node list'''
-        n = [self.start_node]
-        for p in self.path:
-            n.append(p['node'])
-        return n
+        return self.path['node']
 
     def plot(self, pos, *arg,**kwarg):
         """Short summary.
@@ -141,7 +138,38 @@ class segment:
         nx.draw(temp, position, *arg, **kwarg)
 
     def stitch_score(self, other):
-        pass
+        """Calculate stitch score with `self` and other.
+
+        Parameters
+        ----------
+        other : taxidata.segment
+            a segment which will be compared with `self`
+
+        Returns
+        -------
+        stitch score : float
+            returns a consistency score which is cost of jointing self and other
+            
+        When the overlap between the last part of `self` and the initial part of `other` 
+        exists, `other` is consistent with `self`. The stitching score measure the consistency
+        with quantifying the size of overlap. If `self` is same as `other`, 
+        the size of overlap goes whole segment which is jointed with `self` and `other`, 
+        and the stitching score can be measured as 0.
+        The other hand, when `self` and `other` is not consistent, the stitching score will be 1
+        as maximum score.
+        """
+        start_overlap = np.where(self.path == other.path[0])[0]
+        # seg2 start node doesn't match with seg1
+        if len(start_overlap) == 0: stitchScore = 1
+        # seg2 start node in seg1
+        else:
+            if (self.path[start_overlap[0]:] == other.path[:len(self.path[start_overlap[0]:])]).all():
+                overlap_length = sum(self.length[start_overlap[0]:])
+                total_length = self.total_length + other.total_length - overlap_length
+                stitchScore = 1 - overlap_length/total_length
+            else:stitchScore = 1
+        return stitchScore
+
 
 
 class Roadnetwork(nx.MultiDiGraph):
@@ -181,13 +209,11 @@ class Roadnetwork(nx.MultiDiGraph):
             nodes = [node]
         return self.subgraph(nodes)
 
-    def nn_nodes(G, node, depth_limit = 2):
+    def nn_nodes(self, node, depth_limit = 2):
         """Short summary.
         '''return nodes from given node with bfs manner'''
         Parameters
         ----------
-        G : Network(MultiDiGraph)
-
         node : int
             G's node
         depth_limit : int
@@ -201,7 +227,7 @@ class Roadnetwork(nx.MultiDiGraph):
         """
 
         nodes = {node : 0}
-        for edge in nx.bfs_edges(G, node, depth_limit= depth_limit):
+        for edge in nx.bfs_edges(self, node, depth_limit= depth_limit):
             nodes[edge[1]] = 0
 
         nodes = list(nodes.keys())
@@ -211,28 +237,19 @@ class Roadnetwork(nx.MultiDiGraph):
 
 
 
-    def edge_plot(G):
+    def edge_plot(self):
         """Short summary.
         '''plot edges in given graph'''
-        Parameters
-        ----------
-        G : Network
-
-        Returns
-        -------
-        plot edges in given graph
         """
 
-        for i in G.edges(data = 'geometry'):
+        for i in self.edges(data = 'geometry'):
             plt.plot(*i[2].xy)
 
-    def edgelist_plot(G, edgelist):
+    def edgelist_plot(self, edgelist):
         """Short summary.
         '''plot edges in given edgelist '''
         Parameters
         ----------
-        G : Network
-
         edgelist : geopandas
 
         Returns
@@ -243,15 +260,13 @@ class Roadnetwork(nx.MultiDiGraph):
         """
 
         for edge in edgelist:
-            plt.plot(*G.edges[edge]['geometry'].xy)
+            plt.plot(*self.edges[edge]['geometry'].xy)
 
-    def subgraph_plot(G, node, depth_limit = 2):
+    def subgraph_plot(self, node, depth_limit = 2):
         """Short summary.
         '''making subgraph and plot'''
         Parameters
         ----------
-        G : Network
-
         node : int
             start node of path
         depth_limit : int
@@ -262,7 +277,7 @@ class Roadnetwork(nx.MultiDiGraph):
         type
             subgraph bfs_edges
         """
-        sub = subgraph_of_node(G,node, depth_limit)
+        sub = subgraph_of_node(self,node, depth_limit)
         node_pos = pos(sub)[node]
 
         edge_plot(sub)
