@@ -20,14 +20,15 @@ class segment:
             self.path[1] = tuple(edge[1:3])
             self.past_node = self.start_node
             self.last_node = edge[1]
-            self.length = edge[-1]['length']
+            self.total_length = edge[-1]['length']
+            self.length = [edge[-1]['length']]
             self.angle = edge[-1]['angle']
             self.edgelist = {edge[:3]:True}
             self.total_angle  = np.array([0],dtype = np.float32)
 
     def expand(self, edge):
-        """Short summary.
-        '''return copy of segment appending extra edge '''
+        """return copy of segment appending extra edge
+
         Parameters
         ----------
         edge : type
@@ -46,7 +47,9 @@ class segment:
         temp.path = np.empty([temp.num+1],dtype = [('node','i4'),('id','i4')])
         temp.path[:-1] = self.path
         temp.path[-1] = edge[1:3]
-        temp.length = self.length + edge[-1]['length']
+        temp.total_length = self.total_length + edge[-1]['length']
+        temp.length = self.length.copy()
+        temp.length.append(edge[-1]['length'])
         temp.angle =  edge[-1]['angle']
         temp.edgelist = {edge[:3]:True}
         for e in self.edgelist:
@@ -69,7 +72,7 @@ class segment:
 
         """
 
-        return self.length> k or self.total_angle[-1]<-2*np.pi or self.total_angle[-1]>2*np.pi #(self.total_angle <-2*np.pi).any() or (self.total_angle > 2*np.pi).any()
+        return self.total_length> k or self.total_angle[-1]<-2*np.pi or self.total_angle[-1]>2*np.pi #(self.total_angle <-2*np.pi).any() or (self.total_angle > 2*np.pi).any()
 
     def overlap(self, edge):
         '''check overlap with given edge'''
@@ -82,19 +85,19 @@ class segment:
 
     def __lt__(self, other):
         '''sorting'''
-        return self.length<other.length
+        return self.total_length<other.total_length
 
     def __gt__(self, other):
         '''sorting'''
-        return self.length>other.length
+        return self.total_length>other.total_length
 
     def __le__(self, other):
         '''sorting'''
-        return self.length<=other.length
+        return self.total_length<=other.total_length
 
     def __ge__(self, other):
         '''sorting'''
-        return self.length>=other.length
+        return self.total_length>=other.total_length
 
     def edges(self):
         '''return edgelist'''
@@ -107,13 +110,7 @@ class segment:
 
     def nodes(self):
         '''return node list'''
-        n = [self.start_node]
-        if self.num == 1:
-            n.append(self.path['node'])
-            return n
-        for p in self.path[1:]:
-            n.append(p['node'])
-        return n
+        return self.path['node']
 
     def plot(self, pos, *arg,**kwarg):
         """Short summary.
@@ -140,27 +137,35 @@ class segment:
             position[i] = pos[n]
         nx.draw(temp, position, *arg, **kwarg)
 
-    def stitch_score(self, Segment1, Segment2):
-        """Calculate stitch score with Segment1 and Segment2
+    def stitch_score(self, other):
+        """Calculate stitch score with `self` and other.
 
         Parameters
         ----------
-        Segment1 : np.array
-
-        Segment2 : np.array
+        other : taxidata.segment
+            a segment which will be compared with `self`
 
         Returns
         -------
         stitch score : float
+            returns a consistency score which is cost of jointing self and other
+            
+        When the overlap between the last part of `self` and the initial part of `other` 
+        exists, `other` is consistent with `self`. The stitching score measure the consistency
+        with quantifying the size of overlap. If `self` is same as `other`, 
+        the size of overlap goes whole segment which is jointed with `self` and `other`, 
+        and the stitching score can be measured as 0.
+        The other hand, when `self` and `other` is not consistent, the stitching score will be 1
+        as maximum score.
         """
-        start_overlap = np.where(Segment1.path == Segment2.path[0])[0]
+        start_overlap = np.where(self.path == other.path[0])[0]
         # seg2 start node doesn't match with seg1
         if len(start_overlap) == 0: stitchScore = 1
         # seg2 start node in seg1
         else:
-            if (Segment1.path[start_overlap[0]:] == Segment2.path[:len(Segment1.path[start_overlap[0]:])]).all():
-                overlap_length = sum(Segment1.length[start_overlap[0]:])
-                total_length = Segment1.total_length + Segment2.total_length - overlap_length
+            if (self.path[start_overlap[0]:] == other.path[:len(self.path[start_overlap[0]:])]).all():
+                overlap_length = sum(self.length[start_overlap[0]:])
+                total_length = self.total_length + other.total_length - overlap_length
                 stitchScore = 1 - overlap_length/total_length
             else:stitchScore = 1
         return stitchScore
