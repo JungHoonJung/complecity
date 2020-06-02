@@ -6,7 +6,9 @@ import numpy as np
 import shapely.geometry as geom
 import h5py as h5
 
-class segment:
+__all__ = ['Segment', 'Roadnetwork', 'k_segments', 'k_segments_strict_bfs', 'k_segments_semi_strict_bfs', 'k_segments_strict_bfs_with_length']
+
+class Segment:
     def __init__(self, edge = None):
         if edge is None:
             #Do nothing
@@ -39,7 +41,7 @@ class segment:
         type
             Description of returned object.
         """
-        temp = segment()
+        temp = Segment()
         temp.start_node = self.start_node
         temp.past_node = edge[0]
         temp.last_node = edge[1]
@@ -289,7 +291,7 @@ def k_segments(G, node, k= 100):
     type dictionay
         k-segments
     """
-    segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
+    segments = [Segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     iter_num  = 0
     while segments:
@@ -332,7 +334,7 @@ def k_segments_strict_bfs(G, node, k= 100):
 
     """
 
-    segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
+    segments = [Segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     nodes = {node :True}
     iter_num  = 0
@@ -377,7 +379,7 @@ def k_segments_strict_bfs_with_length(G, node, k= 100):
 
     """
 
-    segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
+    segments = [Segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     nodes = {node :True}
     iter_num  = 0
@@ -424,7 +426,7 @@ def k_segments_semi_strict_bfs(G, node, k= 100):
 
     """
 
-    segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
+    segments = [Segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     nodes = {node :True}
     iter_num  = 0
