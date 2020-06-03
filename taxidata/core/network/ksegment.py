@@ -151,11 +151,11 @@ class Segment:
         -------
         stitch score : float
             returns a consistency score which is cost of jointing self and other
-            
-        When the overlap between the last part of `self` and the initial part of `other` 
+
+        When the overlap between the last part of `self` and the initial part of `other`
         exists, `other` is consistent with `self`. The stitching score measure the consistency
-        with quantifying the size of overlap. If `self` is same as `other`, 
-        the size of overlap goes whole segment which is jointed with `self` and `other`, 
+        with quantifying the size of overlap. If `self` is same as `other`,
+        the size of overlap goes whole segment which is jointed with `self` and `other`,
         and the stitching score can be measured as 0.
         The other hand, when `self` and `other` is not consistent, the stitching score will be 1
         as maximum score.
@@ -171,7 +171,6 @@ class Segment:
                 stitchScore = 1 - overlap_length/total_length
             else:stitchScore = 1
         return stitchScore
-
 
 
 class Roadnetwork(nx.MultiDiGraph):
