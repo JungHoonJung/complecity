@@ -85,6 +85,12 @@ class Segment:
     def __repr__(self):
         return "<segment from node '{}' to '{}', total num : {}>".format(self.start_node, self.last_node, self.num)
 
+    def __eq__(self, other):
+        if isinsance(other, self.__class__):
+            return self.start_node == other.start_node and (self.path==other.path).all()
+        else:
+            return False
+
     def __lt__(self, other):
         '''sorting'''
         return self.total_length<other.total_length
@@ -160,6 +166,7 @@ class Segment:
         The other hand, when `self` and `other` is not consistent, the stitching score will be 1
         as maximum score.
         """
+        if self == other: return 0
         start_overlap = np.where(self.path == other.path[0])[0]
         # seg2 start node doesn't match with seg1
         if len(start_overlap) == 0: stitchScore = 1
