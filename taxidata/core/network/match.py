@@ -99,7 +99,14 @@ class SingleTrackMapMatching:
             gen = SingleTrackMapMatching._default_segment_func
         else: gen = seg_func
 
-        raise NotImplemtedError
+        for node in self.map.nodes:
+            self.node_segments[node] = gen(self.map, node, k)
+            for i in self.node_segments[node]:
+                self.segment_set.append(kseg[node][i])
+                self.node_segments[temp.segments_index]=kseg[node][i]
+
+                kseg[node][i].id = self.segments_index
+                self.segments_index+=1
 
     def make_candidate_set(self, d_max = 200):
         """Find a candidate segment set with stored ksegments through calculating the distance of curve.
