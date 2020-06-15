@@ -1,7 +1,6 @@
 import geopandas as gpd
 import networkx as nx
 import matplotlib.pyplot as plt
-import osmnx as ox
 import numpy as np
 import shapely.geometry as geom
 import h5py as h5
@@ -17,7 +16,7 @@ class Segment:
             #initialize with given node as segment
             self.start_node = edge[0]
             self.num = 1
-            self.path = np.empty([2], ,dtype = [('node','i4'),('id','i4')])
+            self.path = np.empty([2], dtype = [('node','i4'),('id','i4')])
             self.path[0] = tuple((edge[0], 0))
             self.path[1] = tuple(edge[1:3])
             self.past_node = self.start_node
@@ -27,6 +26,8 @@ class Segment:
             self.angle = edge[-1]['angle']
             self.edgelist = {edge[:3]:True}
             self.total_angle  = np.array([0],dtype = np.float32)
+            #index
+            self.id =None
 
     def expand(self, edge):
         """return copy of segment appending extra edge
@@ -180,12 +181,15 @@ class Segment:
         return stitchScore
 
 
+
+
 class Roadnetwork(nx.MultiDiGraph):
-    def __init__(self,*arg, **kwarg):
-        self.__super__(self, *arg, **kwarg)
+
+    def __init__(self, *arg ,**kwarg):
+        super(Roadnetwork, self).__init__(*arg ,**kwarg)
 
     def pos():
-        doc = '''return position dictionay'''
+        doc = '''return position dictionary'''
         def fget(self):
             return self.nodes(data = 'pos')
         return locals()
@@ -285,7 +289,7 @@ class Roadnetwork(nx.MultiDiGraph):
         type
             subgraph bfs_edges
         """
-        sub = subgraph_of_node(self,node, depth_limit)
+        sub = self.subgraph_of_node(node, depth_limit)
         node_pos = pos(sub)[node]
 
         edge_plot(sub)
