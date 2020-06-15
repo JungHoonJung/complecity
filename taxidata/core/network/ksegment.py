@@ -6,7 +6,9 @@ import numpy as np
 import shapely.geometry as geom
 import h5py as h5
 
-class segment:
+__all__ = ['Segment', 'Roadnetwork', 'k_segments', 'k_segments_strict_bfs', 'k_segments_semi_strict_bfs', 'k_segments_strict_bfs_with_length']
+
+class Segment:
     def __init__(self, edge = None):
         if edge is None:
             #Do nothing
@@ -39,7 +41,7 @@ class segment:
         type
             Description of returned object.
         """
-        temp = segment()
+        temp = Segment()
         temp.start_node = self.start_node
         temp.past_node = edge[0]
         temp.last_node = edge[1]
@@ -82,6 +84,12 @@ class segment:
 
     def __repr__(self):
         return "<segment from node '{}' to '{}', total num : {}>".format(self.start_node, self.last_node, self.num)
+
+    def __eq__(self, other):
+        if isinsance(other, self.__class__):
+            return self.start_node == other.start_node and (self.path==other.path).all()
+        else:
+            return False
 
     def __lt__(self, other):
         '''sorting'''
@@ -149,15 +157,16 @@ class segment:
         -------
         stitch score : float
             returns a consistency score which is cost of jointing self and other
-            
-        When the overlap between the last part of `self` and the initial part of `other` 
+
+        When the overlap between the last part of `self` and the initial part of `other`
         exists, `other` is consistent with `self`. The stitching score measure the consistency
-        with quantifying the size of overlap. If `self` is same as `other`, 
-        the size of overlap goes whole segment which is jointed with `self` and `other`, 
+        with quantifying the size of overlap. If `self` is same as `other`,
+        the size of overlap goes whole segment which is jointed with `self` and `other`,
         and the stitching score can be measured as 0.
         The other hand, when `self` and `other` is not consistent, the stitching score will be 1
         as maximum score.
         """
+        if self == other: return 0
         start_overlap = np.where(self.path == other.path[0])[0]
         # seg2 start node doesn't match with seg1
         if len(start_overlap) == 0: stitchScore = 1
@@ -169,7 +178,6 @@ class segment:
                 stitchScore = 1 - overlap_length/total_length
             else:stitchScore = 1
         return stitchScore
-
 
 
 class Roadnetwork(nx.MultiDiGraph):
@@ -304,7 +312,7 @@ def k_segments(G, node, k= 100):
     type dictionay
         k-segments
     """
-    segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
+    segments = [Segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     iter_num  = 0
     while segments:
@@ -347,7 +355,7 @@ def k_segments_strict_bfs(G, node, k= 100):
 
     """
 
-    segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
+    segments = [Segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     nodes = {node :True}
     iter_num  = 0
@@ -392,7 +400,7 @@ def k_segments_strict_bfs_with_length(G, node, k= 100):
 
     """
 
-    segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
+    segments = [Segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     nodes = {node :True}
     iter_num  = 0
@@ -439,7 +447,7 @@ def k_segments_semi_strict_bfs(G, node, k= 100):
 
     """
 
-    segments = [segment(edge) for edge in G.edges(node,keys = True, data = True)]
+    segments = [Segment(edge) for edge in G.edges(node,keys = True, data = True)]
     k_segments = []
     nodes = {node :True}
     iter_num  = 0
