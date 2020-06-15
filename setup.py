@@ -7,10 +7,10 @@ setup(name='taxidata',
 		author_email='jh.gnuaz@gamil.com',
 		packages=['taxidata', 'taxidata.tdarray','taxidata.core', 'taxidata.core.lib'],
 		py_modules=['taxidata.core.lib.taxipoint'],
-		data_files=[('core/lib',['taxidata/core/lib/district.DAT']),('network/nodelink'),['taxidata/network/nodelink/*']],
+		data_files=[('core/lib',['taxidata/core/lib/district.DAT'])],
 		include_package_data=True,
 		#package_data={'taxidata':['taxidata/lib/TL_SCCO_SIG_W.gml']},
 		python_requires = '>=3',
-		install_requires=['numpy', 'networkx', 'h5py', 'matplotlib','pyproj'.'tqdm']
+		install_requires=['numpy', 'networkx', 'h5py', 'matplotlib','pyproj','tqdm','geopandas']
 
 	 )

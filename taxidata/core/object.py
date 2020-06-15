@@ -18,7 +18,6 @@ class taxiarray(np.ndarray):
     traditionally, data type is '['id', 'x','y','time','passenger']'.
     please check datatype.'''
 
-#thekr
     def pos():
         doc = """position of taxi.
 
@@ -118,8 +117,6 @@ class taxiarray(np.ndarray):
 
         """
 
-        pass
-
 
     def get_trajectories(self):
         """return trajectories list by taxi_id.
@@ -160,10 +157,30 @@ class trajectory(taxiarray):
     taxi_id = property(**taxi_id())
 
     def distance_of_curve(self, i, segment):
+        """return max distance between trajectory point and segment
 
-        pass
+        Parameters
+        ----------
+        i : `int`
+            index of trajectory
+        segment : list
+            list of segment-points
 
+        Returns
+        -------
+        'float'
+            max distance between trajectory point and segment
 
+        """
+        d_p = []
+        d_v = distance_line_point(segment, trajectory[i])
+
+        for k in segment:
+            d_p.append(distance_line_point(trajectory, k))
+
+        max_d_p = np.max(d_p)
+        d_curve = max(d_v, max_d_p)
+        return d_curve
 
 class triparray(taxiarray):
     """
