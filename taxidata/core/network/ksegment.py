@@ -181,8 +181,8 @@ class Segment:
 
 
 class Roadnetwork(nx.MultiDiGraph):
-    def __init__(self):
-        self.__super__(self)
+    def __init__(self,*arg, **kwarg):
+        self.__super__(self, *arg, **kwarg)
 
     def pos():
         doc = '''return position dictionay'''
