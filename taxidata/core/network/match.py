@@ -105,7 +105,7 @@ class SingleTrackMapMatching:
                 self.segment_set.append(i)
                 self.node_segments[temp.segments_index]=i
 
-                kseg[node][i].id = self.segments_index
+                i.id = self.segments_index
                 self.segments_index+=1
 
     def make_candidate_set(self, d_max = 200):
