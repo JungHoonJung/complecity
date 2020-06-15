@@ -124,7 +124,7 @@ class SingleTrackMapMatching:
         raise NotImplemtedError
 
 
-    def  map_mathcing(dis_weight, stitch_weight):
+    def path_optimizing(dis_weight=1, stitch_weight=10):
         """Find a optimized path through minimizing
         the sum of distance and stitching score.
 
@@ -196,6 +196,37 @@ class SingleTrackMapMatching:
         selected_path.reverse()
         return selected_path, cost_min
 
+    def path_stitching(self, segments):
+        """Make a whole path with given segments.
+
+        Parameters
+        ----------
+        segments : `list`
+            a list of index of segment which will be stitched.
+
+        Returns
+        -------
+        `taxidata.Segment`
+            a whole path which is stitched by given segments.
+
+        """
+        pass
+
+    def point_projection(self, path):
+        """Find edges that points of `self.target` belong in.
+
+        Parameters
+        ----------
+        path : `taxidata.Segment`
+            A complete path which will be a map with projection.
+
+        Returns
+        -------
+        `list`
+            the list of tuples indicate the edges of road network.
+
+        """
+        pass
 
 
 
