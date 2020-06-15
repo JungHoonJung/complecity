@@ -1,4 +1,8 @@
 from .object import *
+from .network.functions import toUTM
+from .network.ksegment  import *
+from .network.match import *
+
 import numpy as np
 
 def array(*arg, **kwarg):

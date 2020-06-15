@@ -304,3 +304,4 @@ def logBinning(dist,base):
     for i in range(maximum):
         hist[i]/=(base**(i+1)-base**i)
     return x_hist,hist
+
