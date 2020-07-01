@@ -359,7 +359,7 @@ class Dataset:
 
         for key in kwarg:
             if key == 'num':
-                if kwarg.get('random',False):
+                if not kwarg.get('random',True):
                     self.set_taxis(kwarg['num'],kwarg['random'])
                 else:
                     self.set_taxis(kwarg['num'])
