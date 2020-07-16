@@ -112,11 +112,30 @@ class taxiarray(np.ndarray):
 
         Returns
         -------
-        list
-            list of distance from each point from trajectories.
+        float
+            result of distance from point from trajectories.
 
         """
+        lines=line[:-1]-line[1:]
+        a=-lines[:,1]
+        b=lines[:,0]
+        c=-a*line[:,0][:-1]-b*line[:,1][:-1]
 
+        shortest=np.abs(a*point[0]+b*point[1]+c)/np.sqrt(a*a+b*b)
+        m1=-a/(b+1e-12)
+        m2=-1/(m1+1e-12)
+
+        x=(m1*line[:,0][:-1]-m2*point[0]-line[:,1][:-1]+point[1])/(m1-m2)
+        y=m2*(x-point[0])+point[1]
+
+        yesorno=(line[:,0][:-1]-x)*(line[:,0][1:]-x)+(line[:,1][:-1]-y)*(line[:,1][1:]-y)
+
+        len1=np.sqrt((line[:,0][:-1]-point[0])**2+(line[:,1][:-1]-point[1])**2)
+        len2=np.sqrt((line[:,0][1:]-point[0])**2+(line[:,1][1:]-point[1])**2)
+
+        short=shortest*(yesorno<=0)+np.minimum(len1,len2)*(yesorno>0)
+
+        return np.min(short)
 
     def get_trajectories(self):
         """return trajectories list by taxi_id.
