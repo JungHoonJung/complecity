@@ -192,10 +192,10 @@ class trajectory(taxiarray):
 
         """
         d_p = []
-        d_v = distance_line_point(segment, trajectory[i])
+        d_v = distance(segment, trajectory[i])
 
         for k in segment:
-            d_p.append(distance_line_point(trajectory, k))
+            d_p.append(distance(trajectory, k))
 
         max_d_p = np.max(d_p)
         d_curve = max(d_v, max_d_p)
