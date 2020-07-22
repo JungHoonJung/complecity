@@ -50,7 +50,7 @@ class PathContainer:
 
 
 
-class SingleTrackMapMatching:
+class SingleTrackMapMatching(nx.MultiDiGraph):
     """object for single-track map matching."""
     _default_segment_func = k_segments_strict_bfs_with_length
 
