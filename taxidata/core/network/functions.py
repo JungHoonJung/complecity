@@ -10,5 +10,5 @@ def toUTM(dataX,dataY, inverse = False):
     """
     KoreaZone = 52
     p = pyproj.Proj(proj = 'utm', zone = '52N', ellps='WGS84')
-    dataX, dataY = p(dataX, dataY, inverse = inverse, dtype=np.float32)
+    dataX, dataY = p(dataX, dataY, inverse = inverse)
     return dataX,dataY  # lon, lat
