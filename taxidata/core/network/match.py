@@ -50,7 +50,7 @@ class PathContainer:
 
 
 
-class SingleTrackMapMatching(nx.MultiDiGraph):
+class SingleTrackMapMatching:
     """object for single-track map matching."""
     _default_segment_func = k_segments_strict_bfs_with_length
 
@@ -100,10 +100,12 @@ class SingleTrackMapMatching(nx.MultiDiGraph):
         else: gen = seg_func
 
         for node in self.map.nodes:
+            self.node_segments[node]
+            gen(self.map, node, k)
             self.node_segments[node] = gen(self.map, node, k)
             for i in self.node_segments[node]:
                 self.segment_set.append(i)
-                self.node_segments[temp.segments_index]=i
+                self.node_segments[self.segments_index]=i
 
                 i.id = self.segments_index
                 self.segments_index+=1
