@@ -70,9 +70,9 @@ class SingleTrackMapMatching:
         self.stitching_map      =   {}          # this will be double dictionay (i.e. stitching_map[(index_of_seg1)][(index_of_seg2)])
 
         #mathcing algorithm will be implemented as bfs manner.
-        self.length             =   len(self.trajectory)
+        self.length             =   len(self.target)
 
-    def generate_ksegment(self, seg_func = None, k = 800):
+    def generate_ksegment(self,  k = 800, seg_func = None):
         """Segment generating function. return dictionary of segments by node.
 
         Parameters
@@ -103,7 +103,7 @@ class SingleTrackMapMatching:
             self.node_segments[node] = gen(self.map, node, k)
             for i in self.node_segments[node]:
                 self.segment_set.append(i)
-                self.node_segments[temp.segments_index]=i
+                self.node_segments[self.segments_index]=i
 
                 i.id = self.segments_index
                 self.segments_index+=1
