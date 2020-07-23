@@ -72,7 +72,7 @@ class SingleTrackMapMatching:
         #mathcing algorithm will be implemented as bfs manner.
         self.length             =   len(self.target)
 
-    def generate_ksegment(self, seg_func = None, k = 800):
+    def generate_ksegment(self,  k = 800, seg_func = None):
         """Segment generating function. return dictionary of segments by node.
 
         Parameters
