@@ -100,7 +100,7 @@ class SingleTrackMapMatching:
         else: gen = seg_func
 
         for node in self.map.nodes:
-            self.node_segments[node] = gen(self.map, node, k)
+            self.node_segments[node] = gen(road_network, node, k)
             for i in self.node_segments[node]:
                 self.segment_set.append(i)
                 self.node_segments[self.segments_index]=i
