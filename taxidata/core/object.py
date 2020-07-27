@@ -201,6 +201,55 @@ class trajectory(taxiarray):
         d_curve = max(d_v, max_d_p)
         return d_curve
 
+    def trajectory_grid(self, point=False):
+        """Short summary.
+
+        Parameters
+        ----------
+        point : bool
+            If calculate not a trajetory but a point, set True.
+
+        Returns
+        -------
+        np.ndarray
+            Array of trajectory grids
+
+        """
+        l = []
+        if point:
+            l.append(int(trajectory[0]//200-1234 + (trajectory[1]//200-20400)*734))
+        else:
+            for j in trajectory:
+                l.append(int(j[0]//200-1234 + (j[1]//200-20400)*734))
+        return np.unique(l)
+
+    def grid_set(self, point=True):
+        """Short summary.
+
+        Parameters
+        ----------
+        point : bool
+            If calculate not a trajetory but a point, set True.
+
+        Returns
+        -------
+        np.ndarray
+            Array of trajectory grid sets.
+
+        """
+        tot = []
+        grid_raw = trajectory_grid(self, point)
+        for i in grid_raw:
+            grid_list = [i+733, i+734, i+735, \
+                         i-1,   i,     i+1,   \
+                         i-735, i-734, i-733]
+            for j in grid_list:
+                tot += [j]
+        return np.unique(tot)
+
+    def seg_check_np(grid_set, seg_set):
+        return np.in1d(seg_set, grid_set,assume_unique=True).all()
+
 class triparray(taxiarray):
     """
 
