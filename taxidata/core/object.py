@@ -247,8 +247,7 @@ class trajectory(taxiarray):
                 tot += [j]
         return np.unique(tot)
 
-    def seg_check_np(grid_set, seg_set):
-        return np.in1d(seg_set, grid_set,assume_unique=True).all()
+
 
 class triparray(taxiarray):
     """
