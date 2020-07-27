@@ -112,11 +112,30 @@ class taxiarray(np.ndarray):
 
         Returns
         -------
-        list
-            list of distance from each point from trajectories.
+        float
+            result of distance from point from trajectories.
 
         """
+        lines=line[:-1]-line[1:]
+        a=-lines[:,1]
+        b=lines[:,0]
+        c=-a*line[:,0][:-1]-b*line[:,1][:-1]
 
+        shortest=np.abs(a*point[0]+b*point[1]+c)/np.sqrt(a*a+b*b)
+        m1=-a/(b+1e-12)
+        m2=-1/(m1+1e-12)
+
+        x=(m1*line[:,0][:-1]-m2*point[0]-line[:,1][:-1]+point[1])/(m1-m2)
+        y=m2*(x-point[0])+point[1]
+
+        yesorno=(line[:,0][:-1]-x)*(line[:,0][1:]-x)+(line[:,1][:-1]-y)*(line[:,1][1:]-y)
+
+        len1=np.sqrt((line[:,0][:-1]-point[0])**2+(line[:,1][:-1]-point[1])**2)
+        len2=np.sqrt((line[:,0][1:]-point[0])**2+(line[:,1][1:]-point[1])**2)
+
+        short=shortest*(yesorno<=0)+np.minimum(len1,len2)*(yesorno>0)
+
+        return np.min(short)
 
     def get_trajectories(self):
         """return trajectories list by taxi_id.
@@ -173,14 +192,62 @@ class trajectory(taxiarray):
 
         """
         d_p = []
-        d_v = distance_line_point(segment, trajectory[i])
+        d_v = distance(segment, trajectory[i])
 
         for k in segment:
-            d_p.append(distance_line_point(trajectory, k))
+            d_p.append(distance(trajectory, k))
 
         max_d_p = np.max(d_p)
         d_curve = max(d_v, max_d_p)
         return d_curve
+
+    def trajectory_grid(self, point=False):
+        """Short summary.
+
+        Parameters
+        ----------
+        point : bool
+            If calculate not a trajetory but a point, set True.
+
+        Returns
+        -------
+        np.ndarray
+            Array of trajectory grids
+
+        """
+        l = []
+        if point:
+            l.append(int(trajectory[0]//200-1234 + (trajectory[1]//200-20400)*734))
+        else:
+            for j in trajectory:
+                l.append(int(j[0]//200-1234 + (j[1]//200-20400)*734))
+        return np.unique(l)
+
+    def grid_set(self, point=True):
+        """Short summary.
+
+        Parameters
+        ----------
+        point : bool
+            If calculate not a trajetory but a point, set True.
+
+        Returns
+        -------
+        np.ndarray
+            Array of trajectory grid sets.
+
+        """
+        tot = []
+        grid_raw = trajectory_grid(self, point)
+        for i in grid_raw:
+            grid_list = [i+733, i+734, i+735, \
+                         i-1,   i,     i+1,   \
+                         i-735, i-734, i-733]
+            for j in grid_list:
+                tot += [j]
+        return np.unique(tot)
+
+
 
 class triparray(taxiarray):
     """
