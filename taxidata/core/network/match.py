@@ -108,13 +108,15 @@ class SingleTrackMapMatching:
                 i.id = self.segments_index
                 self.segments_index+=1
 
-    def make_candidate_set(self, d_max = 200):
+    def make_candidate_set(self, ksegment_set, d_max = 200):
         """Find a candidate segment set with stored ksegments through calculating the distance of curve.
 
         Parameters
         ----------
         trajectory : `taxidata.trajectory`
              a sequence of converted GPS data(UTM coordinate). It must have `pos` attribute.
+        ksegment_set : `list`
+             a list of ksegment.
         d_max : `int` or `float`
             a threshold of maximum distance between positions of trajectory and segments. the default value is 200 (m).
 
