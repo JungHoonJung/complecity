@@ -127,8 +127,13 @@ class SingleTrackMapMatching:
 
         + each calculation must be saved on `self.distance_map`.
         """
-        self.d_max = d_max
-        raise NotImplemtedError
+        candidate_set=[[]for i in range(len(taxi_np))]
+        for i in range(len(self)):
+            for j in ksegment_set:
+                if (trajectory_grid(j[0],point=True) == grid_set(taxi_np[i],point=True).any():
+                    if d_curve(self,i,j)<=200:
+                        candidate_set[i].append(j)
+        return candidate_set
 
 
     def path_optimizing(dis_weight=1, stitch_weight=10):
