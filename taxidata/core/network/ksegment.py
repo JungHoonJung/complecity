@@ -126,8 +126,8 @@ class Segment:
         '''plot segment in aspect of graph'''
         Parameters
         ----------
-        pos : type
-            Description of parameter `pos`.
+        pos : node_pos
+
         *arg : type
             Description of parameter `*arg`.
         **kwarg : type
@@ -135,9 +135,7 @@ class Segment:
 
         Returns
         -------
-        type
-            Description of returned object.
-
+        Road segment plot(Using networkx.draw).
         """
 
         temp = nx.path_graph(self.num+1,create_using=nx.DiGraph)
