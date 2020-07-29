@@ -34,13 +34,16 @@ class Segment:
 
         Parameters
         ----------
-        edge : type
+        edge : road network edege
             (start_node, end_node, {'ID', 'length', 'geometry', 'angle'})
 
         Returns
         -------
         type
             Description of returned object.
+
+        When segment expand by new edge(road), this function add some edge's information
+        to segment.  
         """
         temp = Segment()
         temp.start_node = self.start_node
@@ -62,8 +65,7 @@ class Segment:
         return temp
 
     def check(self, k):
-        """Short summary.
-        '''check condition of k segments'''
+        """check condition of k segments
         Parameters
         ----------
         k : int
