@@ -13,20 +13,20 @@ def toUTM(dataX,dataY, inverse = False):
     dataX, dataY = p(dataX, dataY, inverse = inverse)
     return dataX,dataY  # lon, lat
 
-    def seg_check(grid_set, seg_set):
-        """Short summary.
+def seg_check(grid_set, seg_set):
+    """Short summary.
 
-        Parameters
-        ----------
-        grid_set : np.ndarray
-            grid set of trajectory
-        seg_set : np.ndarray
-            grid set of segment
+    Parameters
+    ----------
+    grid_set : np.ndarray
+        grid set of trajectory
+    seg_set : np.ndarray
+        grid set of segment
 
-        Returns
-        -------
-        bool
-            Return True when segment grid in trajectory return False other
+    Returns
+    -------
+    bool
+        Return True when segment grid in trajectory return False other
 
-        """
-        return np.in1d(seg_set, grid_set,assume_unique=True).all()
+    """
+    return np.in1d(seg_set, grid_set,assume_unique=True).all()
