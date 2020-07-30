@@ -43,7 +43,7 @@ class Segment:
             Description of returned object.
 
         When segment expand by new edge(road), this function add some edge's information
-        to segment.  
+        to segment.
         """
         temp = Segment()
         temp.start_node = self.start_node
