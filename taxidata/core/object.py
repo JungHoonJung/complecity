@@ -28,7 +28,7 @@ class taxiarray(np.ndarray):
 
         """
         def fget(self):
-            return np.array([self[self._posx],self[self._posy]])
+            return np.array([self[self._posx],self[self._posy]]).T
         def fset(self, value):
             self._posx = value[0]
             self._posy = value[1]
