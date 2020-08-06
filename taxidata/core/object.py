@@ -202,7 +202,7 @@ class trajectory(taxiarray):
         return d_curve
 
     def trajectory_grid(self, point=False):
-        """Short summary.
+        """Return grid trajectory.
 
         Parameters
         ----------
@@ -224,7 +224,7 @@ class trajectory(taxiarray):
         return np.unique(l)
 
     def grid_set(self, point=True):
-        """Short summary.
+        """grid set surrounding the trajectory.
 
         Parameters
         ----------
