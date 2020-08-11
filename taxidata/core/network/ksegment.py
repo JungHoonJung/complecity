@@ -34,13 +34,16 @@ class Segment:
 
         Parameters
         ----------
-        edge : type
+        edge : road network edege
             (start_node, end_node, {'ID', 'length', 'geometry', 'angle'})
 
         Returns
         -------
         type
             Description of returned object.
+
+        When segment expand by new edge(road), this function add some edge's information
+        to segment.
         """
         temp = Segment()
         temp.start_node = self.start_node
@@ -62,8 +65,7 @@ class Segment:
         return temp
 
     def check(self, k):
-        """Short summary.
-        '''check condition of k segments'''
+        """check condition of k segments
         Parameters
         ----------
         k : int
@@ -126,8 +128,8 @@ class Segment:
         '''plot segment in aspect of graph'''
         Parameters
         ----------
-        pos : type
-            Description of parameter `pos`.
+        pos : node_pos
+
         *arg : type
             Description of parameter `*arg`.
         **kwarg : type
@@ -135,9 +137,7 @@ class Segment:
 
         Returns
         -------
-        type
-            Description of returned object.
-
+        Road segment plot(Using networkx.draw).
         """
 
         temp = nx.path_graph(self.num+1,create_using=nx.DiGraph)
