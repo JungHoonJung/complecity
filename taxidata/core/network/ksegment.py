@@ -89,7 +89,7 @@ class Segment:
         return "<segment from node '{}' to '{}', total num : {}>".format(self.start_node, self.last_node, self.num)
 
     def __eq__(self, other):
-        if isinsance(other, self.__class__):
+        if isinstance(other, self.__class__):
             return self.start_node == other.start_node and (self.path==other.path).all()
         else:
             return False
