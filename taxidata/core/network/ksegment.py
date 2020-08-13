@@ -90,7 +90,7 @@ class Segment:
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return ([self.start_node == other.start_node,self.path==other.path]).all()
+            return all([self.start_node == other.start_node, self.path==other.path])
         else:
             return False
 
