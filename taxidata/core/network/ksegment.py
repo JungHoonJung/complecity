@@ -90,7 +90,8 @@ class Segment:
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return np.array([self.start_node == other.start_node, self.path==other.path]).all()
+            return all([self.start_node == other.start_node, (self.path==other.path).min()])
+            # ? start_node도 봐야하나?? path끼리만 비교해도 되지 않으려나?
         else:
             return False
 
