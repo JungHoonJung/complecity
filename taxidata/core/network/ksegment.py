@@ -174,7 +174,7 @@ class Segment:
         if len(start_overlap) == 0: stitchScore = 1
         # seg2 start node in seg1
         else:
-            if (self.path[start_overlap[0]:] == other.path[:len(self.path[start_overlap[0]:])]).all():
+            if np.array_equal(self.path[start_overlap[0]:], other.path[:len(self.path[start_overlap[0]:])]):
                 overlap_length = sum(self.length[start_overlap[0]:])
                 total_length = self.total_length + other.total_length - overlap_length
                 stitchScore = 1 - overlap_length/total_length
