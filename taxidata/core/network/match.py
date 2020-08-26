@@ -238,7 +238,7 @@ class SingleTrackMapMatching:
                 for i in range(len(shortest_path)): shortest_path_array[i]=shortest_path[i]
                 Joint_node = np.r_[Joint_node, shortest_path_array[1:], seg.nodes()[1:]]
         edge_in = (Joint_node[0],Joint_node[1],0,self.map.get_edge_data(Joint_node[0],Joint_node[1],0))
-        Jointsegment = segment(edge_in)
+        Jointsegment = Segment(edge_in)
         for edge_count in range(len(Joint_node)-2):
             edge_in = (Joint_node[edge_count+1],Joint_node[edge_count+2],0,self.map.get_edge_data(Joint_node[edge_count+1],Joint_node[edge_count+2],0))
             Jointsegment = Jointsegment.expand(edge_in)
