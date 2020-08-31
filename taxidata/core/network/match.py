@@ -70,9 +70,9 @@ class SingleTrackMapMatching:
         self.stitching_map      =   {}          # this will be double dictionay (i.e. stitching_map[(index_of_seg1)][(index_of_seg2)])
 
         #mathcing algorithm will be implemented as bfs manner.
-        self.length             =   len(self.trajectory)
+        self.length             =   len(self.target)
 
-    def generate_ksegment(self, seg_func = None, k = 800):
+    def generate_ksegment(self,  k = 800, seg_func = None):
         """Segment generating function. return dictionary of segments by node.
 
         Parameters
@@ -103,7 +103,7 @@ class SingleTrackMapMatching:
             self.node_segments[node] = gen(self.map, node, k)
             for i in self.node_segments[node]:
                 self.segment_set.append(i)
-                self.node_segments[temp.segments_index]=i
+                self.node_segments[self.segments_index]=i
 
                 i.id = self.segments_index
                 self.segments_index+=1
@@ -224,7 +224,42 @@ class SingleTrackMapMatching:
             a whole path which is stitched by given segments.
 
         """
-        pass
+        Joint_node = segments[0].nodes()
+        for seg in segments[1:]:
+            start_overlap = np.where(Joint_node == seg.nodes()[0])[0]
+            if len(start_overlap)>0:
+                Joint_node = np.r_[Joint_node[:start_overlap[0]], seg.nodes()]
+            else:
+                shortest_path = nx.shortest_path(self.map, Joint_node[-1], seg.nodes()[0],'length')
+                shortest_path_array = np.zeros([len(shortest_path)])
+                for i in range(len(shortest_path)): shortest_path_array[i]=shortest_path[i]
+                Joint_node = np.r_[Joint_node, shortest_path_array[1:], seg.nodes()[1:]]
+        edge_in = (Joint_node[0],Joint_node[1],0,self.map.get_edge_data(Joint_node[0],Joint_node[1],0))
+        Jointsegment = segment(edge_in)
+        for edge_count in range(len(Joint_node)-2):
+            edge_in = (Joint_node[edge_count+1],Joint_node[edge_count+2],0,self.map.get_edge_data(Joint_node[edge_count+1],Joint_node[edge_count+2],0))
+            Jointsegment = Jointsegment.expand(edge_in)
+        return Jointsegment
+
+    def segment_to_line(self, segment):
+        """
+        segment -> pos_array [x_node,y_ndoe]
+
+        Parameter
+        ----------
+        self : road network
+        segment
+
+
+        Return
+        -------
+        pos_array
+        np.array([x1,y1],[x2,y2],...)
+        """
+        pos_list = np.zeros([len(segment.nodes()),2])
+        for c in range(len(segment.nodes())):
+            pos_list[c] = self.map.nodes[segment.nodes()[c]]['pos']
+        return pos_list
 
     def point_projection(self, path):
         """Find edges that points of `self.target` belong in.
@@ -240,8 +275,12 @@ class SingleTrackMapMatching:
             the list of tuples indicate the edges of road network.
 
         """
-        pass
-
+        edge_list = []
+        path_line = segment_to_line(self,path)
+        for target_point in self.target:
+            distance_list = distance_line_point_new(path_line, target_point)
+            edge_list.append(path.edges()[np.where(min(distance_list)==distance_list)[0][0]])
+        return edge_list
 
 
 
