@@ -108,7 +108,7 @@ class SingleTrackMapMatching:
                 i.id = self.segments_index
                 self.segments_index+=1
 
-    def make_candidate_set(self, trajectory, ksegment_set, d_max = 200):
+    def make_candidate_set(self, trajectory, ksegment_set, real_id, d_max = 200):
         """Find a candidate segment set with stored ksegments through calculating the distance of curve.
 
         Parameters
@@ -131,10 +131,10 @@ class SingleTrackMapMatching:
         """
         candidate_set=[[]for i in range(len(trajectory))]
         for i in range(len(trajectory)):
-            for j in ksegment_set:
-                if (trajectory_grid(j[0],point=True) == grid_set(trajectory[i],point=True)).any():
-                    if distance_of_curve(self,i,j)<=d_max:
-                        candidate_set[i].append(j)
+            for j in range(len(ksegment_set)):
+                if (trajectory_grid(ksegment_set[j][0],point=True) == grid_set(trajectory[i],point=True)).any():
+                    if distance_of_curve(self, i, ksegment_set[j])<=d_max:
+                        candidate_set[i].append(real_id[j])
         return candidate_set
 
 
