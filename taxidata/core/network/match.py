@@ -132,13 +132,13 @@ class SingleTrackMapMatching:
         candidate_set=[[]for i in range(len(trajectory))]
         for i in range(len(trajectory)):
             for j in ksegment_set:
-                if (trajectory_grid(j[0],point=True) == grid_set(trajectory[i],point=True).any():
+                if (trajectory_grid(j[0],point=True) == grid_set(trajectory[i],point=True).any()):
                     if distance_of_curve(self,i,j)<=d_max:
                         candidate_set[i].append(j)
         return candidate_set
 
 
-    def path_optimizing(dis_weight=1, stitch_weight=10):
+    def path_optimizing(self, dis_weight=1, stitch_weight=10):
         """Find a optimized path through minimizing
         the sum of distance and stitching score.
 
