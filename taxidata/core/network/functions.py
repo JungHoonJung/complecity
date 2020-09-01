@@ -15,8 +15,6 @@ def toUTM(dataX,dataY, inverse = False):
 
 def seg_check(grid_set, seg_set):
     """check formaer gird if it in later grid set.
-    =======
-    """Short summary.
 
     Parameters
     ----------
