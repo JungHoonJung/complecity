@@ -1,6 +1,7 @@
 import numpy as np
 import h5py
 import networkx as nx
+from .network import functions
 import datetime as dt
 import matplotlib.pyplot as plt
 import os
@@ -13,7 +14,7 @@ __all__ = ['taxiarray', 'triparray', 'Dataset','trajectory'] ## triparray == od_
 logging.basicConfig(format='%(asctime)s %(name)-10s : [%(levelname)-8s] %(message)s')
 
 
-class taxiarray(np.ndarray):
+class taxiarray(np.ndarray):#self 죄다 self.pos로 바꿀것.
     '''pratical data container based on structured array of numoy.
     traditionally, data type is '['id', 'x','y','time','passenger']'.
     please check datatype.'''
@@ -119,28 +120,6 @@ class taxiarray(np.ndarray):
             t.append(taxi)
         return t
 
-class trajectory(taxiarray):
-    '''a set of continuous point of single taxi. time gap may be 10 seconds.
-    interaction with segment, other trajectories. map matching.
-    '''
-    def taxi_id():
-
-        doc ="""The taxi_id property.
-
-                Returns
-                -------
-                np.index_array
-                    in taxiarray, return np.array([id_array])
-                """
-        def fget(self):
-            return self._taxi_id
-        def fset(self, value):
-            self._taxi_id = value
-        def fdel(self):
-            del self._taxi_id
-        return locals()
-    taxi_id = property(**taxi_id())
-
     def distance_of_curve(self, i, segment):
         """return max distance between trajectory point and segment
 
@@ -158,10 +137,10 @@ class trajectory(taxiarray):
 
         """
         d_p = []
-        d_v = distance(segment, self[i])
+        d_v = functions.distance(segment, self[i])
 
         for k in segment:
-            d_p.append(distance(self, k))
+            d_p.append(functions.distance(self, k))
 
         max_d_p = np.max(d_p)
         d_curve = max(d_v, max_d_p)
@@ -183,9 +162,9 @@ class trajectory(taxiarray):
         """
         l = []
         if point:
-            l.append(int(trajectory[0]//200-1234 + (trajectory[1]//200-20400)*734))
+            l.append(int(self[0]//200-1234 + (self[1]//200-20400)*734))
         else:
-            for j in trajectory:
+            for j in self:
                 l.append(int(j[0]//200-1234 + (j[1]//200-20400)*734))
         return np.unique(l)
 
@@ -204,15 +183,46 @@ class trajectory(taxiarray):
 
         """
         tot = []
-        grid_raw = trajectory_grid(self, point)
-        for i in grid_raw:
-            grid_list = [i+733, i+734, i+735, \
-                         i-1,   i,     i+1,   \
+
+        if point:
+            i = taxiarray.trajectory_grid(self, point=True)
+            grid_list = [i+733, i+734, i+735,\
+                         i-1,   i,     i+1,  \
                          i-735, i-734, i-733]
             for j in grid_list:
                 tot += [j]
+        else:
+            grid_raw = taxiarray.trajectory_grid(self)
+            for i in grid_raw:
+                 grid_list = [i+733, i+734, i+735,\
+                              i-1,   i,     i+1,  \
+                              i-735, i-734, i-733]
+                 for j in grid_list:
+                    tot += [j]
         return np.unique(tot)
 
+
+class trajectory(taxiarray):
+    '''a set of continuous point of single taxi. time gap may be 10 seconds.
+    interaction with segment, other trajectories. map matching.
+    '''
+    def taxi_id():
+
+        doc ="""The taxi_id property.
+
+                Returns
+                -------
+                np.index_array
+                    in taxiarray, return np.array([id_array])
+                """
+        def fget(self):
+            return self._taxi_id
+        def fset(self, value):
+            self._taxi_id = value
+        def fdel(self):
+            del self._taxi_id
+        return locals()
+    taxi_id = property(**taxi_id())
 
 
 class triparray(taxiarray):

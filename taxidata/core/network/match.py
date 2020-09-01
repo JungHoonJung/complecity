@@ -108,6 +108,25 @@ class SingleTrackMapMatching:
                 i.id = self.segments_index
                 self.segments_index+=1
 
+    def start(self, grid_set):
+        """Short summary.
+
+        Parameters
+        ----------
+        grid_set : array
+            Array of grid numbers.
+
+        Returns
+        -------
+        type
+            Description of returned object.
+
+        """
+        start_node=[]
+        for i in grid_set:
+            start_node.append(grid_200[i])
+        return start_node:
+
     def make_candidate_set(self, trajectory, ksegment_set, real_id, d_max = 200):
         """Find a candidate segment set with stored ksegments through calculating the distance of curve.
 
@@ -129,6 +148,11 @@ class SingleTrackMapMatching:
 
         + each calculation must be saved on `self.distance_map`.+저장 부분 안 만듦
         """
+
+        grid=grid_set(trajectory)
+
+
+
         candidate_set=[[]for i in range(len(trajectory))]
         for i in range(len(trajectory)):
             for j in range(len(ksegment_set)):
