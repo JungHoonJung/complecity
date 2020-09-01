@@ -223,6 +223,9 @@ class SingleTrackMapMatching:
         `taxidata.Segment`
             a whole path which is stitched by given segments.
 
+        Combine semgents to one Giant segment which similar to given trajectory. If semgents
+        don't overlap, choose the shortest path between two segments which are apart. Using
+        networkx.shortest_path when look for shortest path.
         """
         Joint_node = segments[0].nodes()
         for seg in segments[1:]:
@@ -242,19 +245,19 @@ class SingleTrackMapMatching:
         return Jointsegment
 
     def segment_to_line(self, segment):
-        """
-        segment -> pos_array [x_node,y_ndoe]
+        """Change semgent to nodes' position.
 
         Parameter
         ----------
-        self : road network
-        segment
-
+        segment : road segment
 
         Return
         -------
-        pos_array
-        np.array([x1,y1],[x2,y2],...)
+        pos_array : np.array([x1,y1],[x2,y2],...)
+            Which are segment's nodes' positions array.
+
+        Segment's nodes' each positions are used to measuring distances between
+        road segments and taxi trajectories
         """
         pos_list = np.zeros([len(segment.nodes()),2])
         for c in range(len(segment.nodes())):
@@ -274,6 +277,9 @@ class SingleTrackMapMatching:
         `list`
             the list of tuples indicate the edges of road network.
 
+        Assign trajectory's each point to edge of road segment. Taxi Gps data include
+        some noise, so it's hard to find correct road which taxi driving on. So mearsure
+        distance between road(edge) and taxi GPS point and assign to the most closest edge.
         """
         edge_list = []
         path_line = segment_to_line(self,path)
