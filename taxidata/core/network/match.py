@@ -1,4 +1,5 @@
 import networkx as nx
+import taxidata as td
 import numpy as np
 from ..object import taxiarray, trajectory, Dataset
 from .ksegment import *
@@ -108,24 +109,43 @@ class SingleTrackMapMatching:
                 i.id = self.segments_index
                 self.segments_index+=1
 
-    def start(self, grid_set):
-        """Short summary.
+    def segment_take(self, trajectory):
+        """Segment function. Take some segment close to trajectory.
 
         Parameters
         ----------
-        grid_set : array
-            Array of grid numbers.
+        trajectory : `taxidata.trajectory`
+             a sequence of converted GPS data(UTM coordinate). It must have `pos` attribute.
 
         Returns
         -------
-        type
-            Description of returned object.
+        `list`
+            Two lists of segment id & position close to trajectory.
 
         """
-        start_node=[]
-        for i in grid_set:
-            start_node.append(grid_200[i])
-        return start_node:
+        grid_set = td.taxiarray.grid_set(trajectory)
+        start_set = td.start(grid1_set)
+
+        seg_id=[]
+        seg_xy=[]
+
+        for z in start_set:
+            for j in z:
+                seg_id.append(td.k_segments_strict_bfs_with_length(td.Roadnetwork(), j, 800))
+                for i in td.k_xy(j):
+                    seg_xy.append(i)
+
+        seg_id=sum(seg_id,[])
+        real_xy=[]
+        real_id=[]
+
+        for i in range(len(seg_xy)):
+            if np.isin(td.taxiarray.trajectory_grid(seg_xy[i]), grid_set).all():
+                real_xy.append(seg_xy[i])
+                real_id.append(seg_id[i])
+
+        return real_xy, real_id
+
 
     def make_candidate_set(self, trajectory, ksegment_set, real_id, d_max = 200):
         """Find a candidate segment set with stored ksegments through calculating the distance of curve.
@@ -149,14 +169,10 @@ class SingleTrackMapMatching:
         + each calculation must be saved on `self.distance_map`.+저장 부분 안 만듦
         """
 
-        grid=grid_set(trajectory)
-
-
-
         candidate_set=[[]for i in range(len(trajectory))]
         for i in range(len(trajectory)):
             for j in range(len(ksegment_set)):
-                if (trajectory_grid(ksegment_set[j][0],point=True) == grid_set(trajectory[i],point=True)).any():
+                if (trajectory.trajectory_grid(real_xy[j][0],point=True)==trajectory.grid_set(points[i],point=True)).any():
                     if distance_of_curve(self, i, ksegment_set[j])<=d_max:
                         candidate_set[i].append(real_id[j])
         return candidate_set
