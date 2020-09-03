@@ -63,25 +63,13 @@ def make_node():
     """
 
     Seoul = td.Roadnetwork()
-    for l, e in s_elist.iterrows():
-        geom = s_link['geometry'][int(e['EDGE'])-1]
-        Seoul.add_edge(int(e['START_NODE']),int(e['END_NODE']),ID = int(e['EDGE']), length = float(e['LENGTH']), geometry = geom)
-        Seoul.nodes[int(e['START_NODE'])]['pos'] = (float(e['XCoord']),float(e['YCoord']))
-    def angle(G, node1, node2):
-        '''aspect of node1 as origin, return angle of node2 in sence of polar coordinates.'''
-        p1 = G.nodes[node1]['pos']
-        p2 = G.nodes[node2]['pos']
-        p2_ = (p2[0]-p1[0],p2[1]-p1[1])
-        return np.arctan2(p2_[1],p2_[0])
-    for edge in Seoul.edges(data = True):
-        edge[-1]['angle']=angle(Seoul, edge[0],edge[1])
     
     pos = Seoul.pos
 
     return Seoul
 
 
-def k_position(start_node):
+def k_position(start_node):#서울 노드의 좌표가 필요해서 아직 못씀.
     """return all segment position.
     Parameters
     ----------
@@ -109,7 +97,7 @@ def k_position(start_node):
         position.append(node)
     return position
 
-def node_in_grid(grid_set):
+def node_in_grid(grid_set):#서울 노드의 좌표가 필요해서 아직 못씀.
     """return nodes in grid set.
     Parameters
     ----------
