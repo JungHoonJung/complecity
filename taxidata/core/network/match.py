@@ -62,6 +62,7 @@ class SingleTrackMapMatching:
         #segment generation
         self.segment_set        =   []          # list of segments
         self.node_segments      =   {}          # node to segment dictionay
+        self.segment_id_dic     =   {}          # segment to segment's id
         self.segments_index     =   0
         self.candidate          =   []
 
@@ -104,7 +105,7 @@ class SingleTrackMapMatching:
             for i in segment_at_node:
                 self.segment_set.append(i)
                 self.node_segments[self.segments_index]=i
-
+                self.segment_id_dic[i]=self.segments_index
                 i.id = self.segments_index
                 self.segments_index+=1
 
