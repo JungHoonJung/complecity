@@ -62,6 +62,7 @@ class SingleTrackMapMatching:
         #segment generation
         self.segment_set        =   []          # list of segments
         self.node_segments      =   {}          # node to segment dictionay
+        self.segment_id_dic     =   {}          # segment to segment's id
         self.segments_index     =   0
         self.candidate          =   []
 
@@ -100,8 +101,8 @@ class SingleTrackMapMatching:
         else: gen = seg_func
 
         for node in self.map.nodes:
-            self.node_segments[node] = gen(self.map, node, k)
-            for i in self.node_segments[node]:
+            segment_at_node = gen(self.map, node, k)
+            for i in segment_at_node:
                 self.segment_set.append(i)
                 i.id = self.segments_index
                 self.segments_index+=1
@@ -130,8 +131,8 @@ class SingleTrackMapMatching:
         candidate_set=[[]for i in range(len(trajectory))]
         for i in range(len(trajectory)):
             for j in ksegment_set:
-                if (trajectory_grid(j[0],point=True) == grid_set(trajectory[i],point=True).any()):
-                    if distance_of_curve(self,i,j)<=d_max:
+                if (trajectory.trajectory_grid(j[0],point=True) == trajectory.grid_set(trajectory[i],point=True).any()):
+                    if trajectory.distance_of_curve(self,i,j)<=d_max:
                         candidate_set[i].append(j)
         return candidate_set
 
@@ -236,7 +237,7 @@ class SingleTrackMapMatching:
                 for i in range(len(shortest_path)): shortest_path_array[i]=shortest_path[i]
                 Joint_node = np.r_[Joint_node, shortest_path_array[1:], seg.nodes()[1:]]
         edge_in = (Joint_node[0],Joint_node[1],0,self.map.get_edge_data(Joint_node[0],Joint_node[1],0))
-        Jointsegment = segment(edge_in)
+        Jointsegment = Segment(edge_in)
         for edge_count in range(len(Joint_node)-2):
             edge_in = (Joint_node[edge_count+1],Joint_node[edge_count+2],0,self.map.get_edge_data(Joint_node[edge_count+1],Joint_node[edge_count+2],0))
             Jointsegment = Jointsegment.expand(edge_in)
