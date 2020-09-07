@@ -14,7 +14,7 @@ __all__ = ['taxiarray', 'triparray', 'Dataset','trajectory'] ## triparray == od_
 logging.basicConfig(format='%(asctime)s %(name)-10s : [%(levelname)-8s] %(message)s')
 
 
-class taxiarray(np.ndarray):#self 죄다 self.pos로 바꿀것.
+class taxiarray(np.ndarray):
     '''pratical data container based on structured array of numoy.
     traditionally, data type is '['id', 'x','y','time','passenger']'.
     please check datatype.'''
@@ -104,6 +104,32 @@ class taxiarray(np.ndarray):#self 죄다 self.pos로 바꿀것.
         '''
         pass
 
+
+
+
+class trajectory(taxiarray):
+    '''a set of continuous point of single taxi. time gap may be 10 seconds.
+    interaction with segment, other trajectories. map matching.
+    '''
+    def taxi_id():
+
+        doc ="""The taxi_id property.
+
+                Returns
+                -------
+                np.index_array
+                    in taxiarray, return np.array([id_array])
+                """
+        def fget(self):
+            return self._taxi_id
+        def fset(self, value):
+            self._taxi_id = value
+        def fdel(self):
+            del self._taxi_id
+        return locals()
+    taxi_id = property(**taxi_id())
+
+
     def get_trajectories(self):
         """return trajectories list by taxi_id.
 
@@ -185,14 +211,14 @@ class taxiarray(np.ndarray):#self 죄다 self.pos로 바꿀것.
         tot = []
 
         if point:
-            i = taxiarray.trajectory_grid(self, point=True)
+            i = trajectory.trajectory_grid(self, point=True)
             grid_list = [i+733, i+734, i+735,\
                          i-1,   i,     i+1,  \
                          i-735, i-734, i-733]
             for j in grid_list:
                 tot += [j]
         else:
-            grid_raw = taxiarray.trajectory_grid(self)
+            grid_raw = trajectory.trajectory_grid(self)
             for i in grid_raw:
                  grid_list = [i+733, i+734, i+735,\
                               i-1,   i,     i+1,  \
@@ -200,30 +226,6 @@ class taxiarray(np.ndarray):#self 죄다 self.pos로 바꿀것.
                  for j in grid_list:
                     tot += [j]
         return np.unique(tot)
-
-
-class trajectory(taxiarray):
-    '''a set of continuous point of single taxi. time gap may be 10 seconds.
-    interaction with segment, other trajectories. map matching.
-    '''
-    def taxi_id():
-
-        doc ="""The taxi_id property.
-
-                Returns
-                -------
-                np.index_array
-                    in taxiarray, return np.array([id_array])
-                """
-        def fget(self):
-            return self._taxi_id
-        def fset(self, value):
-            self._taxi_id = value
-        def fdel(self):
-            del self._taxi_id
-        return locals()
-    taxi_id = property(**taxi_id())
-
 
 class triparray(taxiarray):
     """
@@ -294,6 +296,9 @@ class triparray(taxiarray):
 
     def range(self, arg):
         pass
+
+
+
 
 class Dataset:
     '''this class will take FileManager and read from file make many objects of processing data.

@@ -172,8 +172,8 @@ class SingleTrackMapMatching:
         candidate_set=[[]for i in range(len(trajectory))]
         for i in range(len(trajectory)):
             for j in range(len(ksegment_set)):
-                if (trajectory.trajectory_grid(real_xy[j][0],point=True)==trajectory.grid_set(points[i],point=True)).any():
-                    if distance_of_curve(self, i, ksegment_set[j])<=d_max:
+                if (td.trajectory.trajectory_grid(real_xy[j][0],point=True)==td.trajectory.grid_set(points[i],point=True)).any():
+                    if td.trajectory.distance_of_curve(self, i, ksegment_set[j])<=d_max:
                         candidate_set[i].append(real_id[j])
         return candidate_set
 
