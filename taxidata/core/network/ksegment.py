@@ -34,13 +34,16 @@ class Segment:
 
         Parameters
         ----------
-        edge : type
+        edge : road network edege
             (start_node, end_node, {'ID', 'length', 'geometry', 'angle'})
 
         Returns
         -------
         type
             Description of returned object.
+
+        When segment expand by new edge(road), this function add some edge's information
+        to segment.
         """
         temp = Segment()
         temp.start_node = self.start_node
@@ -62,8 +65,7 @@ class Segment:
         return temp
 
     def check(self, k):
-        """Short summary.
-        '''check condition of k segments'''
+        """check condition of k segments
         Parameters
         ----------
         k : int
@@ -87,8 +89,9 @@ class Segment:
         return "<segment from node '{}' to '{}', total num : {}>".format(self.start_node, self.last_node, self.num)
 
     def __eq__(self, other):
-        if isinsance(other, self.__class__):
-            return self.start_node == other.start_node and (self.path==other.path).all()
+        if isinstance(other, self.__class__):
+            return all([self.start_node == other.start_node, np.array_equal(self.path, other.path)])
+            # ? start_node도 봐야하나?? path끼리만 비교해도 되지 않으려나?
         else:
             return False
 
@@ -126,8 +129,8 @@ class Segment:
         '''plot segment in aspect of graph'''
         Parameters
         ----------
-        pos : type
-            Description of parameter `pos`.
+        pos : node_pos
+
         *arg : type
             Description of parameter `*arg`.
         **kwarg : type
@@ -135,9 +138,7 @@ class Segment:
 
         Returns
         -------
-        type
-            Description of returned object.
-
+        Road segment plot(Using networkx.draw).
         """
 
         temp = nx.path_graph(self.num+1,create_using=nx.DiGraph)
@@ -173,7 +174,7 @@ class Segment:
         if len(start_overlap) == 0: stitchScore = 1
         # seg2 start node in seg1
         else:
-            if (self.path[start_overlap[0]:] == other.path[:len(self.path[start_overlap[0]:])]).all():
+            if np.array_equal(self.path[start_overlap[0]:], other.path[:len(self.path[start_overlap[0]:])]):
                 overlap_length = sum(self.length[start_overlap[0]:])
                 total_length = self.total_length + other.total_length - overlap_length
                 stitchScore = 1 - overlap_length/total_length

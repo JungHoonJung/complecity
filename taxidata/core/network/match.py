@@ -63,6 +63,7 @@ class SingleTrackMapMatching:
         #segment generation
         self.segment_set        =   []          # list of segments
         self.node_segments      =   {}          # node to segment dictionay
+        self.segment_id_dic     =   {}          # segment to segment's id
         self.segments_index     =   0
         self.candidate          =   []
 
@@ -101,11 +102,11 @@ class SingleTrackMapMatching:
         else: gen = seg_func
 
         for node in self.map.nodes:
-            self.node_segments[node] = gen(self.map, node, k)
-            for i in self.node_segments[node]:
+            segment_at_node = gen(self.map, node, k)
+            for i in segment_at_node:
                 self.segment_set.append(i)
                 self.node_segments[self.segments_index]=i
-
+                self.segment_id_dic[str(i)]=self.segments_index
                 i.id = self.segments_index
                 self.segments_index+=1
 
@@ -175,10 +176,11 @@ class SingleTrackMapMatching:
                 if (td.trajectory.trajectory_grid(real_xy[j][0],point=True)==td.trajectory.grid_set(points[i],point=True)).any():
                     if td.trajectory.distance_of_curve(self, i, ksegment_set[j])<=d_max:
                         candidate_set[i].append(real_id[j])
+
         return candidate_set
 
 
-    def path_optimizing(dis_weight=1, stitch_weight=10):
+    def path_optimizing(self, dis_weight=1, stitch_weight=10):
         """Find a optimized path through minimizing
         the sum of distance and stitching score.
 
@@ -263,6 +265,9 @@ class SingleTrackMapMatching:
         `taxidata.Segment`
             a whole path which is stitched by given segments.
 
+        Combine semgents to one Giant segment which similar to given trajectory. If semgents
+        don't overlap, choose the shortest path between two segments which are apart. Using
+        networkx.shortest_path when look for shortest path.
         """
         Joint_node = segments[0].nodes()
         for seg in segments[1:]:
@@ -275,26 +280,26 @@ class SingleTrackMapMatching:
                 for i in range(len(shortest_path)): shortest_path_array[i]=shortest_path[i]
                 Joint_node = np.r_[Joint_node, shortest_path_array[1:], seg.nodes()[1:]]
         edge_in = (Joint_node[0],Joint_node[1],0,self.map.get_edge_data(Joint_node[0],Joint_node[1],0))
-        Jointsegment = segment(edge_in)
+        Jointsegment = Segment(edge_in)
         for edge_count in range(len(Joint_node)-2):
             edge_in = (Joint_node[edge_count+1],Joint_node[edge_count+2],0,self.map.get_edge_data(Joint_node[edge_count+1],Joint_node[edge_count+2],0))
             Jointsegment = Jointsegment.expand(edge_in)
         return Jointsegment
 
     def segment_to_line(self, segment):
-        """
-        segment -> pos_array [x_node,y_ndoe]
+        """Change semgent to nodes' position.
 
         Parameter
         ----------
-        self : road network
-        segment
-
+        segment : road segment
 
         Return
         -------
-        pos_array
-        np.array([x1,y1],[x2,y2],...)
+        pos_array : np.array([x1,y1],[x2,y2],...)
+            Which are segment's nodes' positions array.
+
+        Segment's nodes' each positions are used to measuring distances between
+        road segments and taxi trajectories
         """
         pos_list = np.zeros([len(segment.nodes()),2])
         for c in range(len(segment.nodes())):
@@ -314,6 +319,9 @@ class SingleTrackMapMatching:
         `list`
             the list of tuples indicate the edges of road network.
 
+        Assign trajectory's each point to edge of road segment. Taxi Gps data include
+        some noise, so it's hard to find correct road which taxi driving on. So mearsure
+        distance between road(edge) and taxi GPS point and assign to the most closest edge.
         """
         edge_list = []
         path_line = segment_to_line(self,path)

@@ -48,54 +48,7 @@ def distance(line, point):
 
     return np.min(short)
 
-def make_node():
-    """return all nodes in seoul.
-    Parameters
-    ----------
-    None
 
-    Returns
-    -------
-    List
-
-    Two lists of node's position and node's id.
-
-    """
-
-    Seoul = td.Roadnetwork()
-    
-    pos = Seoul.pos
-
-    return Seoul
-
-
-def k_position(start_node):#서울 노드의 좌표가 필요해서 아직 못씀.
-    """return all segment position.
-    Parameters
-    ----------
-    Node id
-
-    Returns
-    -------
-    List
-
-    List of node's position in segment.
-
-    """
-    seg = td.k_segments_strict_bfs_with_length(Seoul, start_node, 800)
-    len_seg = len(seg)
-    list_seg = [[start_node]for l in range(len_seg)]
-    n = 0
-    for i in seg:
-        for j in i.edges():
-            list_seg[n].append(j[1])
-        n += 1
-
-    position = []
-    for i in list_seg:
-        node=np.array([seoul_dict[j] for j in i])
-        position.append(node)
-    return position
 
 def node_in_grid(grid_set):#서울 노드의 좌표가 필요해서 아직 못씀.
     """return nodes in grid set.
