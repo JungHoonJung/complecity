@@ -1,6 +1,7 @@
 import numpy as np
 import h5py
 import networkx as nx
+from .network import functions
 import datetime as dt
 import matplotlib.pyplot as plt
 import os
@@ -103,55 +104,8 @@ class taxiarray(np.ndarray):
         '''
         pass
 
-    def distance(self, point):
-        """return distance between taxi data's position and given point.
-        Parameters
-        ----------
-        point : array,tuple,list
-            the point where you want to know how far from each point from trajectories.
 
-        Returns
-        -------
-        float
-            result of distance from point from trajectories.
 
-        """
-        lines=line[:-1]-line[1:]
-        a=-lines[:,1]
-        b=lines[:,0]
-        c=-a*line[:,0][:-1]-b*line[:,1][:-1]
-
-        shortest=np.abs(a*point[0]+b*point[1]+c)/np.sqrt(a*a+b*b)
-        m1=-a/(b+1e-12)
-        m2=-1/(m1+1e-12)
-
-        x=(m1*line[:,0][:-1]-m2*point[0]-line[:,1][:-1]+point[1])/(m1-m2)
-        y=m2*(x-point[0])+point[1]
-
-        yesorno=(line[:,0][:-1]-x)*(line[:,0][1:]-x)+(line[:,1][:-1]-y)*(line[:,1][1:]-y)
-
-        len1=np.sqrt((line[:,0][:-1]-point[0])**2+(line[:,1][:-1]-point[1])**2)
-        len2=np.sqrt((line[:,0][1:]-point[0])**2+(line[:,1][1:]-point[1])**2)
-
-        short=shortest*(yesorno<=0)+np.minimum(len1,len2)*(yesorno>0)
-
-        return np.min(short)
-
-    def get_trajectories(self):
-        """return trajectories list by taxi_id.
-
-        Returns
-        -------
-        np.ndarray
-            in taxiarray, return np.array([trajectory_array])
-
-        """
-        t = []
-        for taxi_id, array in self.iterate_with('id'):
-            taxi = array.view(trajectory)
-            taxi.taxi_id = taxi_id
-            t.append(taxi)
-        return t
 
 class trajectory(taxiarray):
     '''a set of continuous point of single taxi. time gap may be 10 seconds.
@@ -175,6 +129,23 @@ class trajectory(taxiarray):
         return locals()
     taxi_id = property(**taxi_id())
 
+
+    def get_trajectories(self):
+        """return trajectories list by taxi_id.
+
+        Returns
+        -------
+        np.ndarray
+            in taxiarray, return np.array([trajectory_array])
+
+        """
+        t = []
+        for taxi_id, array in self.iterate_with('id'):
+            taxi = array.view(trajectory)
+            taxi.taxi_id = taxi_id
+            t.append(taxi)
+        return t
+
     def distance_of_curve(self, i, segment):
         """return max distance between trajectory point and segment
 
@@ -192,10 +163,10 @@ class trajectory(taxiarray):
 
         """
         d_p = []
-        d_v = distance(segment, trajectory[i])
+        d_v = functions.distance(segment, self[i])
 
         for k in segment:
-            d_p.append(distance(trajectory, k))
+            d_p.append(functions.distance(self, k))
 
         max_d_p = np.max(d_p)
         d_curve = max(d_v, max_d_p)
@@ -217,13 +188,13 @@ class trajectory(taxiarray):
         """
         l = []
         if point:
-            l.append(int(trajectory[0]//200-1234 + (trajectory[1]//200-20400)*734))
+            l.append(int(self[0]//200-1234 + (self[1]//200-20400)*734))
         else:
-            for j in trajectory:
+            for j in self:
                 l.append(int(j[0]//200-1234 + (j[1]//200-20400)*734))
         return np.unique(l)
 
-    def grid_set(self, point=True):
+    def grid_set(self, point=False):
         """grid set surrounding the trajectory.
 
         Parameters
@@ -238,16 +209,23 @@ class trajectory(taxiarray):
 
         """
         tot = []
-        grid_raw = trajectory_grid(self, point)
-        for i in grid_raw:
-            grid_list = [i+733, i+734, i+735, \
-                         i-1,   i,     i+1,   \
+
+        if point:
+            i = trajectory.trajectory_grid(self, point=True)
+            grid_list = [i+733, i+734, i+735,\
+                         i-1,   i,     i+1,  \
                          i-735, i-734, i-733]
             for j in grid_list:
                 tot += [j]
+        else:
+            grid_raw = trajectory.trajectory_grid(self)
+            for i in grid_raw:
+                 grid_list = [i+733, i+734, i+735,\
+                              i-1,   i,     i+1,  \
+                              i-735, i-734, i-733]
+                 for j in grid_list:
+                    tot += [j]
         return np.unique(tot)
-
-
 
 class triparray(taxiarray):
     """
@@ -319,6 +297,9 @@ class triparray(taxiarray):
     def range(self, arg):
         pass
 
+
+
+
 class Dataset:
     '''this class will take FileManager and read from file make many objects of processing data.
     so that you can get taxi object or network object easily with this class. '''
@@ -380,7 +361,6 @@ class Dataset:
                 return [field for field in f['taxidata']]
         return locals()
     fields = property(**fields())
-
 
     def get_array(self, target = None, start_time = None, end_time = None, **kwarg):
         '''return array from file.
