@@ -1,6 +1,7 @@
 import numpy as np
 import h5py
 import networkx as nx
+from .network import functions
 import datetime as dt
 import matplotlib.pyplot as plt
 import os
@@ -103,55 +104,8 @@ class taxiarray(np.ndarray):
         '''
         pass
 
-    def distance(self, point):
-        """return distance between taxi data's position and given point.
-        Parameters
-        ----------
-        point : array,tuple,list
-            the point where you want to know how far from each point from trajectories.
 
-        Returns
-        -------
-        float
-            result of distance from point from trajectories.
 
-        """
-        lines=line[:-1]-line[1:]
-        a=-lines[:,1]
-        b=lines[:,0]
-        c=-a*line[:,0][:-1]-b*line[:,1][:-1]
-
-        shortest=np.abs(a*point[0]+b*point[1]+c)/np.sqrt(a*a+b*b)
-        m1=-a/(b+1e-12)
-        m2=-1/(m1+1e-12)
-
-        x=(m1*line[:,0][:-1]-m2*point[0]-line[:,1][:-1]+point[1])/(m1-m2)
-        y=m2*(x-point[0])+point[1]
-
-        yesorno=(line[:,0][:-1]-x)*(line[:,0][1:]-x)+(line[:,1][:-1]-y)*(line[:,1][1:]-y)
-
-        len1=np.sqrt((line[:,0][:-1]-point[0])**2+(line[:,1][:-1]-point[1])**2)
-        len2=np.sqrt((line[:,0][1:]-point[0])**2+(line[:,1][1:]-point[1])**2)
-
-        short=shortest*(yesorno<=0)+np.minimum(len1,len2)*(yesorno>0)
-
-        return np.min(short)
-
-    def get_trajectories(self):
-        """return trajectories list by taxi_id.
-
-        Returns
-        -------
-        np.ndarray
-            in taxiarray, return np.array([trajectory_array])
-
-        """
-        t = []
-        for taxi_id, array in self.iterate_with('id'):
-            taxi = array.view(trajectory)
-            taxi.taxi_id = taxi_id
-            t.append(taxi)
-        return t
 
 class trajectory(taxiarray):
     '''a set of continuous point of single taxi. time gap may be 10 seconds.
@@ -175,6 +129,23 @@ class trajectory(taxiarray):
         return locals()
     taxi_id = property(**taxi_id())
 
+
+    def get_trajectories(self):
+        """return trajectories list by taxi_id.
+
+        Returns
+        -------
+        np.ndarray
+            in taxiarray, return np.array([trajectory_array])
+
+        """
+        t = []
+        for taxi_id, array in self.iterate_with('id'):
+            taxi = array.view(trajectory)
+            taxi.taxi_id = taxi_id
+            t.append(taxi)
+        return t
+
     def distance_of_curve(self, i, segment):
         """return max distance between trajectory point and segment
 
@@ -192,10 +163,10 @@ class trajectory(taxiarray):
 
         """
         d_p = []
-        d_v = distance(segment, trajectory[i])
+        d_v = functions.distance(segment, self[i])
 
         for k in segment:
-            d_p.append(distance(trajectory, k))
+            d_p.append(functions.distance(self, k))
 
         max_d_p = np.max(d_p)
         d_curve = max(d_v, max_d_p)
@@ -217,13 +188,13 @@ class trajectory(taxiarray):
         """
         l = []
         if point:
-            l.append(int(trajectory[0]//200-1234 + (trajectory[1]//200-20400)*734))
+            l.append(int(self[0]//200-1234 + (self[1]//200-20400)*734))
         else:
-            for j in trajectory:
+            for j in self:
                 l.append(int(j[0]//200-1234 + (j[1]//200-20400)*734))
         return np.unique(l)
 
-    def grid_set(self, point=True):
+    def grid_set(self, point=False):
         """grid set surrounding the trajectory.
 
         Parameters
@@ -238,16 +209,23 @@ class trajectory(taxiarray):
 
         """
         tot = []
-        grid_raw = trajectory_grid(self, point)
-        for i in grid_raw:
-            grid_list = [i+733, i+734, i+735, \
-                         i-1,   i,     i+1,   \
+
+        if point:
+            i = trajectory.trajectory_grid(self, point=True)
+            grid_list = [i+733, i+734, i+735,\
+                         i-1,   i,     i+1,  \
                          i-735, i-734, i-733]
             for j in grid_list:
                 tot += [j]
+        else:
+            grid_raw = trajectory.trajectory_grid(self)
+            for i in grid_raw:
+                 grid_list = [i+733, i+734, i+735,\
+                              i-1,   i,     i+1,  \
+                              i-735, i-734, i-733]
+                 for j in grid_list:
+                    tot += [j]
         return np.unique(tot)
-
-
 
 class triparray(taxiarray):
     """
@@ -319,6 +297,9 @@ class triparray(taxiarray):
     def range(self, arg):
         pass
 
+
+
+
 class Dataset:
     '''this class will take FileManager and read from file make many objects of processing data.
     so that you can get taxi object or network object easily with this class. '''
@@ -380,7 +361,6 @@ class Dataset:
                 return [field for field in f['taxidata']]
         return locals()
     fields = property(**fields())
-
 
     def get_array(self, target = None, start_time = None, end_time = None, **kwarg):
         '''return array from file.
@@ -639,7 +619,7 @@ class DataProcessor:
     date = property(**date())
 
     def set_date(self, year, month, day):
-        date = dt.datetime(year, month, day)
+        date = dt.datetime(int(year), int(month), int(day))
         self._date = int(date.timestamp()-54000)/86400
 
     def load(self, hdf = None, npy = None, RAW = None, shp = None):
@@ -655,8 +635,7 @@ class DataProcessor:
         if shp is not None:
             pass
 
-    def set_hdf(self, file):
-        self.hdf = h5py.File(file)
+
 
     def set_RAW_path(self, path):
         if rawfiles(path).file_check():
@@ -697,52 +676,23 @@ class DataProcessor:
             self.logger.error('Attempt to make hdf before setting RAW file.')
             raise ValueError("No RAW files.")
         if self.hdf is None:
-            self.set_hdf(path) # self.hdf = h5py.File(file)
+            self.hdf = h5py.File(path, 'w') # self.hdf = h5py.File(file)
+            self.hdf.attrs['Date'] = self._date
         if self._date == None:
             self.logger.error('Attempt to make hdf before setting date.')
             raise ValueError("'date' is None.")
 
         self.logger.info('Starting process converting RAW to hdf5.')
 
-        if not self.hdf.get('id_list',False):
-            self.hdf.create_dataset('id_list',(1,), maxshape=(None,), dtype = np.int32)
-            self.hdf.create_dataset('TimeTable',(8640,1000), maxshape=(8640,None), dtype = np.int32)
-            self.logger.info('hdf handler start to initializing')
-            self.hdf.attrs['Date'] = self._date
-            self.logger.info('Collecting id.')
-            ids = self.RAW.col_unique(0)
-            ids.sort()
-            self.logger.info('Saving id_list')
-            self.hdf['id_list'].resize((len(id_list),))
-            self.hdf['id_list'][:] = ids
 
-            self.logger.debug('Time table resize')
-            self.hdf['TimeTable'].resize((8640,len(id_list)))
 
         taxidata = self.hdf.require_group('taxidata')
-        #errors = self.hdf.require_group('Errors')
         remains = self.hdf.require_group('remains')
-        for i, typename in enumerate(self.RAW.dtype.names):
-            if typename == 'id' or typename =='time':continue
-            if not taxidata.get(typename, False):
-                self.logger.debug("'{}' Dataset created.".format(typename))
-                ta = taxidata.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
-                #ta.attrs['Nonesign'] = -1
-                #errors.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
-                re = remains.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
-                #ta.attrs['Nonesign'] = -1
-
-        ids = self.hdf['id_list'][:]
-        id_list = dict()
-        for i,j in enumerate(ids):
-            id_list[j] = i
 
         files = 0
         lines = 0
         id_count = 0
-        #err_c = 0
         rem_c = 0
-        timetable = -np.ones([8640,len(id_list)], dtype = np.int32)
 
         date = self._date*86400 + 54000
         totalfile = len(self.RAW)
@@ -755,7 +705,7 @@ class DataProcessor:
 
             #self.logger.debug('\tCurrent total taxi number : {}'.format(len(id_list)))
 
-            self.logger.debug('\tSorting npy')
+            #self.logger.debug('\tSorting npy')
             np.sort(npy, order=['time','id'])
             full[check:check+npy.shape[0]] = npy
             check += npy.shape[0]
@@ -763,35 +713,60 @@ class DataProcessor:
         self.logger.debug('total : {}'.format(check))
         full = full[:check]
 
+
+        self.logger.info('Collecting id.')
+
+        ids = np.unique(full['id'])
+        timetable = -np.ones([8640,len(ids)], dtype = np.int32)
+
+        self.logger.info('Saving id_list')
+        self.hdf.create_dataset('id_list', data = ids)
+        #ids.sort()
+        id_list = dict()
+        for i,j in enumerate(ids):
+            id_list[j] = i
+
         self.logger.debug('Time converting')
         times = ((time_converter(full['time']) - (self._date*86400+54000))/10).astype(np.int32)
 
         self.logger.debug('Masking start')
         mask = np.logical_and(times>=0, times<8640)
+        tdata = full[mask]
+        rdata = full[np.logical_not(mask)]
 
         self.logger.debug('id converting')
-        ids = [id_list[i] for i in full['id'][mask]]
+        ids = [id_list[i] for i in tdata['id']]
         datalen = len(ids)
 
         self.logger.debug('Time table update')
-        timetable[times[mask], ids] = lines+i
+        timetable[times[mask], ids] = np.arange(len(ids))
+        self.logger.debug('Time table collecting')
+        self.hdf.create_dataset('TimeTable', data = timetable, compression = 'gzip')
+
 
         self.logger.debug('Data collecting')
+        for i, typename in enumerate(self.RAW.dtype.names):
+            if typename == 'id' or typename =='time':continue
+            if not taxidata.get(typename, False):
+                self.logger.debug("\t'{}' Dataset created.".format(typename))
+                ta = taxidata.create_dataset(typename, data = tdata[typename], compression='gzip')
+
+                #ta.attrs['Nonesign'] = -1
+                #errors.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
+                re = remains.create_dataset(typename, data = rdata[typename], compression='gzip')
+        r'''
         for types in npy.dtype.names:
             if types == 'id' or types =='time':continue
             self.logger.debug('\t\t{}'.format(types))
             taxidata[types].resize((datalen,))
-            taxidata[types][lines:] = full[types][mask]
-            remains[types].resize((rem_c+full.shape[0]-datalen,))
-            remains[types][rem_c:] = full[types][np.logical_not(mask)]
-
+            taxidata[types][:] = tdata[types]
+            remains[types].resize((full.shape[0]-datalen,))
+            remains[types][:] = rdata[types]
+        '''
         #files+=1
         #lines+=datalen
         #rem_c+= len(npy)-datalen
-        self.logger.debug('total files length : {}, data : {}. remains : {}'.format(len(npy), datalen, len(npy)-datalen))
-
-        self.logger.info('Saving time table.')
-        self.hdf['TimeTable'] = timetable
+        self.logger.debug('total files length : {}, data : {}. remains : {}'.format(len(tdata), datalen, len(rdata)))
         self.hdf.attrs['TotalNumber'] = len(id_list)
         self.logger.info('Finished!')
         self.hdf.flush()
