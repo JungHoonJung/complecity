@@ -103,8 +103,6 @@ class SingleTrackMapMatching:
             self.node_segments[node] = gen(self.map, node, k)
             for i in self.node_segments[node]:
                 self.segment_set.append(i)
-                self.node_segments[self.segments_index]=i
-
                 i.id = self.segments_index
                 self.segments_index+=1
 
