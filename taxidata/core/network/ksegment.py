@@ -90,7 +90,8 @@ class Segment:
 
     def __eq__(self, other):
         if isinstance(other, self.__class__):
-            return self.start_node == other.start_node and (self.path==other.path).all()
+            return all([self.start_node == other.start_node, np.array_equal(self.path, other.path)])
+            # ? start_node도 봐야하나?? path끼리만 비교해도 되지 않으려나?
         else:
             return False
 
@@ -173,7 +174,7 @@ class Segment:
         if len(start_overlap) == 0: stitchScore = 1
         # seg2 start node in seg1
         else:
-            if (self.path[start_overlap[0]:] == other.path[:len(self.path[start_overlap[0]:])]).all():
+            if np.array_equal(self.path[start_overlap[0]:], other.path[:len(self.path[start_overlap[0]:])]):
                 overlap_length = sum(self.length[start_overlap[0]:])
                 total_length = self.total_length + other.total_length - overlap_length
                 stitchScore = 1 - overlap_length/total_length
