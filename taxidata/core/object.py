@@ -619,7 +619,7 @@ class DataProcessor:
     date = property(**date())
 
     def set_date(self, year, month, day):
-        date = dt.datetime(year, month, day)
+        date = dt.datetime(int(year), int(month), int(day))
         self._date = int(date.timestamp()-54000)/86400
 
     def load(self, hdf = None, npy = None, RAW = None, shp = None):
@@ -635,8 +635,7 @@ class DataProcessor:
         if shp is not None:
             pass
 
-    def set_hdf(self, file):
-        self.hdf = h5py.File(file)
+
 
     def set_RAW_path(self, path):
         if rawfiles(path).file_check():
@@ -677,52 +676,23 @@ class DataProcessor:
             self.logger.error('Attempt to make hdf before setting RAW file.')
             raise ValueError("No RAW files.")
         if self.hdf is None:
-            self.set_hdf(path) # self.hdf = h5py.File(file)
+            self.hdf = h5py.File(path, 'w') # self.hdf = h5py.File(file)
+            self.hdf.attrs['Date'] = self._date
         if self._date == None:
             self.logger.error('Attempt to make hdf before setting date.')
             raise ValueError("'date' is None.")
 
         self.logger.info('Starting process converting RAW to hdf5.')
 
-        if not self.hdf.get('id_list',False):
-            self.hdf.create_dataset('id_list',(1,), maxshape=(None,), dtype = np.int32)
-            self.hdf.create_dataset('TimeTable',(8640,1000), maxshape=(8640,None), dtype = np.int32)
-            self.logger.info('hdf handler start to initializing')
-            self.hdf.attrs['Date'] = self._date
-            self.logger.info('Collecting id.')
-            ids = self.RAW.col_unique(0)
-            ids.sort()
-            self.logger.info('Saving id_list')
-            self.hdf['id_list'].resize((len(id_list),))
-            self.hdf['id_list'][:] = ids
 
-            self.logger.debug('Time table resize')
-            self.hdf['TimeTable'].resize((8640,len(id_list)))
 
         taxidata = self.hdf.require_group('taxidata')
-        #errors = self.hdf.require_group('Errors')
         remains = self.hdf.require_group('remains')
-        for i, typename in enumerate(self.RAW.dtype.names):
-            if typename == 'id' or typename =='time':continue
-            if not taxidata.get(typename, False):
-                self.logger.debug("'{}' Dataset created.".format(typename))
-                ta = taxidata.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
-                #ta.attrs['Nonesign'] = -1
-                #errors.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
-                re = remains.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
-                #ta.attrs['Nonesign'] = -1
-
-        ids = self.hdf['id_list'][:]
-        id_list = dict()
-        for i,j in enumerate(ids):
-            id_list[j] = i
 
         files = 0
         lines = 0
         id_count = 0
-        #err_c = 0
         rem_c = 0
-        timetable = -np.ones([8640,len(id_list)], dtype = np.int32)
 
         date = self._date*86400 + 54000
         totalfile = len(self.RAW)
@@ -735,7 +705,7 @@ class DataProcessor:
 
             #self.logger.debug('\tCurrent total taxi number : {}'.format(len(id_list)))
 
-            self.logger.debug('\tSorting npy')
+            #self.logger.debug('\tSorting npy')
             np.sort(npy, order=['time','id'])
             full[check:check+npy.shape[0]] = npy
             check += npy.shape[0]
@@ -743,35 +713,60 @@ class DataProcessor:
         self.logger.debug('total : {}'.format(check))
         full = full[:check]
 
+
+        self.logger.info('Collecting id.')
+
+        ids = np.unique(full['id'])
+        timetable = -np.ones([8640,len(ids)], dtype = np.int32)
+
+        self.logger.info('Saving id_list')
+        self.hdf.create_dataset('id_list', data = ids)
+        #ids.sort()
+        id_list = dict()
+        for i,j in enumerate(ids):
+            id_list[j] = i
+
         self.logger.debug('Time converting')
         times = ((time_converter(full['time']) - (self._date*86400+54000))/10).astype(np.int32)
 
         self.logger.debug('Masking start')
         mask = np.logical_and(times>=0, times<8640)
+        tdata = full[mask]
+        rdata = full[np.logical_not(mask)]
 
         self.logger.debug('id converting')
-        ids = [id_list[i] for i in full['id'][mask]]
+        ids = [id_list[i] for i in tdata['id']]
         datalen = len(ids)
 
         self.logger.debug('Time table update')
-        timetable[times[mask], ids] = lines+i
+        timetable[times[mask], ids] = np.arange(len(ids))
+        self.logger.debug('Time table collecting')
+        self.hdf.create_dataset('TimeTable', data = timetable, compression = 'gzip')
+
 
         self.logger.debug('Data collecting')
+        for i, typename in enumerate(self.RAW.dtype.names):
+            if typename == 'id' or typename =='time':continue
+            if not taxidata.get(typename, False):
+                self.logger.debug("\t'{}' Dataset created.".format(typename))
+                ta = taxidata.create_dataset(typename, data = tdata[typename], compression='gzip')
+
+                #ta.attrs['Nonesign'] = -1
+                #errors.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
+                re = remains.create_dataset(typename, data = rdata[typename], compression='gzip')
+        r'''
         for types in npy.dtype.names:
             if types == 'id' or types =='time':continue
             self.logger.debug('\t\t{}'.format(types))
             taxidata[types].resize((datalen,))
-            taxidata[types][lines:] = full[types][mask]
-            remains[types].resize((rem_c+full.shape[0]-datalen,))
-            remains[types][rem_c:] = full[types][np.logical_not(mask)]
-
+            taxidata[types][:] = tdata[types]
+            remains[types].resize((full.shape[0]-datalen,))
+            remains[types][:] = rdata[types]
+        '''
         #files+=1
         #lines+=datalen
         #rem_c+= len(npy)-datalen
-        self.logger.debug('total files length : {}, data : {}. remains : {}'.format(len(npy), datalen, len(npy)-datalen))
-
-        self.logger.info('Saving time table.')
-        self.hdf['TimeTable'] = timetable
+        self.logger.debug('total files length : {}, data : {}. remains : {}'.format(len(tdata), datalen, len(rdata)))
         self.hdf.attrs['TotalNumber'] = len(id_list)
         self.logger.info('Finished!')
         self.hdf.flush()
