@@ -1,6 +1,7 @@
 import numpy as np
 import h5py
 import networkx as nx
+from .network import functions
 import datetime as dt
 import matplotlib.pyplot as plt
 import os
@@ -11,7 +12,6 @@ from .lib.plot import plot_seoul
 __all__ = ['taxiarray', 'triparray', 'Dataset','trajectory'] ## triparray == od_data(id, origin, destination) .npy => .hdf5
 
 logging.basicConfig(format='%(asctime)s %(name)-10s : [%(levelname)-8s] %(message)s')
-
 
 class taxiarray(np.ndarray):
     '''pratical data container based on structured array of numoy.
@@ -62,7 +62,9 @@ class taxiarray(np.ndarray):
         *only id for now*'''
         i = 0
         for taxi_id, index in self._taxi_id:
-            yield taxi_id, self[i:index]
+            temp = self[i:index]
+            temp.pos = (self._posx, self._posy)
+            yield taxi_id, temp
             i = index
 
     def plot(self, id='all', time ='all'):
@@ -103,55 +105,8 @@ class taxiarray(np.ndarray):
         '''
         pass
 
-    def distance(self, point):
-        """return distance between taxi data's position and given point.
-        Parameters
-        ----------
-        point : array,tuple,list
-            the point where you want to know how far from each point from trajectories.
 
-        Returns
-        -------
-        float
-            result of distance from point from trajectories.
 
-        """
-        lines=line[:-1]-line[1:]
-        a=-lines[:,1]
-        b=lines[:,0]
-        c=-a*line[:,0][:-1]-b*line[:,1][:-1]
-
-        shortest=np.abs(a*point[0]+b*point[1]+c)/np.sqrt(a*a+b*b)
-        m1=-a/(b+1e-12)
-        m2=-1/(m1+1e-12)
-
-        x=(m1*line[:,0][:-1]-m2*point[0]-line[:,1][:-1]+point[1])/(m1-m2)
-        y=m2*(x-point[0])+point[1]
-
-        yesorno=(line[:,0][:-1]-x)*(line[:,0][1:]-x)+(line[:,1][:-1]-y)*(line[:,1][1:]-y)
-
-        len1=np.sqrt((line[:,0][:-1]-point[0])**2+(line[:,1][:-1]-point[1])**2)
-        len2=np.sqrt((line[:,0][1:]-point[0])**2+(line[:,1][1:]-point[1])**2)
-
-        short=shortest*(yesorno<=0)+np.minimum(len1,len2)*(yesorno>0)
-
-        return np.min(short)
-
-    def get_trajectories(self):
-        """return trajectories list by taxi_id.
-
-        Returns
-        -------
-        np.ndarray
-            in taxiarray, return np.array([trajectory_array])
-
-        """
-        t = []
-        for taxi_id, array in self.iterate_with('id'):
-            taxi = array.view(trajectory)
-            taxi.taxi_id = taxi_id
-            t.append(taxi)
-        return t
 
 class trajectory(taxiarray):
     '''a set of continuous point of single taxi. time gap may be 10 seconds.
@@ -175,6 +130,23 @@ class trajectory(taxiarray):
         return locals()
     taxi_id = property(**taxi_id())
 
+
+    def get_trajectories(self):
+        """return trajectories list by taxi_id.
+
+        Returns
+        -------
+        np.ndarray
+            in taxiarray, return np.array([trajectory_array])
+
+        """
+        t = []
+        for taxi_id, array in self.iterate_with('id'):
+            taxi = array.view(trajectory)
+            taxi.taxi_id = taxi_id
+            t.append(taxi)
+        return t
+
     def distance_of_curve(self, i, segment):
         """return max distance between trajectory point and segment
 
@@ -192,10 +164,10 @@ class trajectory(taxiarray):
 
         """
         d_p = []
-        d_v = distance(segment, trajectory[i])
+        d_v = functions.distance(segment, self[i])
 
         for k in segment:
-            d_p.append(distance(trajectory, k))
+            d_p.append(functions.distance(self, k))
 
         max_d_p = np.max(d_p)
         d_curve = max(d_v, max_d_p)
@@ -217,13 +189,13 @@ class trajectory(taxiarray):
         """
         l = []
         if point:
-            l.append(int(trajectory[0]//200-1234 + (trajectory[1]//200-20400)*734))
+            l.append(int(self[0]//200-1234 + (self[1]//200-20400)*734))
         else:
-            for j in trajectory:
+            for j in self:
                 l.append(int(j[0]//200-1234 + (j[1]//200-20400)*734))
         return np.unique(l)
 
-    def grid_set(self, point=True):
+    def grid_set(self, point=False):
         """grid set surrounding the trajectory.
 
         Parameters
@@ -238,16 +210,23 @@ class trajectory(taxiarray):
 
         """
         tot = []
-        grid_raw = trajectory_grid(self, point)
-        for i in grid_raw:
-            grid_list = [i+733, i+734, i+735, \
-                         i-1,   i,     i+1,   \
+
+        if point:
+            i = trajectory.trajectory_grid(self, point=True)
+            grid_list = [i+733, i+734, i+735,\
+                         i-1,   i,     i+1,  \
                          i-735, i-734, i-733]
             for j in grid_list:
                 tot += [j]
+        else:
+            grid_raw = trajectory.trajectory_grid(self)
+            for i in grid_raw:
+                 grid_list = [i+733, i+734, i+735,\
+                              i-1,   i,     i+1,  \
+                              i-735, i-734, i-733]
+                 for j in grid_list:
+                    tot += [j]
         return np.unique(tot)
-
-
 
 class triparray(taxiarray):
     """
@@ -293,12 +272,12 @@ class triparray(taxiarray):
         """
 
         def fget(self): # IDEA: return origin points of this instance as taxi array
-            return taxidata(_origins)
+            return array(self._origins)
         return locals()
     origins = property(**origins())
 
     def destination():
-        doc = "destination is end point of trip. this this property gives origin points as taxiarray form."
+        doc = "destination is end point of trip. this property gives origin points as taxiarray form."
         def fget(self):
             return self._destination
         def fset(self, value):
@@ -318,6 +297,9 @@ class triparray(taxiarray):
 
     def range(self, arg):
         pass
+
+
+
 
 class Dataset:
     '''this class will take FileManager and read from file make many objects of processing data.
@@ -381,9 +363,9 @@ class Dataset:
         return locals()
     fields = property(**fields())
 
-
     def get_array(self, target = None, start_time = None, end_time = None, **kwarg):
-        '''return array from file.
+        '''return array from file.  
+
         start_time and end_time specify the output data size.
         if integer is given, each argument will be regarded as hours
         or time must be instance of datetime module.
@@ -392,34 +374,34 @@ class Dataset:
 
         kwargs
         ---------
-        num : integer
+        num : integer  
             total taxi number fixed as given integer.
             same option of Dataset.set_taxis(num, random)
-        random : bool (optional)
+        random : bool (optional)  
             same option of Dataset.set_taxis(num, random)
             default is `True`.
-        time : tuple
+        time : tuple  
             set start_time and end_time
 
-        date : bool
+        date : bool  
             if True, timestamp of date will be added.
 
-        dtype : list of (field_name, dtype)
+        dtype : list of (field_name, dtype)  
             set return dtypes.
             if None, return whole field and saved dtypes.
-        fields : list
+        fields : list  
             set return fields.
             if None, return whole field
-        position : tuple of str (field_name_of_x, field_name_of_y)
+        position : tuple of str (field_name_of_x, field_name_of_y)  
             specify position default is ('lon','lat')
         '''
-        set_taxis = False
-        fields = None
-        dtypes = None
-        fd_ol = False
-        start = None
-        end = None
-        position = ('lon','lat')
+        set_taxis   = False
+        fields      = None
+        dtypes      = None
+        fd_ol       = False
+        start       = None
+        end         = None
+        position    = ('lon','lat')
 
         if target is not None:
             self.set_taxi_id(target)
@@ -488,8 +470,6 @@ class Dataset:
 
 
         time = slice(start, end)
-        with h5py.File(self.file, 'r') as f:
-            timetable = f['TimeTable'][:].T
         ids = {ii:i for i, ii in enumerate(self.id_list)}
         target = [ids[taxiid] for taxiid in self.targets]
         target.sort()
@@ -498,6 +478,20 @@ class Dataset:
         times = []
 
         date = self.date.timestamp()
+
+        #timetable loads
+        if len(self.targets)<=50:
+            with h5py.File(self.file, 'r') as f:
+                timetable = f['TimeTable'][:].T
+        else:
+            with h5py.File(self.file, 'r') as f:
+                timetable = {}
+                for i in target:
+                    timetable[i] = f['TimeTable'][:,i]
+
+
+
+        # partial reading is optimal when len(target) < 1000
         #reading data indices from timetable
         for i in target:
             mask = timetable[i][time]
@@ -512,10 +506,16 @@ class Dataset:
             times.append(tlist)
             indices.append(taxi)
             nums.append(taxi.shape[0])
-
+        
+        
+        
+        if not nums:
+            raise ValueError("Data is Empty. Please check the data range.")
+        else:
+            print(f"{len(nums)} taxis founded in data with given condition.")
         #print(dtypes) ## check
 
-        array = np.zeros(sum(nums),dtype = dtypes)
+        Array = np.zeros(sum(nums),dtype = dtypes)
         cumnum = np.array(nums).cumsum()
         order = np.empty([cumnum[-1],2],dtype = np.int32)
         order[:,1] = np.arange(cumnum[-1])
@@ -523,30 +523,32 @@ class Dataset:
         for index in indices:
             order[:,0][number:number + len(index)] = index
             number += len(index)
-
+        ind_min = order[:,0].min()
+        ind_max = order[:,0].max()
         #order = np.sort(order, 0)
 
         ch_len = 0
+        order[:,0] -= ind_min
 
         with h5py.File(self.file, 'r') as f:
             for field, _ in dtypes:
                 if field == 'id' or field == 'time':continue
-                array[field] = f['taxidata'][field][:][order.T[0]]
+                Array[field] = f['taxidata'][field][ind_min:ind_max+1][order.T[0]]
 
             for start_index, dlen, taxi_id, tlist, index in zip(cumnum, nums, self.targets, times, indices):
-                tarr = array[start_index-dlen: start_index]
+                tarr = Array[start_index-dlen: start_index]
                 ch_len+=dlen
                 tarr['id'] = taxi_id
                 tarr['time'] = tlist
 
         assert ch_len == cumnum[-1]
 
-        res = array.view(taxiarray)
+        res = Array.view(taxiarray)
         if 'lat' in fields:
             res['lat']/=1e7
         if 'lon' in fields:
             res['lon']/=1e7
-        res.pos = ('lat','lon')
+        res.pos = position
         res.taxi_id = [(id, index) for id, index in zip(self.targets, cumnum)]
         self.targets = None
         return res
@@ -559,6 +561,7 @@ class Dataset:
             self.targets = np.random.choice(self.id_list, num, replace = False)
         else:
             self.targets = self.id_list[:num]
+
 
     def set_taxi_id(self, ids):
         """setting target with given id.
@@ -609,6 +612,9 @@ class Dataset:
     def __getitems__(self,  key):
         pass
 
+    def __len__(self):
+        with h5py.File(self.file, 'r') as f:
+             return f['taxidata']['valid'].shape[0]
 
 
 class DataProcessor:
@@ -639,7 +645,7 @@ class DataProcessor:
     date = property(**date())
 
     def set_date(self, year, month, day):
-        date = dt.datetime(year, month, day)
+        date = dt.datetime(int(year), int(month), int(day))
         self._date = int(date.timestamp()-54000)/86400
 
     def load(self, hdf = None, npy = None, RAW = None, shp = None):
@@ -655,8 +661,7 @@ class DataProcessor:
         if shp is not None:
             pass
 
-    def set_hdf(self, file):
-        self.hdf = h5py.File(file)
+
 
     def set_RAW_path(self, path):
         if rawfiles(path).file_check():
@@ -697,52 +702,23 @@ class DataProcessor:
             self.logger.error('Attempt to make hdf before setting RAW file.')
             raise ValueError("No RAW files.")
         if self.hdf is None:
-            self.set_hdf(path) # self.hdf = h5py.File(file)
+            self.hdf = h5py.File(path, 'w') # self.hdf = h5py.File(file)
+            self.hdf.attrs['Date'] = self._date
         if self._date == None:
             self.logger.error('Attempt to make hdf before setting date.')
             raise ValueError("'date' is None.")
 
         self.logger.info('Starting process converting RAW to hdf5.')
 
-        if not self.hdf.get('id_list',False):
-            self.hdf.create_dataset('id_list',(1,), maxshape=(None,), dtype = np.int32)
-            self.hdf.create_dataset('TimeTable',(8640,1000), maxshape=(8640,None), dtype = np.int32)
-            self.logger.info('hdf handler start to initializing')
-            self.hdf.attrs['Date'] = self._date
-            self.logger.info('Collecting id.')
-            ids = self.RAW.col_unique(0)
-            ids.sort()
-            self.logger.info('Saving id_list')
-            self.hdf['id_list'].resize((len(id_list),))
-            self.hdf['id_list'][:] = ids
 
-            self.logger.debug('Time table resize')
-            self.hdf['TimeTable'].resize((8640,len(id_list)))
 
         taxidata = self.hdf.require_group('taxidata')
-        #errors = self.hdf.require_group('Errors')
         remains = self.hdf.require_group('remains')
-        for i, typename in enumerate(self.RAW.dtype.names):
-            if typename == 'id' or typename =='time':continue
-            if not taxidata.get(typename, False):
-                self.logger.debug("'{}' Dataset created.".format(typename))
-                ta = taxidata.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
-                #ta.attrs['Nonesign'] = -1
-                #errors.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
-                re = remains.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
-                #ta.attrs['Nonesign'] = -1
-
-        ids = self.hdf['id_list'][:]
-        id_list = dict()
-        for i,j in enumerate(ids):
-            id_list[j] = i
 
         files = 0
         lines = 0
         id_count = 0
-        #err_c = 0
         rem_c = 0
-        timetable = -np.ones([8640,len(id_list)], dtype = np.int32)
 
         date = self._date*86400 + 54000
         totalfile = len(self.RAW)
@@ -755,7 +731,7 @@ class DataProcessor:
 
             #self.logger.debug('\tCurrent total taxi number : {}'.format(len(id_list)))
 
-            self.logger.debug('\tSorting npy')
+            #self.logger.debug('\tSorting npy')
             np.sort(npy, order=['time','id'])
             full[check:check+npy.shape[0]] = npy
             check += npy.shape[0]
@@ -763,35 +739,60 @@ class DataProcessor:
         self.logger.debug('total : {}'.format(check))
         full = full[:check]
 
+
+        self.logger.info('Collecting id.')
+
+        ids = np.unique(full['id'])
+        timetable = -np.ones([8640,len(ids)], dtype = np.int32)
+
+        self.logger.info('Saving id_list')
+        self.hdf.create_dataset('id_list', data = ids)
+        #ids.sort()
+        id_list = dict()
+        for i,j in enumerate(ids):
+            id_list[j] = i
+
         self.logger.debug('Time converting')
         times = ((time_converter(full['time']) - (self._date*86400+54000))/10).astype(np.int32)
 
         self.logger.debug('Masking start')
         mask = np.logical_and(times>=0, times<8640)
+        tdata = full[mask]
+        rdata = full[np.logical_not(mask)]
 
         self.logger.debug('id converting')
-        ids = [id_list[i] for i in full['id'][mask]]
+        ids = [id_list[i] for i in tdata['id']]
         datalen = len(ids)
 
         self.logger.debug('Time table update')
-        timetable[times[mask], ids] = lines+i
+        timetable[times[mask], ids] = np.arange(len(ids))
+        self.logger.debug('Time table collecting')
+        self.hdf.create_dataset('TimeTable', data = timetable, compression = 'gzip')
+
 
         self.logger.debug('Data collecting')
+        for i, typename in enumerate(self.RAW.dtype.names):
+            if typename == 'id' or typename =='time':continue
+            if not taxidata.get(typename, False):
+                self.logger.debug("\t'{}' Dataset created.".format(typename))
+                ta = taxidata.create_dataset(typename, data = tdata[typename], compression='gzip')
+
+                #ta.attrs['Nonesign'] = -1
+                #errors.create_dataset(typename, (1,), maxshape=(None,), dtype = self.RAW.dtype[i], compression='gzip')
+                re = remains.create_dataset(typename, data = rdata[typename], compression='gzip')
+        r'''
         for types in npy.dtype.names:
             if types == 'id' or types =='time':continue
             self.logger.debug('\t\t{}'.format(types))
             taxidata[types].resize((datalen,))
-            taxidata[types][lines:] = full[types][mask]
-            remains[types].resize((rem_c+full.shape[0]-datalen,))
-            remains[types][rem_c:] = full[types][np.logical_not(mask)]
-
+            taxidata[types][:] = tdata[types]
+            remains[types].resize((full.shape[0]-datalen,))
+            remains[types][:] = rdata[types]
+        '''
         #files+=1
         #lines+=datalen
         #rem_c+= len(npy)-datalen
-        self.logger.debug('total files length : {}, data : {}. remains : {}'.format(len(npy), datalen, len(npy)-datalen))
-
-        self.logger.info('Saving time table.')
-        self.hdf['TimeTable'] = timetable
+        self.logger.debug('total files length : {}, data : {}. remains : {}'.format(len(tdata), datalen, len(rdata)))
         self.hdf.attrs['TotalNumber'] = len(id_list)
         self.logger.info('Finished!')
         self.hdf.flush()
@@ -811,6 +812,12 @@ class DataProcessor:
 def time_converter(strtime):
     return dt.datetime.strptime(strtime.decode(), '%Y%m%d%H%M%S').timestamp()
 
+def array(*arg, **kwarg):
+    x = np.array(*arg, **kwarg)
+    x = x.view(taxiarray)
+    x.pos = ([],[])
+    x.taxi_id = []
+    return x
 
 if __name__ == '__main__':
     b = dt.datetime(1900,1,1)
