@@ -13,7 +13,6 @@ __all__ = ['taxiarray', 'triparray', 'Dataset','trajectory'] ## triparray == od_
 
 logging.basicConfig(format='%(asctime)s %(name)-10s : [%(levelname)-8s] %(message)s')
 
-
 class taxiarray(np.ndarray):
     '''pratical data container based on structured array of numoy.
     traditionally, data type is '['id', 'x','y','time','passenger']'.
@@ -63,7 +62,9 @@ class taxiarray(np.ndarray):
         *only id for now*'''
         i = 0
         for taxi_id, index in self._taxi_id:
-            yield taxi_id, self[i:index]
+            temp = self[i:index]
+            temp.pos = (self._posx, self._posy)
+            yield taxi_id, temp
             i = index
 
     def plot(self, id='all', time ='all'):
@@ -271,12 +272,12 @@ class triparray(taxiarray):
         """
 
         def fget(self): # IDEA: return origin points of this instance as taxi array
-            return taxidata(_origins)
+            return array(self._origins)
         return locals()
     origins = property(**origins())
 
     def destination():
-        doc = "destination is end point of trip. this this property gives origin points as taxiarray form."
+        doc = "destination is end point of trip. this property gives origin points as taxiarray form."
         def fget(self):
             return self._destination
         def fset(self, value):
@@ -363,7 +364,8 @@ class Dataset:
     fields = property(**fields())
 
     def get_array(self, target = None, start_time = None, end_time = None, **kwarg):
-        '''return array from file.
+        '''return array from file.  
+
         start_time and end_time specify the output data size.
         if integer is given, each argument will be regarded as hours
         or time must be instance of datetime module.
@@ -372,34 +374,34 @@ class Dataset:
 
         kwargs
         ---------
-        num : integer
+        num : integer  
             total taxi number fixed as given integer.
             same option of Dataset.set_taxis(num, random)
-        random : bool (optional)
+        random : bool (optional)  
             same option of Dataset.set_taxis(num, random)
             default is `True`.
-        time : tuple
+        time : tuple  
             set start_time and end_time
 
-        date : bool
+        date : bool  
             if True, timestamp of date will be added.
 
-        dtype : list of (field_name, dtype)
+        dtype : list of (field_name, dtype)  
             set return dtypes.
             if None, return whole field and saved dtypes.
-        fields : list
+        fields : list  
             set return fields.
             if None, return whole field
-        position : tuple of str (field_name_of_x, field_name_of_y)
+        position : tuple of str (field_name_of_x, field_name_of_y)  
             specify position default is ('lon','lat')
         '''
-        set_taxis = False
-        fields = None
-        dtypes = None
-        fd_ol = False
-        start = None
-        end = None
-        position = ('lon','lat')
+        set_taxis   = False
+        fields      = None
+        dtypes      = None
+        fd_ol       = False
+        start       = None
+        end         = None
+        position    = ('lon','lat')
 
         if target is not None:
             self.set_taxi_id(target)
@@ -468,8 +470,6 @@ class Dataset:
 
 
         time = slice(start, end)
-        with h5py.File(self.file, 'r') as f:
-            timetable = f['TimeTable'][:].T
         ids = {ii:i for i, ii in enumerate(self.id_list)}
         target = [ids[taxiid] for taxiid in self.targets]
         target.sort()
@@ -478,6 +478,20 @@ class Dataset:
         times = []
 
         date = self.date.timestamp()
+
+        #timetable loads
+        if len(self.targets)<=50:
+            with h5py.File(self.file, 'r') as f:
+                timetable = f['TimeTable'][:].T
+        else:
+            with h5py.File(self.file, 'r') as f:
+                timetable = {}
+                for i in target:
+                    timetable[i] = f['TimeTable'][:,i]
+
+
+
+        # partial reading is optimal when len(target) < 1000
         #reading data indices from timetable
         for i in target:
             mask = timetable[i][time]
@@ -492,10 +506,16 @@ class Dataset:
             times.append(tlist)
             indices.append(taxi)
             nums.append(taxi.shape[0])
-
+        
+        
+        
+        if not nums:
+            raise ValueError("Data is Empty. Please check the data range.")
+        else:
+            print(f"{len(nums)} taxis founded in data with given condition.")
         #print(dtypes) ## check
 
-        array = np.zeros(sum(nums),dtype = dtypes)
+        Array = np.zeros(sum(nums),dtype = dtypes)
         cumnum = np.array(nums).cumsum()
         order = np.empty([cumnum[-1],2],dtype = np.int32)
         order[:,1] = np.arange(cumnum[-1])
@@ -503,30 +523,32 @@ class Dataset:
         for index in indices:
             order[:,0][number:number + len(index)] = index
             number += len(index)
-
+        ind_min = order[:,0].min()
+        ind_max = order[:,0].max()
         #order = np.sort(order, 0)
 
         ch_len = 0
+        order[:,0] -= ind_min
 
         with h5py.File(self.file, 'r') as f:
             for field, _ in dtypes:
                 if field == 'id' or field == 'time':continue
-                array[field] = f['taxidata'][field][:][order.T[0]]
+                Array[field] = f['taxidata'][field][ind_min:ind_max+1][order.T[0]]
 
             for start_index, dlen, taxi_id, tlist, index in zip(cumnum, nums, self.targets, times, indices):
-                tarr = array[start_index-dlen: start_index]
+                tarr = Array[start_index-dlen: start_index]
                 ch_len+=dlen
                 tarr['id'] = taxi_id
                 tarr['time'] = tlist
 
         assert ch_len == cumnum[-1]
 
-        res = array.view(taxiarray)
+        res = Array.view(taxiarray)
         if 'lat' in fields:
             res['lat']/=1e7
         if 'lon' in fields:
             res['lon']/=1e7
-        res.pos = ('lat','lon')
+        res.pos = position
         res.taxi_id = [(id, index) for id, index in zip(self.targets, cumnum)]
         self.targets = None
         return res
@@ -539,6 +561,7 @@ class Dataset:
             self.targets = np.random.choice(self.id_list, num, replace = False)
         else:
             self.targets = self.id_list[:num]
+
 
     def set_taxi_id(self, ids):
         """setting target with given id.
@@ -589,6 +612,9 @@ class Dataset:
     def __getitems__(self,  key):
         pass
 
+    def __len__(self):
+        with h5py.File(self.file, 'r') as f:
+             return f['taxidata']['valid'].shape[0]
 
 
 class DataProcessor:
@@ -786,6 +812,12 @@ class DataProcessor:
 def time_converter(strtime):
     return dt.datetime.strptime(strtime.decode(), '%Y%m%d%H%M%S').timestamp()
 
+def array(*arg, **kwarg):
+    x = np.array(*arg, **kwarg)
+    x = x.view(taxiarray)
+    x.pos = ([],[])
+    x.taxi_id = []
+    return x
 
 if __name__ == '__main__':
     b = dt.datetime(1900,1,1)
