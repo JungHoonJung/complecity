@@ -7,7 +7,7 @@ __all__= ['load_seoul']
 
 def load_seoul():
     Seoul = Roadnetwork()
-    print(pkg_resources.resource_filename(__name__, "nodelink/Seoul_Edgelist.csv"))
+    #print(pkg_resources.resource_filename(__name__, "nodelink/Seoul_Edgelist.csv"))
     s_elist = gpd.read_file(pkg_resources.resource_filename(__name__, "nodelink/Seoul_Edgelist.csv")) #get filename through a filesystem
     s_link = gpd.read_file(pkg_resources.resource_filename(__name__, "nodelink/Seoul_Links.shp"))
     #s_elist = gpd.read_file(r'.\taxidata\core\network\nodelink\Seoul_Edgelist.csv')

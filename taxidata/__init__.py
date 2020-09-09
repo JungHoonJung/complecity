@@ -11,6 +11,6 @@ from .core.network.functions import toUTM
 from .core.network.ksegment  import *
 from .core.network.match import *
 from .core.network.load_net import *
-from .src.taxi_cext import d_curve
+from .src.c_extension import c_ext
 
 dtype = tdarray.dtype

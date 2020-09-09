@@ -104,7 +104,11 @@ class taxiarray(np.ndarray):
         if there is no name in dtype field, it raise nameerror.
         '''
         pass
-
+    
+    def __getitem__(self, value):
+        temp  = super(taxiarray, self).__getitem__(value)
+        temp.pos = (self._posx, self._posy)
+        return temp
 
 
 
