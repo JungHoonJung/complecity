@@ -18,6 +18,7 @@ include taxidata/core/network/nodelink/Seoul_Nodes.sbx
 include taxidata/core/network/nodelink/Seoul_Nodes.shp
 include taxidata/core/network/nodelink/Seoul_Nodes.shp.xml
 include taxidata/core/network/nodelink/Seoul_Nodes.shx
+include taxidata/core/network/nodelink/RN_seoul.npz
 
 include taxidata/src/d_curve.dll
 include taxidata/src/d_curve.so
