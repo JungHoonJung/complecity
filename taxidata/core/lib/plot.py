@@ -124,7 +124,7 @@ class dist:
 
 district = dist()
 
-with open(raw_district_file) as f:
+with open(raw_district_file, encoding="utf8") as f:
     sig_cd      = []
     sig_kor_nm  = []
     sig_eng_nm  = []
