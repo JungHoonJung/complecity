@@ -431,8 +431,7 @@ def k_segments_strict_bfs_with_length(G, node, k= 100):
     return k_segments
 
 def k_segments_semi_strict_bfs(G, node, k= 100):
-    """Short summary.
-    '''k_segment with no overlap within single segment.'''
+    """k_segment with no overlap within single segment.
     Parameters
     ----------
     G : Network
@@ -473,4 +472,50 @@ def k_segments_semi_strict_bfs(G, node, k= 100):
         if iter_num == 1e5:
             print(node)
         #print(k_segments)
+    return k_segments
+
+
+def k_segments_with_shortest_path(G, node, k = 100):
+    """generate k_segment which is the shortest path of node i,j with length under k.
+    Parameters
+    ----------
+    G : `RoadNetwork(nx.MultiDiGraph)`
+
+    node : `int`
+        node which starts point of k_segment
+
+    k : `int`
+        segment's length
+
+    Returns
+    -------
+    `dict`
+        k-segments with no overlapping node and search with length
+    """
+    segments = [Segment(edge) for edge in G.edges(node,keys = True, data = True)]
+    k_segments = []
+    nodes = {node :True}
+    iter_num  = 0
+    segments.sort()
+    while segments:
+        iter_num += 1
+        target = segments.pop(0)
+        ch = False
+        #print("target : {},{}".format(target.past_node, target.last_node))
+        for edge in G.edges(target.last_node, keys = True, data = True):
+            if edge[1] in nodes: continue
+            #print("to : {}, {}".format(edge[0], edge[1]))
+            ch = True
+            nodes[edge[1]] = True
+            temp = target.expand(edge)
+            if temp.check(k):
+                k_segments.append(temp)
+            else:
+                segments.append(temp)
+        if not ch:
+            k_segments.append(target)
+        if iter_num == 1e5:
+            print(node)
+        #print(k_segments)
+        segments.sort()
     return k_segments

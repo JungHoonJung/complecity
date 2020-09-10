@@ -8,6 +8,7 @@ __pycache__/
 # test files
 test*/
 test*
+k_seg*
 
 # C extensions
 #*.so
