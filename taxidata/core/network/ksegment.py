@@ -295,25 +295,6 @@ class Roadnetwork(nx.MultiDiGraph):
         edge_plot(sub)
         plt.scatter(*node_pos, s= 100)
 
-    def start(self, grid_set):
-        """To calculate effectively derive some node in grid_set
-
-        Parameters
-        ----------
-        grid_set : array
-            Array of grid numbers.
-
-        Returns
-        -------
-        List
-            List of nodes in grid_set.
-
-        """
-        start_node=[]
-        for i in grid_set:
-            start_node.append(grid_200[i])
-        return start_node
-
 
 
 def k_segments(G, node, k= 100):

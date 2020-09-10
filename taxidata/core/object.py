@@ -18,6 +18,7 @@ class taxiarray(np.ndarray):
     traditionally, data type is '['id', 'x','y','time','passenger']'.
     please check datatype.'''
 
+
     def pos():
         doc = """position of taxi.
 
@@ -107,7 +108,8 @@ class taxiarray(np.ndarray):
     
     def __getitem__(self, value):
         temp  = super(taxiarray, self).__getitem__(value)
-        temp.pos = (self._posx, self._posy)
+        if not isinstance(value, str):
+            temp.pos = (self._posx, self._posy)
         return temp
 
 
