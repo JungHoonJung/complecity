@@ -33,7 +33,7 @@ def c_import(c_ext):
     if platform.system() == 'Windows':
         _cdll = ctypes.windll.LoadLibrary(pkg_resources.resource_filename(__name__,f"{c_ext}.dll"))
     elif platform.system() == 'Linux':
-        _cdll = ctypes.cdll.LoadLibrary(pkg_resources.resource_filename(__name__,f"{c_ext}.so"))
+        _cdll = ctypes.cdll.LoadLibrary(pkg_resources.resource_filename(__name__,f"{c_ext}.so.1"))
     else:
         raise OSError("this OS is not supported.")
     return _cdll
