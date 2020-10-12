@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import shapely.geometry as geom
 import h5py as h5
+import tqdm
 
 __all__ = ['Segment', 'Roadnetwork', 'k_segments', 'k_segments_strict_bfs', 'k_segments_semi_strict_bfs', 'k_segments_strict_bfs_with_length']
 
@@ -180,23 +181,26 @@ class Segment:
                 stitchScore = 1 - overlap_length/total_length
             else:stitchScore = 1
         return stitchScore
-
+    
 class KSegment():
     def __init__(self, hdf5):
         self.file = hdf5
-    
+        self._object = {}
+        #self.add_meta_data()
+        
     def add_meta_data(self):
-        with h5.File(self.file, 'r') as f:
+        with h5.File(self.file, 'r+') as f:
             for i,n in enumerate(f):
                 if i == 0:
                     if f[n].get('seg_len',False):
                         return
                     break
-            for node in f:
+            for node in tqdm.tqdm(f):
                 folder = f[node]
                 mask = (folder['node'][:]!=-1)
                 seg_len = mask.astype(np.uint8).sum(axis=1)+1
                 folder.create_dataset('seg_len',data = seg_len, compression = 'lzf')
+                assert folder['node'].shape[0] == seg_len.shape[0], f"{folder['node'].shape[0]} != {seg_len.shape[0]}"
 
     def _load_node(self, start_nodes): # from start_nodes `list` get array of 
         nodes = []
@@ -216,20 +220,66 @@ class KSegment():
                 nodes.append(f[f'{snode}']['length'][:])
         return nodes
     
-    def _load_edge(self, start_nodes):
+    def _load_edge(self, start_nodes,length = False, fn_tqdm= None):
         with h5.File(self.file, 'r') as f:
             edges = []
-            for snode in start_nodes:
+            if fn_tqdm is None:
+                fn_tqdm = lambda x:x
+            for snode in fn_tqdm(start_nodes):
                 shape = f[f'{snode}']['node'].shape
                 buf = np.empty([shape[0], shape[1]+1],dtype = np.int32)
                 buf[:,0] = snode
                 buf[:,1:] = f[f'{snode}']['node'][:]
-                edge = np.empty(shape, dtype = [('start','i4'),('end','i4'),('indices','i1')])
+                if length:
+                    edge = np.empty(shape, dtype = [('start','i4'),('end','i4'),('indices','i1'),('length','f4')])
+                    edge['length'] = f[f'{snode}']['length'][:]
+                else:
+                    edge = np.empty(shape, dtype = [('start','i4'),('end','i4'),('indices','i1')])
                 edge['start'] = buf[:,:-1]
                 edge['end'] = buf[:,1:]
                 edge['indices'] = f[f'{snode}']['index'][:]
                 edges.append(edge)
         return edges
+    
+    def loads(self, start_nodes, length = True):
+        edges = self._load_edge(start_nodes, length, fn_tqdm=tqdm.tqdm)
+        for s, e in zip(start_nodes, edges):
+            self._object[s] = e
+
+    def get_segment_nodes(self, start_node):
+        s_n = start_node
+        if self._object.get(s_n, None) is None:
+            self._object[s_n] = self._load_edge(s_n)
+        data = self._object[s_n]
+        edges = []
+        seg_len = (data['start']!=-1).astype(np.uint8).sum(axis=1)
+        for d, l in zip(data, seg_len):
+            edges.append(d[:l])
+        return edges
+
+    def __getitem__(self, value):
+        """
+        docstring
+        """
+        if isinstance(value, (tuple, np.ndarray)):
+            s_n, ind = value
+            if self._object.get(s_n, None) is None:
+                self._object[s_n] = self._load_edge(s_n)
+            data =  self._object[s_n][ind]
+            return data[data['end']!=-1]
+        else:
+            s_n = value
+            if self._object.get(s_n, None) is None:
+                self._object[s_n] = self._load_edge(s_n)
+            data = self._object[s_n]
+            edges = []
+            seg_len = (data['end']!=-1).astype(np.uint8).sum(axis=1)
+            for d, l in zip(data, seg_len):
+                edges.append(d[:l])
+            return edges
+
+        
+            
 
 
 
