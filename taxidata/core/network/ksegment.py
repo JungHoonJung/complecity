@@ -187,7 +187,14 @@ class KSegment():
         self.file = hdf5
         self._object = {}
         #self.add_meta_data()
-        
+
+    def get_nodes(self):
+        nodes = []
+        with h5.File(self.file, 'r+') as f:
+            for i in f:
+                nodes.append(int(i))
+        return nodes
+
     def add_meta_data(self):
         with h5.File(self.file, 'r+') as f:
             for i,n in enumerate(f):
@@ -242,9 +249,14 @@ class KSegment():
         return edges
     
     def loads(self, start_nodes, length = True):
+        if start_nodes =='*':
+            start_nodes = self.get_nodes()
         edges = self._load_edge(start_nodes, length, fn_tqdm=tqdm.tqdm)
         for s, e in zip(start_nodes, edges):
             self._object[s] = e
+        
+    def clear(self):
+        self._object.clear()
 
     def get_segment_nodes(self, start_node):
         s_n = start_node
@@ -264,13 +276,13 @@ class KSegment():
         if isinstance(value, (tuple, np.ndarray)):
             s_n, ind = value
             if self._object.get(s_n, None) is None:
-                self._object[s_n] = self._load_edge(s_n)
+                self._object[s_n] = self._load_edge([s_n])[0]
             data =  self._object[s_n][ind]
             return data[data['end']!=-1]
         else:
             s_n = value
             if self._object.get(s_n, None) is None:
-                self._object[s_n] = self._load_edge(s_n)
+                self._object[s_n] = self._load_edge([s_n])[0]
             data = self._object[s_n]
             edges = []
             seg_len = (data['end']!=-1).astype(np.uint8).sum(axis=1)
