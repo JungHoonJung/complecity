@@ -13,7 +13,7 @@ cpp_header = """
     DCURVE_API float d_ls_p(float* line_points, int line_length, float px, float py, int line_start = 0);
     DCURVE_API float d_curve_single(float* seg_points, int seg_length, float* traj_points, int traj_length, int index, int seg_index, float& prefix, int seg_start = 0);
     DCURVE_API void d_curve(float* segments, int* segment_lengths, int* segment_start_point, int total_seg_num, float* traj_points, int traj_length, int index, float* prefix, float* d_c, int thr_num = 1);
-    DCURVE_API void k_segments(int* edges, int* edge_start_indices, int* degrees, int total_number, int* start_node, int n_num, float* length, float* angle, float k, int thr_num = 1);
+    DCURVE_API void k_segments(int* edges, int* edge_start_indices, int* degrees, int max_number, int* start_node, int n_num, float* length, float* angle, float k, float threshold, int thr_num=1);
 """
 
 

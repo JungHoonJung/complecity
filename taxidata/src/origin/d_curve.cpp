@@ -360,5 +360,8 @@ DCURVE_API void k_segments(int* edges, int* edge_start_indices, int* degrees, in
 }
 
 
+
+
+
 #endif
 

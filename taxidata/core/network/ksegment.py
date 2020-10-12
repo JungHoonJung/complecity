@@ -181,6 +181,55 @@ class Segment:
             else:stitchScore = 1
         return stitchScore
 
+class KSegment():
+    def __init__(self, hdf5):
+        self.file = hdf5
+    
+    def add_meta_data(self):
+        with h5.File(self.file, 'r') as f:
+            for i,n in enumerate(f):
+                if i == 0:
+                    if f[n].get('seg_len',False):
+                        return
+                    break
+            for node in f:
+                folder = f[node]
+                mask = (folder['node'][:]!=-1)
+                seg_len = mask.astype(np.uint8).sum(axis=1)+1
+                folder.create_dataset('seg_len',data = seg_len, compression = 'lzf')
+
+    def _load_node(self, start_nodes): # from start_nodes `list` get array of 
+        nodes = []
+        with h5.File(self.file, 'r') as f:
+            for snode in start_nodes:
+                shape = f[f'{snode}']['node'].shape
+                buf = np.empty([shape[0], shape[1]+1],dtype = np.int32)
+                buf[:,0] = snode
+                buf[:,1:] = f[f'{snode}']['node'][:]
+                nodes.append(buf)
+        return nodes
+
+    def _load_length(self, start_nodes):
+        nodes = []
+        with h5.File(self.file, 'r') as f:
+            for snode in start_nodes:
+                nodes.append(f[f'{snode}']['length'][:])
+        return nodes
+    
+    def _load_edge(self, start_nodes):
+        with h5.File(self.file, 'r') as f:
+            edges = []
+            for snode in start_nodes:
+                shape = f[f'{snode}']['node'].shape
+                buf = np.empty([shape[0], shape[1]+1],dtype = np.int32)
+                buf[:,0] = snode
+                buf[:,1:] = f[f'{snode}']['node'][:]
+                edge = np.empty(shape, dtype = [('start','i4'),('end','i4'),('indices','i1')])
+                edge['start'] = buf[:,:-1]
+                edge['end'] = buf[:,1:]
+                edge['indices'] = f[f'{snode}']['index'][:]
+                edges.append(edge)
+        return edges
 
 
 
@@ -290,9 +339,9 @@ class Roadnetwork(nx.MultiDiGraph):
             subgraph bfs_edges
         """
         sub = self.subgraph_of_node(node, depth_limit)
-        node_pos = pos(sub)[node]
+        node_pos = pos[node]
 
-        edge_plot(sub)
+        self.edge_plot(sub)
         plt.scatter(*node_pos, s= 100)
 
 
