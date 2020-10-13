@@ -6,7 +6,7 @@ import shapely.geometry as geom
 import h5py as h5
 import tqdm
 
-__all__ = ['Segment', 'Roadnetwork', 'k_segments', 'k_segments_strict_bfs', 'k_segments_semi_strict_bfs', 'k_segments_strict_bfs_with_length']
+__all__ = ['Segment', 'KSegment', 'Roadnetwork', 'k_segments', 'k_segments_strict_bfs', 'k_segments_semi_strict_bfs', 'k_segments_strict_bfs_with_length']
 
 class Segment:
     def __init__(self, edge = None):
@@ -289,6 +289,50 @@ class KSegment():
             for d, l in zip(data, seg_len):
                 edges.append(d[:l])
             return edges
+
+    def _stitch_score(self, seg1, seg2):
+        """A function which is calculating stitching score from seg1 to seg2.
+
+        Parameters
+        ------------
+        seg1 : `tuple (start_node, order)`
+            Segment.
+        seg2 : `tuple (start_node, order)`
+            Segment.
+        
+        """        
+        seg1 = self[seg1]
+        seg2 = self[seg2]
+        l1 = seg1['length'].sum()
+        l2 = seg2['length'].sum()
+        n1 = seg1.shape[0]
+        n2 = seg2.shape[0]
+        for i, edge in enumerate(seg1):
+            if edge == seg2[0]:
+                if n2>=n1-i and seg2[n1-i-1]==seg1[-1]:
+                    if (seg1[i:]==seg2[:n1-i]).all():
+                        ol = seg1[i:]['length'].sum()
+                        return 1 - ol/(l1+l2-ol)
+        return 1
+
+        
+
+
+    def stitch_score(self, seg1, seg2):
+        """A function which is calculating stitching score.
+
+        Parameters
+        ------------
+        seg1 : `tuple (start_node, order)`
+            Segment.
+        seg2 : `tuple (start_node, order)`
+            Segment.
+        
+        """
+        if seg1==seg2:
+            return 0        
+        return min(self._stitch_score(seg1, seg2), self._stitch_score(seg2, seg1))
+
 
         
             
