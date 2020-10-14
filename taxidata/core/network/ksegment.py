@@ -6,7 +6,7 @@ import shapely.geometry as geom
 import h5py as h5
 import tqdm
 
-__all__ = ['Segment', 'KSegment', 'Roadnetwork', 'k_segments', 'k_segments_strict_bfs', 'k_segments_semi_strict_bfs', 'k_segments_strict_bfs_with_length']
+__all__ = ['Segment', 'KSegment', 'Roadnetwork', 'kseg_flattening', 'get_seg_id','k_segments', 'k_segments_strict_bfs', 'k_segments_semi_strict_bfs', 'k_segments_strict_bfs_with_length']
 
 class Segment:
     def __init__(self, edge = None):
@@ -181,19 +181,126 @@ class Segment:
                 stitchScore = 1 - overlap_length/total_length
             else:stitchScore = 1
         return stitchScore
+
+class segment(np.ndarray):
+    def nodes(self):
+        a = np.empty([len(self)+1], dtype = np.int32)
+        a[:-1] = self['start']
+        a[-1] = self[-1]['end']
+        return a
     
+    @property
+    def start(self):
+        return
+    @start.getter
+    def start(self):
+        return self['start']
+    
+    @property
+    def end(self):
+        return
+    @end.getter
+    def end(self):
+        return self['end']
+    
+    @property
+    def indices(self):
+        return
+    @indices.getter
+    def indices(self):
+        return self['indices']
+
+    @property
+    def length(self):
+        return
+    @length.getter
+    def length(self):
+        return self['length']
+
+    @property
+    def node(self):
+        return
+    @node.getter
+    def node(self):
+        return self.nodes()
+    
+
+
+    
+    
+
+def kseg_flattening(*ksegments):
+    """ return k segment array, length_array, and total length to calculate d_curve
+    Parameters
+    ----------
+    ksegments : `taxidata.segment`
+        ksegment of RoadNetwork
+    
+    Return
+    --------
+    `list`
+        the returned list contain three components.
+        - segment_array : `np.ndarray` flatten nodes of all of given k-segments.
+        - length_array : `np.ndarray` array with lengths of given k-segments.
+        - total_length : `int` total number of given k-segments.
+    """
+    length          = np.array([len(seg)+1 for seg in ksegments])
+    segment_array   = np.empty([length.sum()], dtype = np.int32)
+    total_length    = len(length)
+    lcum            = length.cumsum() 
+    for i, seg in enumerate(ksegments):
+        if i ==0:
+            segment_array[0:lcum[0]] = seg.nodes()
+        else:
+            segment_array[lcum[i-1]:lcum[i]] = seg.nodes()
+    return segment_array, length, total_length
+
+def get_seg_id(*ksegments):
+    """return segment id from k-segment list.
+
+    Parameters
+    -----------
+    ksegments : `taxidata.segment`
+        ksegment of RoadNetwork
+
+    Return
+    --------
+    `list`
+        a list of tuple form as (start_node, index).
+    """
+    return [(s.start[0],s.seg_id) for s in ksegments]
+
 class KSegment():
     def __init__(self, hdf5):
         self.file = hdf5
         self._object = {}
+        self._nodes = {}
+        with h5.File(self.file, 'r+') as f:
+            for i in f:
+                self._nodes[int(i)] = True
+        self.mask = np.vectorize(self.__contains__)
+        self.__contains__ = self.mask
         #self.add_meta_data()
 
     def get_nodes(self):
-        nodes = []
-        with h5.File(self.file, 'r+') as f:
-            for i in f:
-                nodes.append(int(i))
-        return nodes
+        """return full nodes list in this file.
+
+        Returns:
+            `list` : nodes as integer id.
+        """
+        return list(self._nodes.keys())
+    
+    def __contains__(self, node):
+        return self._nodes.get(node, False)
+
+    
+    def mask(self, node):
+        return self._nodes.get(node, False)
+
+    def filtrate(self, nodes):
+        if not isinstance(nodes, np.ndarray):
+            nodes = np.array(nodes, dtype=np.int32)
+        return nodes[np.vectorize(self.__contains__)(nodes)]
 
     def add_meta_data(self):
         with h5.File(self.file, 'r+') as f:
@@ -245,7 +352,7 @@ class KSegment():
                 edge['start'] = buf[:,:-1]
                 edge['end'] = buf[:,1:]
                 edge['indices'] = f[f'{snode}']['index'][:]
-                edges.append(edge)
+                edges.append(edge.view(segment))
         return edges
     
     def loads(self, start_nodes, length = True):
@@ -278,7 +385,9 @@ class KSegment():
             if self._object.get(s_n, None) is None:
                 self._object[s_n] = self._load_edge([s_n])[0]
             data =  self._object[s_n][ind]
-            return data[data['end']!=-1]
+            edge = data[data['end']!=-1]
+            edge.seg_id = ind
+            return edge
         else:
             s_n = value
             if self._object.get(s_n, None) is None:
@@ -286,8 +395,10 @@ class KSegment():
             data = self._object[s_n]
             edges = []
             seg_len = (data['end']!=-1).astype(np.uint8).sum(axis=1)
-            for d, l in zip(data, seg_len):
-                edges.append(d[:l])
+            for i, (d, l) in enumerate(zip(data, seg_len)):
+                edge = d[:l]
+                edge.seg_id = i
+                edges.append(edge)
             return edges
 
     def _stitch_score(self, seg1, seg2):
