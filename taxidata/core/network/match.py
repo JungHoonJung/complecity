@@ -327,7 +327,29 @@ class SingleTrackMapMatching:
             edge_list.append(path.edges()[np.where(min(distance_list)==distance_list)[0][0]])
         return edge_list
 
+    def add_stitching_map(self, seg1, seg2):
+        """Short summary.
 
+        Parameters
+        ----------
+        seg1 : `tuple (start_node, order)`
+            Segment.
+        seg2 : `tuple (start_node, order)`
+            Segment.
+
+        Returns
+        -------
+        type
+            Check if stitch score between seg1 & se2 was calculated and add to stitching_map
+        """
+        
+        if self.stitcing_map.get(seg1) == None:                             # 아예 다 비어있을 때
+            self.stitching_map[seg1] = {}
+            self.stitching_map[seg1, seg2] = stitch_score(self, seg1, seg2)
+        elif self.stitcing_map.get(seg1).get(seg2) == None:                 # 첫 자리는 있는데, 둘 째가 비어있을 때
+            self.stitching_map[seg1, seg2] = stitch_score(self, seg1, seg2)
+        else:                                                               # 값이 입력되어있으면 pass
+            pass
 
 class MultitrackMapMatching(SingleTrackMapMatching):
     """object for multi-track mapmatching."""

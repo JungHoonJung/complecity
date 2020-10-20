@@ -188,21 +188,21 @@ class segment(np.ndarray):
         a[:-1] = self['start']
         a[-1] = self[-1]['end']
         return a
-    
+
     @property
     def start(self):
         return
     @start.getter
     def start(self):
         return self['start']
-    
+
     @property
     def end(self):
         return
     @end.getter
     def end(self):
         return self['end']
-    
+
     @property
     def indices(self):
         return
@@ -223,11 +223,11 @@ class segment(np.ndarray):
     @node.getter
     def node(self):
         return self.nodes()
-    
 
 
-    
-    
+
+
+
 
 def kseg_flattening(*ksegments):
     """ return k segment array, length_array, and total length to calculate d_curve
@@ -235,7 +235,7 @@ def kseg_flattening(*ksegments):
     ----------
     ksegments : `taxidata.segment`
         ksegment of RoadNetwork
-    
+
     Return
     --------
     `list`
@@ -247,7 +247,7 @@ def kseg_flattening(*ksegments):
     length          = np.array([len(seg)+1 for seg in ksegments])
     segment_array   = np.empty([length.sum()], dtype = np.int32)
     total_length    = len(length)
-    lcum            = length.cumsum() 
+    lcum            = length.cumsum()
     for i, seg in enumerate(ksegments):
         if i ==0:
             segment_array[0:lcum[0]] = seg.nodes()
@@ -289,11 +289,11 @@ class KSegment():
             `list` : nodes as integer id.
         """
         return list(self._nodes.keys())
-    
+
     def __contains__(self, node):
         return self._nodes.get(node, False)
 
-    
+
     def mask(self, node):
         return self._nodes.get(node, False)
 
@@ -316,7 +316,7 @@ class KSegment():
                 folder.create_dataset('seg_len',data = seg_len, compression = 'lzf')
                 assert folder['node'].shape[0] == seg_len.shape[0], f"{folder['node'].shape[0]} != {seg_len.shape[0]}"
 
-    def _load_node(self, start_nodes): # from start_nodes `list` get array of 
+    def _load_node(self, start_nodes): # from start_nodes `list` get array of
         nodes = []
         with h5.File(self.file, 'r') as f:
             for snode in start_nodes:
@@ -333,7 +333,7 @@ class KSegment():
             for snode in start_nodes:
                 nodes.append(f[f'{snode}']['length'][:])
         return nodes
-    
+
     def _load_edge(self, start_nodes,length = False, fn_tqdm= None):
         with h5.File(self.file, 'r') as f:
             edges = []
@@ -354,14 +354,14 @@ class KSegment():
                 edge['indices'] = f[f'{snode}']['index'][:]
                 edges.append(edge.view(segment))
         return edges
-    
+
     def loads(self, start_nodes, length = True):
         if start_nodes =='*':
             start_nodes = self.get_nodes()
         edges = self._load_edge(start_nodes, length, fn_tqdm=tqdm.tqdm)
         for s, e in zip(start_nodes, edges):
             self._object[s] = e
-        
+
     def clear(self):
         self._object.clear()
 
@@ -410,8 +410,20 @@ class KSegment():
             Segment.
         seg2 : `tuple (start_node, order)`
             Segment.
-        
-        """        
+
+        Return
+        ------------
+        stitch score(float)
+
+        When the overlap between the last part of `seg1` and the initial part of `seg2`
+        exists, `seg2` is consistent with `seg1`. The stitching score measure the consistency
+        with quantifying the size of overlap. If `seg1` is same as `seg2`,
+        the size of overlap goes whole segment which is jointed with `seg1` and `other`,
+        and the stitching score can be measured as 0.
+        The other hand, when `seg1` and `seg2` is not consistent, the stitching score will be 1
+        as maximum score.
+
+        """
         seg1 = self[seg1]
         seg2 = self[seg2]
         l1 = seg1['length'].sum()
@@ -426,7 +438,7 @@ class KSegment():
                         return 1 - ol/(l1+l2-ol)
         return 1
 
-        
+
 
 
     def stitch_score(self, seg1, seg2):
@@ -438,15 +450,15 @@ class KSegment():
             Segment.
         seg2 : `tuple (start_node, order)`
             Segment.
-        
+
         """
         if seg1==seg2:
-            return 0        
+            return 0
         return min(self._stitch_score(seg1, seg2), self._stitch_score(seg2, seg1))
 
 
-        
-            
+
+
 
 
 
