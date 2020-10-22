@@ -342,11 +342,11 @@ class SingleTrackMapMatching:
         type
             Check if stitch score between seg1 & se2 was calculated and add to stitching_map
         """
-        
-        if self.stitcing_map.get(seg1) == None:                             # 아예 다 비어있을 때
+
+        if self.stitching_map.get(seg1) == None:                             # 아예 다 비어있을 때
             self.stitching_map[seg1] = {}
             self.stitching_map[seg1, seg2] = stitch_score(self, seg1, seg2)
-        elif self.stitcing_map.get(seg1).get(seg2) == None:                 # 첫 자리는 있는데, 둘 째가 비어있을 때
+        elif self.stitching_map.get(seg1).get(seg2) == None:                 # 첫 자리는 있는데, 둘 째가 비어있을 때
             self.stitching_map[seg1, seg2] = stitch_score(self, seg1, seg2)
         else:                                                               # 값이 입력되어있으면 pass
             pass
