@@ -454,7 +454,7 @@ class KSegment():
         """
         if seg1==seg2:
             return 0
-        return min(_stitch_score(seg1, seg2), _stitch_score(seg2, seg1))
+        return min(self._stitch_score(seg1, seg2), self._stitch_score(seg2, seg1))
 
 
 
