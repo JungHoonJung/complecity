@@ -356,6 +356,12 @@ class SingleTrackMapMatching:
         else:                                                               # 값이 입력되어있으면 pass
             pass
 
+    def test_add_stitching_map(self, candi_1, candi_2):
+        for seg1 in candi_1:
+            if self.stitching_map.get(seg1) == None: # seg1 key가 없으면 생성
+                self.stitching_map[seg1] = {}
+            for seg2 in candi_2:
+                self.stitching_map[seg1][seg2] = self.segment_set.stitch_score(seg1, seg2)
 
 class MultitrackMapMatching(SingleTrackMapMatching):
     """object for multi-track mapmatching."""
