@@ -356,7 +356,22 @@ class SingleTrackMapMatching:
         else:                                                               # 값이 입력되어있으면 pass
             pass
 
-    def test_add_stitching_map(self, candi_1, candi_2):
+    def add_stitching_map_CandidateSet(self, candi_1, candi_2):
+        """Short summary.
+
+        Parameters
+        ----------
+        candi_1 : list
+            taxi trajectory point's segment candidate.
+        candi_2 : list
+            taxi trajectory point's segment candidate.
+
+        Returns
+        -------
+        type
+            Check stitching_map & add stitching_map between candidate set 1 & candidate set 2.
+
+        """
         for seg1 in candi_1:
             if self.stitching_map.get(seg1) == None: # seg1 key가 없으면 생성
                 self.stitching_map[seg1] = {}
