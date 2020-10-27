@@ -348,10 +348,10 @@ class SingleTrackMapMatching:
             Check if stitch score between seg1 & se2 was calculated and add to stitching_map
         """
 
-        if self.stitching_map.get(seg1) == None:                             # 아예 다 비어있을 때
+        if self.stitching_map.get(seg1, False):                             # 아예 다 비어있을 때
             self.stitching_map[seg1] = {}
             self.stitching_map[seg1][seg2] = self.segment_set.stitch_score(seg1, seg2)
-        elif self.stitching_map.get(seg1).get(seg2) == None:                 # 첫 자리는 있는데, 둘 째가 비어있을 때
+        elif self.stitching_map.get(seg1).get(seg2, False):                 # 첫 자리는 있는데, 둘 째가 비어있을 때
             self.stitching_map[seg1][seg2] = self.segment_set.stitch_score(seg1, seg2)
         else:                                                               # 값이 입력되어있으면 pass
             pass
@@ -373,7 +373,7 @@ class SingleTrackMapMatching:
 
         """
         for seg1 in candi_1:
-            if self.stitching_map.get(seg1) == None: # seg1 key가 없으면 생성
+            if self.stitching_map.get(seg1,False): # seg1 key가 없으면 생성
                 self.stitching_map[seg1] = {}
             for seg2 in candi_2:
                 self.stitching_map[seg1][seg2] = self.segment_set.stitch_score(seg1, seg2)
