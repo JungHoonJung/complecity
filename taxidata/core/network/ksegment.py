@@ -461,8 +461,11 @@ class KSegment():
         we firstly made stitching_map. So we know where is the first overlap position between seg1 & seg2,
         should not check where is overlaping
         """
+        seg1 = self[seg1]
+        seg2 = self[seg2]
+        
         last_overlap = len(seg1) - first_overlap - 1
-        if (sef1[first_overlap:] == seg2[:last_overlap]).all():
+        if (seg1[first_overlap:] == seg2[:last_overlap]).all():
             ol = seg1[first_overlap:]['length'].sum()
             l1 = seg1['length'].sum()
             l2 = seg1['length'].sum()
