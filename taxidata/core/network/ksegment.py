@@ -431,8 +431,8 @@ class KSegment():
         n1 = seg1.shape[0]
         n2 = seg2.shape[0]
         for i, edge in enumerate(seg1):
-            if edge == seg2[0]:
-                if n2>=n1-i and seg2[n1-i-1]==seg1[-1]:
+            if edge == seg2[0]:                         # 첫번째 edge 같은지 확인
+                if n2>=n1-i and seg2[n1-i-1]==seg1[-1]: #
                     if (seg1[i:]==seg2[:n1-i]).all():
                         ol = seg1[i:]['length'].sum()
                         return 1 - ol/(l1+l2-ol)
@@ -463,14 +463,16 @@ class KSegment():
         """
         seg1 = self[seg1]
         seg2 = self[seg2]
-        
-        last_overlap = len(seg1) - first_overlap - 1
-        if (seg1[first_overlap:] == seg2[:last_overlap]).all():
-            ol = seg1[first_overlap:]['length'].sum()
-            l1 = seg1['length'].sum()
-            l2 = seg1['length'].sum()
-            return 1 - ol/(l1+l2-ol)
-        else: return 1
+        l1 = seg1['length'].sum()
+        l2 = seg2['length'].sum()
+        n1 = seg1.shape[0]
+        n2 = seg2.shape[0]
+
+        if n2>=n1-first_overlap and seg2[n1 - first_overlap - 1]:
+            if (seg1[first_overlap:] == seg2[:n1 - first_overlap]).all():
+                ol = seg1[first_overlap:]['length'].sum()
+                return 1 - ol/(l1+l2-ol)
+        return 1
 
 
 class Roadnetwork(nx.MultiDiGraph):
