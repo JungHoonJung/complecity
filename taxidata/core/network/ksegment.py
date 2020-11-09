@@ -468,7 +468,7 @@ class KSegment():
         n1 = seg1.shape[0]
         n2 = seg2.shape[0]
 
-        if n2>=n1-first_overlap and seg2[n1 - first_overlap - 1]:
+        if n2>=n1-first_overlap and seg2[n1 - first_overlap - 1] == seg1[-1]:
             if (seg1[first_overlap:] == seg2[:n1 - first_overlap]).all():
                 ol = seg1[first_overlap:]['length'].sum()
                 return 1 - ol/(l1+l2-ol)
