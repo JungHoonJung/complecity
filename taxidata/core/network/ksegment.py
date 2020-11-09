@@ -456,10 +456,18 @@ class KSegment():
             return 0
         return min(self._stitch_score(seg1, seg2), self._stitch_score(seg2, seg1))
 
-
-
-
-
+    def stitch_score_with_firstOverlap(self, seg1, seg2, first_overlap):
+        """
+        we firstly made stitching_map. So we know where is the first overlap position between seg1 & seg2,
+        should not check where is overlaping
+        """
+        last_overlap = len(seg1) - first_overlap - 1
+        if (sef1[first_overlap:] == seg2[:last_overlap]).all():
+            ol = seg1[first_overlap:]['length'].sum()
+            l1 = seg1['length'].sum()
+            l2 = seg1['length'].sum()
+            return 1 - ol/(l1+l2-ol)
+        else: return 1
 
 
 class Roadnetwork(nx.MultiDiGraph):
